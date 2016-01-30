@@ -2,10 +2,14 @@ def translate_elem_name(name)
   case name
   when 'listing'
     'pre'
-  when 'identifier', 'glob'
+  when 'firstterm', 'identifier', 'glob', 'emph', 'filename', 'class'
     'i'
-  else
+  when 'command'
+    'code'
+  when 'p', 'dl', 'dt', 'dd', 'code', 'h2', 'h3', 'ul', 'li'
     name
+  else
+    raise "Cannot translate #{name}"
   end
 end
 
