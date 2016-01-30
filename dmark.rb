@@ -64,53 +64,54 @@ def parse(data)
   out
 end
 
-element_stack = []
 INDENTATION = 2
+
+$element_stack = []
+
+def unwind_stack_until(num)
+  while $element_stack.size * INDENTATION > num
+    elem = $element_stack.pop
+    $stdout << "</#{translate_elem_name(elem)}>"
+    $stdout << "\n"
+  end
+end
 
 File.read(ARGV[0]).lines.each do |line|
   case line
-  when /^\s+$/ # blank line
-    # ignore
-  when /^(\s*)([a-z0-9-]+)(\[.*?\])?\.\s*$/ # empty element
+  when /^\s+$/
+    # blank line
+  when /^(\s*)([a-z0-9-]+)(\[.*?\])?\.\s*$/
+    # empty element
     indentation = $1
     element = $2
     options = $3
 
-    element_stack << element
+    $element_stack << element
     $stdout << "<#{translate_elem_name(element)}>"
     $stdout << "\n\n"
-  when /^(\s*)([a-z0-9-]+)(\[.*?\])?\. (.*)$/ # element with inline content
+  when /^(\s*)([a-z0-9-]+)(\[.*?\])?\. (.*)$/
+    # element with inline content
     indentation = $1
     element = $2
     options = $3
     data = $4
 
-    while element_stack.size * INDENTATION > indentation.size
-      elem = element_stack.pop
-      $stdout << "</#{translate_elem_name(elem)}>"
-      $stdout << "\n"
-    end
+    unwind_stack_until(indentation.size)
 
     $stdout << "<#{translate_elem_name(element)}>"
     parse(data)
     $stdout << "</#{translate_elem_name(element)}>"
     $stdout << "\n\n"
   when /^(\s*)(.*)$/
+    # other line (e.g. data)
     indentation = $1
     data = $2
 
-    while element_stack.size * INDENTATION > indentation.size
-      elem = element_stack.pop
-      $stdout << "</#{translate_elem_name(elem)}>"
-      $stdout << "\n"
-    end
+    unwind_stack_until(indentation.size)
 
     $stdout << data
     $stdout << "\n"
   end
 end
 
-element_stack.reverse_each do |elem|
-  $stdout << "</#{translate_elem_name(elem)}>"
-  $stdout << "\n"
-end
+unwind_stack_until(0)
