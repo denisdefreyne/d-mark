@@ -90,6 +90,8 @@ File.read(ARGV[0]).lines.each do |line|
     element = $2
     options = $3
 
+    unwind_stack_until(indentation.size)
+
     $element_stack << element
     $stdout << "<#{translate_elem_name(element)}>"
     $stdout << "\n\n"
