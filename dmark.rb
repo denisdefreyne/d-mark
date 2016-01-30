@@ -119,6 +119,10 @@ File.read(ARGV[0]).lines.each do |line|
 
     unwind_stack_until(indentation.size)
 
+    if $element_stack.empty?
+      raise "Can’t insert raw data at root level"
+    end
+
     $stdout << data
     $stdout << "\n"
   end
