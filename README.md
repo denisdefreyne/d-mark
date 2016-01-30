@@ -11,11 +11,11 @@ _D★Mark_ knows two constructs:
 
 * Block-level elements. For example:
 
-      p. Patterns are used to find items and layouts based on their identifier. They come in three varieties.
+        p. Patterns are used to find items and layouts based on their identifier. They come in three varieties.
 
 * Inline elements. For example:
 
-      p. Identifiers come in two types: the %emph{full} type, new in Nanoc 4, and the %emph{legacy} type, used in Nanoc 3.
+        p. Identifiers come in two types: the %emph{full} type, new in Nanoc 4, and the %emph{legacy} type, used in Nanoc 3.
 
 Block-level elements can be nested. For example:
 
