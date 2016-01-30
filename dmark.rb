@@ -71,6 +71,7 @@ end
 INDENTATION = 2
 
 $element_stack = []
+$pending_blanks = 0
 
 def unwind_stack_until(num)
   while $element_stack.size * INDENTATION > num
@@ -78,12 +79,16 @@ def unwind_stack_until(num)
     $stdout << "</#{translate_elem_name(elem)}>"
     $stdout << "\n"
   end
+
+  $pending_blanks.times { $stdout << "\n" }
+  $pending_blanks = 0
 end
 
 File.read(ARGV[0]).lines.each do |line|
   case line
   when /^\s+$/
     # blank line
+    $pending_blanks += 1
   when /^(\s*)([a-z0-9-]+)(\[.*?\])?\.\s*$/
     # empty element
     indentation = $1
@@ -94,7 +99,6 @@ File.read(ARGV[0]).lines.each do |line|
 
     $element_stack << element
     $stdout << "<#{translate_elem_name(element)}>"
-    $stdout << "\n\n"
   when /^(\s*)([a-z0-9-]+)(\[.*?\])?\. (.*)$/
     # element with inline content
     indentation = $1
