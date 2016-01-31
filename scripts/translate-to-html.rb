@@ -1,4 +1,4 @@
-require_relative 'lib/dmark'
+require_relative '../lib/dmark'
 
 class MyHTMLTranslator
   def initialize(tree)
@@ -39,8 +39,6 @@ class MyHTMLTranslator
     end
   end
 end
-
-#########################
 
 # Lex
 begin
