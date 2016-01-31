@@ -15,7 +15,7 @@ module DMark
 
     private
 
-    def handle(node)
+    def handle(_node)
       raise NotImplementedError
     end
 

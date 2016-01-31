@@ -7,7 +7,7 @@ module DMark
         @children = []
       end
 
-      def inspect(indent = 0)
+      def inspect(_indent = 0)
         'Node()'
       end
     end

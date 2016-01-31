@@ -1,6 +1,18 @@
 AllCops:
   TargetRubyVersion: 2.1
 
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInLiteral:
+  EnforcedStyleForMultiline: comma
+
+Style/IndentArray:
+  EnforcedStyle: consistent
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
 
 
 # ----- DISABLED (metrics) -----

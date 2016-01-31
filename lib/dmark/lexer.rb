@@ -18,9 +18,9 @@ module DMark
           @pending_blanks += 1
         when /^(\s*)([a-z0-9-]+)(\[.*?\])?\.\s*$/
           # empty element
-          indentation = $1
-          element = $2
-          options = $3
+          indentation = Regexp.last_match[1]
+          element = Regexp.last_match[2]
+          _options = Regexp.last_match[3]
 
           unwind_stack_until(indentation.size)
 
@@ -28,10 +28,10 @@ module DMark
           @tokens << DMark::Tokens::TagBeginToken.new(name: element)
         when /^(\s*)([a-z0-9-]+)(\[.*?\])?\. (.*)$/
           # element with inline content
-          indentation = $1
-          element = $2
-          options = $3
-          data = $4
+          indentation = Regexp.last_match[1]
+          element = Regexp.last_match[2]
+          _options = Regexp.last_match[3]
+          data = Regexp.last_match[4]
 
           unwind_stack_until(indentation.size)
 
@@ -40,8 +40,8 @@ module DMark
           @tokens << DMark::Tokens::TagEndToken.new(name: element)
         when /^(\s*)(.*)$/
           # other line (e.g. data)
-          indentation = $1
-          data = $2
+          indentation = Regexp.last_match[1]
+          data = Regexp.last_match[2]
 
           unwind_stack_until(indentation.size)
 
@@ -87,35 +87,31 @@ module DMark
         @col_nr = col_nr
       end
 
-      BOLD = "\e[1m"
-      RED = "\e[31m"
-      RESET = "\e[0m"
-
       class Coloriser
         def red
-          "\e[31m"
+          "\e[31m".freeze
         end
 
         def bold
-          "\e[1m"
+          "\e[1m".freeze
         end
 
         def reset
-          "\e[0m"
+          "\e[0m".freeze
         end
       end
 
       class NullColoriser
         def red
-          ''
+          ''.freeze
         end
 
         def bold
-          ''
+          ''.freeze
         end
 
         def reset
-          ''
+          ''.freeze
         end
       end
 
