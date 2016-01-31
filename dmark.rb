@@ -55,70 +55,6 @@ end
 
 #########################
 
-def append_text(out, text)
-  if out.empty? || !out.last.is_a?(TextToken)
-    out << TextToken.new(text: text)
-  else
-    out.last.text << text
-  end
-end
-
-def lex(data)
-  stack = []
-  state = :root
-  tokens = []
-  name = ''
-
-  data.chars.each do |char|
-    case state
-    when :root
-      case char
-      when '%'
-        state = :after_pct
-      when '{'
-        # FIXME: remove this handling
-        stack << [:raw, '}']
-        append_text(tokens, '{')
-      when '}'
-        if stack.empty?
-          raise "Stack empty"
-        else
-          data = stack.pop
-          case data.first
-          when :raw
-            append_text(tokens, data.last)
-          when :elem
-            tokens << TagEndToken.new(name: data.last)
-          else
-            raise "Unexpected entry on stack: #{data.inspect}"
-          end
-        end
-      else
-        append_text(tokens, char)
-      end
-    when :after_pct
-      case char
-      when 'a'..'z', '0'..'9', '-'
-        name << char
-      when '%' # escaped
-        state = :root
-        append_text(tokens, '%')
-      when '{'
-        state = :root
-        stack << [:elem, name]
-        tokens << TagBeginToken.new(name: name)
-        name = ''
-      else
-        raise "Unexpected char: #{char}"
-      end
-    else
-      raise "Unexpected state: #{state.inspect}"
-    end
-  end
-
-  tokens
-end
-
 class Lexer
   INDENTATION = 2
 
@@ -156,7 +92,7 @@ class Lexer
         unwind_stack_until(indentation.size)
 
         @tokens << TagBeginToken.new(name: element)
-        @tokens.concat(lex(data))
+        @tokens.concat(lex_inline(data))
         @tokens << TagEndToken.new(name: element)
       when /^(\s*)(.*)$/
         # other line (e.g. data)
@@ -189,6 +125,70 @@ class Lexer
 
     append_text(@tokens, "\n" * @pending_blanks)
     @pending_blanks = 0
+  end
+
+  def append_text(out, text)
+    if out.empty? || !out.last.is_a?(TextToken)
+      out << TextToken.new(text: text)
+    else
+      out.last.text << text
+    end
+  end
+
+  def lex_inline(data)
+    stack = []
+    state = :root
+    tokens = []
+    name = ''
+
+    data.chars.each do |char|
+      case state
+      when :root
+        case char
+        when '%'
+          state = :after_pct
+        when '{'
+          # FIXME: remove this handling
+          stack << [:raw, '}']
+          append_text(tokens, '{')
+        when '}'
+          if stack.empty?
+            raise "Stack empty"
+          else
+            data = stack.pop
+            case data.first
+            when :raw
+              append_text(tokens, data.last)
+            when :elem
+              tokens << TagEndToken.new(name: data.last)
+            else
+              raise "Unexpected entry on stack: #{data.inspect}"
+            end
+          end
+        else
+          append_text(tokens, char)
+        end
+      when :after_pct
+        case char
+        when 'a'..'z', '0'..'9', '-'
+          name << char
+        when '%' # escaped
+          state = :root
+          append_text(tokens, '%')
+        when '{'
+          state = :root
+          stack << [:elem, name]
+          tokens << TagBeginToken.new(name: name)
+          name = ''
+        else
+          raise "Unexpected char: #{char}"
+        end
+      else
+        raise "Unexpected state: #{state.inspect}"
+      end
+    end
+
+    tokens
   end
 end
 
