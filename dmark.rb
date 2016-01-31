@@ -6,7 +6,7 @@ def translate_elem_name(name)
     'i'
   when 'command'
     'code'
-  when 'p', 'dl', 'dt', 'dd', 'code', 'h2', 'h3', 'ul', 'li'
+  when 'p', 'dl', 'dt', 'dd', 'code', 'h1', 'h2', 'h3', 'ul', 'li'
     name
   else
     raise "Cannot translate #{name}"
