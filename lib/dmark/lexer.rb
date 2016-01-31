@@ -16,22 +16,22 @@ module DMark
         when /^\s+$/
           # blank line
           @pending_blanks += 1
-        when /^(\s*)([a-z0-9-]+)(\[.*?\])?\.\s*$/
+        when /^(\s*)([a-z0-9-]+)(\[(.*?)\])?\.\s*$/
           # empty element
           indentation = Regexp.last_match[1]
           element = Regexp.last_match[2]
-          attributes = Regexp.last_match[3]
+          attributes = Regexp.last_match[4] || ''
 
           unwind_stack_until(indentation.size)
 
           @element_stack << element
           @tokens << DMark::Tokens::TagBeginToken.new(name: element, attributes: attributes)
-        when /^(\s*)([a-z0-9-]+)(\[.*?\])?\. (.*)$/
+        when /^(\s*)([a-z0-9-]+)(\[(.*?)\])?\. (.*)$/
           # element with inline content
           indentation = Regexp.last_match[1]
           element = Regexp.last_match[2]
-          attributes = Regexp.last_match[3]
-          data = Regexp.last_match[4]
+          attributes = Regexp.last_match[4] || ''
+          data = Regexp.last_match[5]
 
           unwind_stack_until(indentation.size)
 
