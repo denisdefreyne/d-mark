@@ -1,26 +1,16 @@
 require_relative '../lib/dmark'
 
-class MyHTMLTranslator
-  def initialize(tree)
-    @tree = tree
-  end
-
-  def run
-    ''.tap { |io| handle(@tree, io) }
-  end
-
-  private
-
-  def handle(node, io)
+class MyHTMLTranslator < DMark::Translator
+  def handle(node)
     case node
     when DMark::Nodes::RootNode
-      node.children.each { |child| handle(child, io) }
+      handle_children(node)
     when DMark::Nodes::TextNode
-      io << node.text
+      out << node.text
     when DMark::Nodes::ElementNode
-      io << "<#{translate_elem_name(node.name)}>"
-      node.children.each { |child| handle(child, io) }
-      io << "</#{translate_elem_name(node.name)}>"
+      out << "<#{translate_elem_name(node.name)}>"
+      handle_children(node)
+      out << "</#{translate_elem_name(node.name)}>"
     end
   end
 

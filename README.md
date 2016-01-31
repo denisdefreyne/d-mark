@@ -26,27 +26,17 @@ The parsing stage converts the stream of tokens into a node tree. Construct a pa
 
 The translating stage is not the responsibility of D★Mark. A translator is part of the domain of the source text, and D★Mark only deals with syntax rather than semantics. A translator will run over the tree and convert it into something else (usually another string). To do so, handle each node type (`RootNode`, `TextNode`, `ElementNode`). For example, the following translator will convert the tree into something that resembles XML:
 
-    class MyXMLLikeTranslator
-      def initialize(tree)
-        @tree = tree
-      end
-
-      def run
-        ''.tap { |io| handle(@tree, io) }
-      end
-
-      private
-
-      def handle(node, io)
+    class MyXMLLikeTranslator < DMark::Translator
+      def handle(node)
         case node
         when DMark::Nodes::RootNode
-          node.children.each { |child| handle(child, io) }
+          handle_children(node)
         when DMark::Nodes::TextNode
-          io << node.text
+          out << node.text
         when DMark::Nodes::ElementNode
-          io << "<#{node.name}>"
-          node.children.each { |child| handle(child, io) }
-          io << "</#{node.name}>"
+          out << "<#{node.name}>"
+          handle_children(node)
+          out << "</#{node.name}>"
         end
       end
     end
