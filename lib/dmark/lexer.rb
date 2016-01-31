@@ -50,7 +50,9 @@ module DMark
             raise LexerError.new("Can’t insert raw data at root level", line, line_nr, 1)
           end
 
-          @tokens.concat(lex_inline(data + "\n", line_nr + 1))
+          extra_indentation = [indentation.size - INDENTATION * @element_stack.size, 0].max
+
+          @tokens.concat(lex_inline(' ' * extra_indentation + data + "\n", line_nr + 1))
         end
       end
 
