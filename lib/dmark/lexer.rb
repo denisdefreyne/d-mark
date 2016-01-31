@@ -181,6 +181,8 @@ module DMark
             append_text(tokens, char)
           end
         when :after_pct
+          # FIXME: require at least one character after %
+
           case char
           when 'a'..'z', '0'..'9', '-'
             name << char
@@ -192,6 +194,8 @@ module DMark
             state = :root
             col_nr -= 1
             append_text(tokens, '}')
+          when '['
+            state = :after_lbracket
           when '{'
             state = :root
             stack << [:elem, name]
@@ -199,6 +203,14 @@ module DMark
             name = ''
           else
             raise LexerError.new("unexpected `#{char}` after `%`", string, line_nr, col_nr)
+          end
+        when :after_lbracket
+          case char
+          when ']'
+            # FIXME: might make sense to have after_rbracket instead (to prevent %foo[a][b]{…})
+            state = :after_pct
+          else
+            # ignore
           end
         else
           raise "Unexpected state: #{state.inspect}"
