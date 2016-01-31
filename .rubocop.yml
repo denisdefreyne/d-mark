@@ -1,0 +1,72 @@
+AllCops:
+  TargetRubyVersion: 2.1
+
+
+
+# ----- DISABLED (metrics) -----
+
+# Cops for metrics are disabled because they should not cause tests to fail.
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/BlockNesting:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Metrics/LineLength:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/ModuleLength:
+  Enabled: false
+
+Metrics/ParameterLists:
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Enabled: false
+
+
+
+# ----- DISABLED (opinionated) -----
+
+# We should embrace UTF-8, not avoid it. Since the Encoding cop is enabled,
+# there’s no point in enforcing ASCII comments.
+AsciiComments:
+  Enabled: false
+
+# It does not make sense to enforce everything to have documentation.
+Documentation:
+  Enabled: false
+
+# if/unless at the end of the line makes it too easy to oversee.
+IfUnlessModifier:
+  Enabled: false
+
+# Personal preference is to have decent constructors for exceptions rather than
+# just a class and a message.
+RaiseArgs:
+  Enabled: false
+
+# Personal preference is to use `raise` to signal exceptions (normal control
+# flow should not use exceptions anyway).
+SignalException:
+  Enabled: false
+
+# Some methods that appear to be accessors (return a single value or set a
+# single value) should still not be considered to be accessors. This is a purely
+# semantic difference.
+TrivialAccessors:
+  Enabled: false
+
+# This does not always semantically make sense.
+GuardClause:
+  Enabled: false
