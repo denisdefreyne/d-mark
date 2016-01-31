@@ -44,7 +44,7 @@ end
 begin
   tokens = DMark::Lexer.new(File.read(ARGV[0])).run
 rescue DMark::Lexer::LexerError => e
-  $stderr.puts e.message
+  $stderr.puts e.message_for_tty
   exit 1
 end
 

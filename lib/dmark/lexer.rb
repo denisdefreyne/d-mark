@@ -91,7 +91,43 @@ module DMark
       RED = "\e[31m"
       RESET = "\e[0m"
 
+      class Coloriser
+        def red
+          "\e[31m"
+        end
+
+        def bold
+          "\e[1m"
+        end
+
+        def reset
+          "\e[0m"
+        end
+      end
+
+      class NullColoriser
+        def red
+          ''
+        end
+
+        def bold
+          ''
+        end
+
+        def reset
+          ''
+        end
+      end
+
       def message
+        formatted_message(NullColoriser.new)
+      end
+
+      def message_for_tty
+        formatted_message(Coloriser.new)
+      end
+
+      def formatted_message(coloriser)
         line_excerpt_start = [@col_nr - 38, 0].max
         line_excerpt_end = @col_nr + 38
         line_excerpt = @line[line_excerpt_start..line_excerpt_end]
@@ -105,10 +141,10 @@ module DMark
         end
 
         [
-          "#{RED}#{BOLD}ERROR#{RESET} (line #{@line_nr}, col #{@col_nr}): #{RED}#{@message}#{RESET}",
+          "#{coloriser.red}#{coloriser.bold}ERROR#{coloriser.reset} (line #{@line_nr}, col #{@col_nr}): #{coloriser.red}#{@message}#{coloriser.reset}",
           '',
           line_excerpt,
-          RED + ' ' * (@col_nr - 1 - line_excerpt_start) + '^' + RESET,
+          coloriser.red + ' ' * (@col_nr - 1 - line_excerpt_start) + '^' + coloriser.reset,
           '',
         ].join("\n")
       end
@@ -165,7 +201,7 @@ module DMark
             tokens << DMark::Tokens::TagBeginToken.new(name: name)
             name = ''
           else
-            raise "line #{line_nr + 1}, col #{col_nr + 1}: unexpected `#{char}` after %"
+            raise LexerError.new("unexpected `#{char}` after `%`", string, line_nr, col_nr)
           end
         else
           raise "Unexpected state: #{state.inspect}"
