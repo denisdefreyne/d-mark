@@ -1,9 +1,9 @@
 require_relative 'lib/dmark/version'
 
 Gem::Specification.new do |s|
-  s.name        = 'dmark'
+  s.name        = 'd-mark'
   s.version     = DMark::VERSION
-  s.homepage    = 'http://rubygems.org/gems/dmark'
+  s.homepage    = 'http://rubygems.org/gems/d-mark'
   s.summary     = 'markup language for writing text'
   s.description = 'D★Mark is a markup language aimed at being able to write semantically meaningful text without limiting itself to the semantics provided by HTML or Markdown.'
 
@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.files =
     Dir['[A-Z]*'] +
     Dir['{bin,lib,tasks,spec,samples,scripts}/**/*'] +
-    ['dmark.gemspec']
+    ['d-mark.gemspec']
   s.require_paths = ['lib']
 
   s.rdoc_options     = ['--main', 'README.md']
