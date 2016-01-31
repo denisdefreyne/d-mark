@@ -20,7 +20,7 @@ module DMark
           # empty element
           indentation = Regexp.last_match[1]
           element = Regexp.last_match[2]
-          attributes = Regexp.last_match[4] || ''
+          attributes = parse_attributes(Regexp.last_match[4])
 
           unwind_stack_until(indentation.size)
 
@@ -30,7 +30,7 @@ module DMark
           # element with inline content
           indentation = Regexp.last_match[1]
           element = Regexp.last_match[2]
-          attributes = Regexp.last_match[4] || ''
+          attributes = parse_attributes(Regexp.last_match[4])
           data = Regexp.last_match[5]
 
           unwind_stack_until(indentation.size)
@@ -60,6 +60,14 @@ module DMark
     end
 
     private
+
+    def parse_attributes(data)
+      # FIXME: write a proper parser
+
+      (data || '').split(',').map { |part| part.split('=') }.each_with_object({}) do |pair, res|
+        res[pair.first] = pair.last || pair.first
+      end
+    end
 
     def unwind_stack_until(num)
       while @element_stack.size * INDENTATION > num
@@ -200,7 +208,7 @@ module DMark
           when '{'
             state = :root
             stack << [:elem, name]
-            tokens << DMark::Tokens::TagBeginToken.new(name: name, attributes: attributes)
+            tokens << DMark::Tokens::TagBeginToken.new(name: name, attributes: parse_attributes(attributes))
             name = ''
             attributes = ''
           else
