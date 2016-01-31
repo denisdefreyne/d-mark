@@ -46,7 +46,8 @@ module DMark
           unwind_stack_until(indentation.size)
 
           if @element_stack.empty?
-            raise "Can’t insert raw data at root level"
+            # FIXME: unify format of messages (uppercase, lowercase, …)
+            raise LexerError.new("Can’t insert raw data at root level", line, line_nr, 1)
           end
 
           @tokens.concat(lex_inline(data + "\n", line_nr + 1))
