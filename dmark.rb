@@ -13,10 +13,60 @@ def translate_elem_name(name)
   end
 end
 
-def parse(data)
+#########################
+
+class Token
+  def to_s
+    raise NotImplementedError
+  end
+end
+
+class TextToken < Token
+  attr_reader :text
+
+  def initialize(text:)
+    @text = text
+  end
+
+  def to_s
+    @text
+  end
+end
+
+class AbstractTagToken < Token
+  attr_reader :name
+
+  def initialize(name:)
+    @name = name
+  end
+end
+
+class TagBeginToken < AbstractTagToken
+  def to_s
+    "<#{translate_elem_name(name)}>"
+  end
+end
+
+class TagEndToken < AbstractTagToken
+  def to_s
+    "</#{translate_elem_name(name)}>"
+  end
+end
+
+#########################
+
+def append_text(out, text)
+  if out.empty? || !out.last.is_a?(TextToken)
+    out << TextToken.new(text: text)
+  else
+    out.last.text << text
+  end
+end
+
+def lex(data)
   stack = []
   state = :root
-  out = $stdout
+  tokens = []
   name = ''
 
   data.chars.each do |char|
@@ -26,8 +76,9 @@ def parse(data)
       when '%'
         state = :after_pct
       when '{'
+        # FIXME: remove this handling
         stack << [:raw, '}']
-        out << '{'
+        append_text(tokens, '{')
       when '}'
         if stack.empty?
           raise "Stack empty"
@@ -35,15 +86,15 @@ def parse(data)
           data = stack.pop
           case data.first
           when :raw
-            out << data.last
+            append_text(tokens, data.last)
           when :elem
-            out << "</#{translate_elem_name(data.last)}>"
+            tokens << TagEndToken.new(name: data.last)
           else
             raise "Unexpected entry on stack: #{data.inspect}"
           end
         end
       else
-        out << char
+        append_text(tokens, char)
       end
     when :after_pct
       case char
@@ -51,11 +102,11 @@ def parse(data)
         name << char
       when '%' # escaped
         state = :root
-        out << '%'
+        append_text(tokens, '%')
       when '{'
         state = :root
         stack << [:elem, name]
-        out << "<#{translate_elem_name(name)}>"
+        tokens << TagBeginToken.new(name: name)
         name = ''
       else
         raise "Unexpected char: #{char}"
@@ -65,22 +116,23 @@ def parse(data)
     end
   end
 
-  out
+  tokens
 end
 
 INDENTATION = 2
 
 $element_stack = []
+$tokens = []
 $pending_blanks = 0
 
 def unwind_stack_until(num)
   while $element_stack.size * INDENTATION > num
     elem = $element_stack.pop
-    $stdout << "</#{translate_elem_name(elem)}>"
-    $stdout << "\n"
+
+    $tokens << TagEndToken.new(name: elem)
   end
 
-  $pending_blanks.times { $stdout << "\n" }
+  append_text($tokens, "\n" * $pending_blanks)
   $pending_blanks = 0
 end
 
@@ -98,7 +150,7 @@ File.read(ARGV[0]).lines.each do |line|
     unwind_stack_until(indentation.size)
 
     $element_stack << element
-    $stdout << "<#{translate_elem_name(element)}>"
+    $tokens << TagBeginToken.new(name: element)
   when /^(\s*)([a-z0-9-]+)(\[.*?\])?\. (.*)$/
     # element with inline content
     indentation = $1
@@ -108,10 +160,9 @@ File.read(ARGV[0]).lines.each do |line|
 
     unwind_stack_until(indentation.size)
 
-    $stdout << "<#{translate_elem_name(element)}>"
-    parse(data)
-    $stdout << "</#{translate_elem_name(element)}>"
-    $stdout << "\n\n"
+    $tokens << TagBeginToken.new(name: element)
+    $tokens.concat(lex(data))
+    $tokens << TagEndToken.new(name: element)
   when /^(\s*)(.*)$/
     # other line (e.g. data)
     indentation = $1
@@ -123,9 +174,10 @@ File.read(ARGV[0]).lines.each do |line|
       raise "Can’t insert raw data at root level"
     end
 
-    $stdout << data
-    $stdout << "\n"
+    append_text($tokens, data + "\n")
   end
 end
 
 unwind_stack_until(0)
+
+puts $tokens.join('')
