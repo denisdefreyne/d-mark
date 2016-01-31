@@ -119,65 +119,78 @@ def lex(data)
   tokens
 end
 
-INDENTATION = 2
+class Lexer
+  INDENTATION = 2
 
-$element_stack = []
-$tokens = []
-$pending_blanks = 0
+  def initialize(string)
+    @string = string
 
-def unwind_stack_until(num)
-  while $element_stack.size * INDENTATION > num
-    elem = $element_stack.pop
-
-    $tokens << TagEndToken.new(name: elem)
+    @element_stack = []
+    @tokens = []
+    @pending_blanks = 0
   end
 
-  append_text($tokens, "\n" * $pending_blanks)
-  $pending_blanks = 0
-end
+  def run
+    @string.lines.each do |line|
+      case line
+      when /^\s+$/
+        # blank line
+        @pending_blanks += 1
+      when /^(\s*)([a-z0-9-]+)(\[.*?\])?\.\s*$/
+        # empty element
+        indentation = $1
+        element = $2
+        options = $3
 
-File.read(ARGV[0]).lines.each do |line|
-  case line
-  when /^\s+$/
-    # blank line
-    $pending_blanks += 1
-  when /^(\s*)([a-z0-9-]+)(\[.*?\])?\.\s*$/
-    # empty element
-    indentation = $1
-    element = $2
-    options = $3
+        unwind_stack_until(indentation.size)
 
-    unwind_stack_until(indentation.size)
+        @element_stack << element
+        @tokens << TagBeginToken.new(name: element)
+      when /^(\s*)([a-z0-9-]+)(\[.*?\])?\. (.*)$/
+        # element with inline content
+        indentation = $1
+        element = $2
+        options = $3
+        data = $4
 
-    $element_stack << element
-    $tokens << TagBeginToken.new(name: element)
-  when /^(\s*)([a-z0-9-]+)(\[.*?\])?\. (.*)$/
-    # element with inline content
-    indentation = $1
-    element = $2
-    options = $3
-    data = $4
+        unwind_stack_until(indentation.size)
 
-    unwind_stack_until(indentation.size)
+        @tokens << TagBeginToken.new(name: element)
+        @tokens.concat(lex(data))
+        @tokens << TagEndToken.new(name: element)
+      when /^(\s*)(.*)$/
+        # other line (e.g. data)
+        indentation = $1
+        data = $2
 
-    $tokens << TagBeginToken.new(name: element)
-    $tokens.concat(lex(data))
-    $tokens << TagEndToken.new(name: element)
-  when /^(\s*)(.*)$/
-    # other line (e.g. data)
-    indentation = $1
-    data = $2
+        unwind_stack_until(indentation.size)
 
-    unwind_stack_until(indentation.size)
+        if @element_stack.empty?
+          raise "Can’t insert raw data at root level"
+        end
 
-    if $element_stack.empty?
-      raise "Can’t insert raw data at root level"
+        append_text(@tokens, data + "\n")
+      end
     end
 
-    append_text($tokens, data + "\n")
+    unwind_stack_until(0)
+
+    @tokens
+  end
+
+  private
+
+  def unwind_stack_until(num)
+    while @element_stack.size * INDENTATION > num
+      elem = @element_stack.pop
+
+      @tokens << TagEndToken.new(name: elem)
+    end
+
+    append_text(@tokens, "\n" * @pending_blanks)
+    @pending_blanks = 0
   end
 end
 
-unwind_stack_until(0)
-
-puts $tokens.join('')
+tokens = Lexer.new(File.read(ARGV[0])).run
+puts tokens.join('')
