@@ -27,8 +27,16 @@ module DMark
     end
 
     class TagBeginToken < AbstractTagToken
+      attr_reader :attributes
+
+      def initialize(name:, attributes:)
+        super(name: name)
+
+        @attributes = attributes
+      end
+
       def to_s
-        "TagBegin(#{name.inspect})"
+        "TagBegin(#{name.inspect}, #{attributes.inspect})"
       end
     end
 

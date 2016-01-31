@@ -50,10 +50,12 @@ module DMark
 
     class ElementNode < Node
       attr_reader :name
+      attr_reader :attributes
 
-      def initialize(name:)
+      def initialize(name:, attributes:)
         super()
         @name = name
+        @attributes = attributes
       end
 
       def inspect(indent = 0)
@@ -61,6 +63,7 @@ module DMark
         io << '  ' * indent
         io << 'Element('
         io << @name
+        io << ',' << @attributes.inspect unless @attributes.empty?
         io << "\n" if children.any?
         children.each { |c| io << c.inspect(indent + 1) }
         io << '  ' * indent if children.any?

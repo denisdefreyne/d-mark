@@ -20,22 +20,22 @@ module DMark
           # empty element
           indentation = Regexp.last_match[1]
           element = Regexp.last_match[2]
-          _options = Regexp.last_match[3]
+          attributes = Regexp.last_match[3]
 
           unwind_stack_until(indentation.size)
 
           @element_stack << element
-          @tokens << DMark::Tokens::TagBeginToken.new(name: element)
+          @tokens << DMark::Tokens::TagBeginToken.new(name: element, attributes: attributes)
         when /^(\s*)([a-z0-9-]+)(\[.*?\])?\. (.*)$/
           # element with inline content
           indentation = Regexp.last_match[1]
           element = Regexp.last_match[2]
-          _options = Regexp.last_match[3]
+          attributes = Regexp.last_match[3]
           data = Regexp.last_match[4]
 
           unwind_stack_until(indentation.size)
 
-          @tokens << DMark::Tokens::TagBeginToken.new(name: element)
+          @tokens << DMark::Tokens::TagBeginToken.new(name: element, attributes: attributes)
           @tokens.concat(lex_inline(data, line_nr + 1))
           @tokens << DMark::Tokens::TagEndToken.new(name: element)
         when /^(\s*)(.*)$/
@@ -152,6 +152,7 @@ module DMark
       state = :root
       tokens = []
       name = ''
+      attributes = ''
       col_nr = 0
 
       string.chars.each_with_index do |char|
@@ -199,8 +200,9 @@ module DMark
           when '{'
             state = :root
             stack << [:elem, name]
-            tokens << DMark::Tokens::TagBeginToken.new(name: name)
+            tokens << DMark::Tokens::TagBeginToken.new(name: name, attributes: attributes)
             name = ''
+            attributes = ''
           else
             raise LexerError.new("unexpected `#{char}` after `%`", string, line_nr, col_nr)
           end
@@ -210,7 +212,7 @@ module DMark
             # FIXME: might make sense to have after_rbracket instead (to prevent %foo[a][b]{…})
             state = :after_pct
           else
-            # ignore
+            attributes << char
           end
         else
           raise "Unexpected state: #{state.inspect}"
