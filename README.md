@@ -9,7 +9,50 @@ It is aimed at being able to write semantically meaningful text without limiting
 
 ## Usage
 
-Section pending.
+Handling a D★Mark file consists of three stages: lexing, parsing, and translating.
+
+The lexing stage converts the data into a stream of tokens. Construct a lexer with the data as input, and call `#run` to get the tokens, catching any `DMark::Lexer::LexerError`:
+
+    begin
+      tokens = DMark::Lexer.new(File.read(ARGV[0])).run
+    rescue DMark::Lexer::LexerError => e
+      $stderr.puts e.message_for_tty
+      exit 1
+    end
+
+The parsing stage converts the stream of tokens into a node tree. Construct a parser with the tokens as input, and call `#run` to get the tree.
+
+    tree = DMark::Parser.new(tokens).run
+
+The translating stage is not the responsibility of D★Mark. A translator is part of the domain of the source text, and D★Mark only deals with syntax rather than semantics. A translator will run over the tree and convert it into something else (usually another string). To do so, handle each node type (`RootNode`, `TextNode`, `ElementNode`). For example, the following translator will convert the tree into something that resembles XML:
+
+    class MyXMLLikeTranslator
+      def initialize(tree)
+        @tree = tree
+      end
+
+      def run
+        ''.tap { |io| handle(@tree, io) }
+      end
+
+      private
+
+      def handle(node, io)
+        case node
+        when DMark::Nodes::RootNode
+          node.children.each { |child| handle(child, io) }
+        when DMark::Nodes::TextNode
+          io << node.text
+        when DMark::Nodes::ElementNode
+          io << "<#{node.name}>"
+          node.children.each { |child| handle(child, io) }
+          io << "</#{node.name}>"
+        end
+      end
+    end
+
+    result = MyXMLLikeTranslator.new(tree).run
+    puts result
 
 ## Samples
 
