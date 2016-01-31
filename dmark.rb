@@ -218,7 +218,7 @@ class Lexer
         unwind_stack_until(indentation.size)
 
         @tokens << TagBeginToken.new(name: element)
-        @tokens.concat(lex_inline(data, line_nr))
+        @tokens.concat(lex_inline(data, line_nr + 1))
         @tokens << TagEndToken.new(name: element)
       when /^(\s*)(.*)$/
         # other line (e.g. data)
@@ -261,13 +261,51 @@ class Lexer
     end
   end
 
-  def lex_inline(data, line_nr)
+  class LexerError < StandardError
+    def initialize(message, line, line_nr, col_nr)
+      @message = message
+      @line = line
+      @line_nr = line_nr
+      @col_nr = col_nr
+    end
+
+    BOLD = "\e[1m"
+    RED = "\e[31m"
+    RESET = "\e[0m"
+
+    def message
+      line_excerpt_start = [@col_nr - 38, 0].max
+      line_excerpt_end = @col_nr + 38
+      line_excerpt = @line[line_excerpt_start..line_excerpt_end]
+
+      if line_excerpt_start > 0
+        line_excerpt[0] = '…'
+      end
+
+      if line_excerpt_end < @line.size
+        line_excerpt[-1] = '…'
+      end
+
+      [
+        "#{RED}#{BOLD}ERROR#{RESET} (line #{@line_nr}, col #{@col_nr}): #{RED}#{@message}#{RESET}",
+        '',
+        line_excerpt,
+        RED + ' ' * (@col_nr - 1 - line_excerpt_start) + '^' + RESET,
+        '',
+      ].join("\n")
+    end
+  end
+
+  def lex_inline(string, line_nr)
     stack = []
     state = :root
     tokens = []
     name = ''
+    col_nr = 0
 
-    data.chars.each_with_index do |char, col_nr|
+    string.chars.each_with_index do |char|
+      col_nr += 1
+
       case state
       when :root
         case char
@@ -275,7 +313,8 @@ class Lexer
           state = :after_pct
         when '}'
           if stack.empty?
-            raise "Unexpected } at line #{line_nr + 1}, col #{col_nr + 1}"
+            message = 'Unexpected `}`. Try escaping it as `%}`.'
+            raise LexerError.new(message, string, line_nr, col_nr)
           else
             data = stack.pop
             case data.first
@@ -296,9 +335,11 @@ class Lexer
           name << char
         when '%' # escaped
           state = :root
+          col_nr -= 1
           append_text(tokens, '%')
         when '}' # escaped
           state = :root
+          col_nr -= 1
           append_text(tokens, '}')
         when '{'
           state = :root
@@ -306,7 +347,7 @@ class Lexer
           tokens << TagBeginToken.new(name: name)
           name = ''
         else
-          raise "Unexpected char: #{char}"
+          raise "line #{line_nr + 1}, col #{col_nr + 1}: unexpected `#{char}` after %"
         end
       else
         raise "Unexpected state: #{state.inspect}"
@@ -319,7 +360,13 @@ end
 
 #########################
 
-tokens = Lexer.new(File.read(ARGV[0])).run
+begin
+  tokens = Lexer.new(File.read(ARGV[0])).run
+rescue Lexer::LexerError => e
+  $stderr.puts e.message
+  exit 1
+end
+
 tree = Parser.new(tokens).run
 translator = MyHTMLTranslator.new(tree)
 puts translator.run
