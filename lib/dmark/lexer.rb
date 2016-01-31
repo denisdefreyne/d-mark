@@ -49,7 +49,7 @@ module DMark
             raise "Can’t insert raw data at root level"
           end
 
-          append_text(@tokens, data + "\n")
+          @tokens.concat(lex_inline(data + "\n", line_nr + 1))
         end
       end
 
