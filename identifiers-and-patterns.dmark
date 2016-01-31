@@ -90,8 +90,8 @@ dl.
   dt. %code{[abc]}
   dd. Matches any single character in the set. For example, %glob{/people/[kt]im.md} matches only %identifier{/people/kim.md} and %identifier{/people/tim.md}.
 
-  dt. %code{{foo,bar}}
-  dd. Matches either string in the comma-separated list. More than two strings are possible. For example, %glob{/c{at,ub,ount}s.txt} matches %identifier{/cats.txt}, %identifier{/cubs.txt} and %identifier{/counts.txt}, but not %identifier{/cabs.txt}.
+  dt. %code{{foo,bar%}}
+  dd. Matches either string in the comma-separated list. More than two strings are possible. For example, %glob{/c{at,ub,ount%}s.txt} matches %identifier{/cats.txt}, %identifier{/cubs.txt} and %identifier{/counts.txt}, but not %identifier{/cabs.txt}.
 
 p. A glob pattern that matches every item is %glob{/**/*}. A glob pattern that matches every item/layout with the extension %filename{md} is %glob{/**/*.md}.
 
@@ -99,9 +99,9 @@ h3. Regular expression patterns
 
 p. You can use a regular expression to select items and layouts.
 
-p. For matching identifiers, the %code{%%r{…}} syntax is (arguably) nicer than the %code{/…/} syntax. The latter is not a good fit for identifiers (or filenames), because all slashes need to be escaped. The %code{\A} and %code{\z} anchors are also useful to make sure the entire identifier is matched.
+p. For matching identifiers, the %code{%%r{…%}} syntax is (arguably) nicer than the %code{/…/} syntax. The latter is not a good fit for identifiers (or filenames), because all slashes need to be escaped. The %code{\A} and %code{\z} anchors are also useful to make sure the entire identifier is matched.
 
-p. An example of a regular expression pattern is %code{%%r{\A/projects/(cri|nanoc)\.md\z}}, which matches both %identifier{/projects/nanoc.md} and %identifier{/projects/cri.md}.
+p. An example of a regular expression pattern is %code{%%r{\A/projects/(cri|nanoc)\.md\z%}}, which matches both %identifier{/projects/nanoc.md} and %identifier{/projects/cri.md}.
 
 h3. Legacy patterns
 

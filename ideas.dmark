@@ -2,7 +2,7 @@ h1. Ideas
 
 ul.
   li.
-    p. Use %code{%%ref{/doc/tutorial.*}} to reference other pages. On web, this will become links (e.g. “see the Tutorial chapter”), and in PDF, these will be cross-references.
+    p. Use %code{%%ref{/doc/tutorial.*%}} to reference other pages. On web, this will become links (e.g. “see the Tutorial chapter”), and in PDF, these will be cross-references.
 
   li.
     p. We can now have proper admonitions (tips, notes and cautions) and the ugly hacks we currently have can be removed.
@@ -20,7 +20,7 @@ ul.
     p. Build an element tree first, and let the converters work on that. A basic “simple converter” for translating elements one-to-one could be provided by default.
 
   li.
-    p. Pushing { onto the stack does not make sense. Any } that does not correspond with the end of an inline element needs to be escaped. If not, there’s no way to have an inline element with only an opening accolade.
+    p. Pushing { onto the stack does not make sense. Any %} that does not correspond with the end of an inline element needs to be escaped. If not, there’s no way to have an inline element with only an opening accolade.
 
   li.
     p. A lone %% should probably be okay. Maybe everything that doesn’t fully look like an inline element (e.g. %%code) could be acceptable.
@@ -29,7 +29,7 @@ ul.
     p. We need attribute support. The example “identifiers and patterns” document already contains attributes, but they’re ignored at the moment. That file uses %code{listing[lang=ruby]} and %code{dl[legacy]} as examples.
 
   li.
-    p. The first term could also be added to the index, like %code{%%firstterm[index]{donkey}}.
+    p. The first term could also be added to the index, like %code{%%firstterm[index]{donkey%}}.
 
   li.
     p. Cross-references to other chapters is likely easy to implement, but how do we deal with cross-references to sections inside a chapter? The target chapter will need to have been parsed, and so many cross-references might cause the target chapter to be parsed too many times. This might be a use case for caching the compiled (parsed, in this case) content as a syntax tree rather than text.

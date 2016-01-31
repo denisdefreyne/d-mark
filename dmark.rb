@@ -193,7 +193,7 @@ class Lexer
   end
 
   def run
-    @string.lines.each do |line|
+    @string.lines.each_with_index do |line, line_nr|
       case line
       when /^\s+$/
         # blank line
@@ -218,7 +218,7 @@ class Lexer
         unwind_stack_until(indentation.size)
 
         @tokens << TagBeginToken.new(name: element)
-        @tokens.concat(lex_inline(data))
+        @tokens.concat(lex_inline(data, line_nr))
         @tokens << TagEndToken.new(name: element)
       when /^(\s*)(.*)$/
         # other line (e.g. data)
@@ -261,25 +261,21 @@ class Lexer
     end
   end
 
-  def lex_inline(data)
+  def lex_inline(data, line_nr)
     stack = []
     state = :root
     tokens = []
     name = ''
 
-    data.chars.each do |char|
+    data.chars.each_with_index do |char, col_nr|
       case state
       when :root
         case char
         when '%'
           state = :after_pct
-        when '{'
-          # FIXME: remove this handling
-          stack << [:raw, '}']
-          append_text(tokens, '{')
         when '}'
           if stack.empty?
-            raise "Stack empty"
+            raise "Unexpected } at line #{line_nr + 1}, col #{col_nr + 1}"
           else
             data = stack.pop
             case data.first
@@ -301,6 +297,9 @@ class Lexer
         when '%' # escaped
           state = :root
           append_text(tokens, '%')
+        when '}' # escaped
+          state = :root
+          append_text(tokens, '}')
         when '{'
           state = :root
           stack << [:elem, name]
