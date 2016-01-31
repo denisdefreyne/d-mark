@@ -7,6 +7,18 @@ _D★Mark_ is a markup language for writing text.
 
 It is aimed at being able to write semantically meaningful text without limiting itself to the semantics provided by HTML or Markdown.
 
+## Usage
+
+Section pending.
+
+## Samples
+
+The `samples/` directory contains some sample D★Mark files. They can be converted to HTML by running the `scripts/translate-to-html.rb` Ruby script, passing in the name of the file. The resulting HTML will be printed to standard output. For example:
+
+    ruby scripts/translate-to-html.rb samples/identifiers-and-patterns.dmark
+
+## Format
+
 _D★Mark_ knows two constructs:
 
 * Block-level elements. For example:
