@@ -2,6 +2,12 @@ module DMark
   class Lexer
     INDENTATION = 2
 
+    # @api private
+    attr_accessor :pending_blanks
+
+    # @api private
+    attr_accessor :element_stack
+
     def initialize(string)
       @string = string
 
@@ -20,8 +26,7 @@ module DMark
       @tokens
     end
 
-    private
-
+    # @api private
     def handle_line(line, line_nr)
       case line
       when /^\s+$/
@@ -47,10 +52,12 @@ module DMark
       end
     end
 
+    # @api private
     def handle_blank_line(line_nr)
       @pending_blanks += 1
     end
 
+    # @api private
     def handle_block_line_without_content(_line_nr, indentation, element_name, raw_attributes)
       attributes = parse_attributes(raw_attributes)
 
@@ -60,6 +67,7 @@ module DMark
       @tokens << DMark::Tokens::TagBeginToken.new(name: element_name, attributes: attributes)
     end
 
+    # @api private
     def handle_block_line_with_content(line_nr, indentation, element_name, raw_attributes, content)
       attributes = parse_attributes(raw_attributes)
 
@@ -70,6 +78,7 @@ module DMark
       @tokens << DMark::Tokens::TagEndToken.new(name: element_name)
     end
 
+    # @api private
     def handle_other_line(line_nr, indentation, content)
       unwind_stack_until(indentation.size)
 
@@ -83,6 +92,7 @@ module DMark
       @tokens.concat(lex_inline(' ' * extra_indentation + content + "\n", line_nr + 1))
     end
 
+    # @api private
     def parse_attributes(data)
       # FIXME: write a proper parser
 
@@ -91,6 +101,7 @@ module DMark
       end
     end
 
+    # @api private
     def unwind_stack_until(num)
       while @element_stack.size * INDENTATION > num
         elem = @element_stack.pop
@@ -102,6 +113,7 @@ module DMark
       @pending_blanks = 0
     end
 
+    # @api private
     def append_text(out, text)
       if out.empty? || !out.last.is_a?(DMark::Tokens::TextToken)
         out << DMark::Tokens::TextToken.new(text: text)
@@ -177,6 +189,7 @@ module DMark
       end
     end
 
+    # @api private
     def lex_inline(string, line_nr)
       stack = []
       state = :root
