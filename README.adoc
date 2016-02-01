@@ -165,7 +165,40 @@ para. A glob pattern that matches every item is %glob{/**/*}.
 JSON, YAML::
   JSON and YAML are data interchange formats rather than markup languages, and thus are not well-suited for marking up prose.
 +
-_(No example, as this example too verbose in either JSON or YAML.)_
+[source,json]
+----
+{
+  "elements": [
+    {
+      "type": "para",
+      "children": [
+        {
+          "type": "text",
+          "content": " glob pattern that matches every item is "
+        },
+        {
+          "type": "glob",
+          "children": [
+            {
+              "type": "text",
+              "content": "/**/*",
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "content": "."
+        },
+      ]
+    }
+  ]
+}
+----
++
+[source,d-mark]
+----
+para. A glob pattern that matches every item is %glob{/**/*}.
+----
 
 == Specification
 
