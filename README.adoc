@@ -169,7 +169,7 @@ JSON, YAML::
 ----
 [
   "A glob pattern that matches every item is ",
-  ["para", {"kind": "glob"}, ["/**/*"]],
+  ["pattern", {"kind": "glob"}, ["/**/*"]],
   "."
 ]
 ----
