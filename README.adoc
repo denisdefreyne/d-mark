@@ -98,27 +98,74 @@ Be extensible::
 Be simple::
   Simplicity implies being easy to write and easy to parse. D★Mark eschews ambiguity and aims to have a short formal syntactical definition. This also means that it is easy to syntax highlight.
 
+Be compact::
+  Introduce as little extra syntax as possible.
+
 == Comparison to other languages
 
 D★Mark takes inspiration from a variety of other languages.
 
 HTML::
   HTML is syntactically unambiguous, but comparatively more verbose than other languages. It als prescribes only a small set of elements, which makes it awkward to use for prose that requires more thorough markup. It is possible use `span` or `div` elements with custom classes, but this approach turns an already verbose language into something even more verbose.
++
+[source,html]
+----
+<p>A glob pattern that matches every item is <span class="glob">/**/*</span>.</p>
+----
++
+[source,d-mark]
+----
+para. A glob pattern that matches every item is %glob{/**/*}.
+----
 
 XML::
   Similar to HTML, with the major difference that XML does not prescribe a set of elements.
++
+[source,xml]
+----
+<para>A glob pattern that matches every item is <glob>/**/*</glob>.</para>
+----
++
+[source,d-mark]
+----
+para. A glob pattern that matches every item is %glob{/**/*}.
+----
 
 Markdown::
   Markdown has a compact syntax, but is complex and ambiguous, as evidenced by the many different mutually incompatible implementations. It prescribes a small set of elements (smaller even than HTML). It supports embedding raw HTML, which in theory makes it possible to combine the best of both worlds, but in practice leads to markup that is harder to read than either Markdown or HTML separately, and occasionally trips up the parser and syntax highlighter.
++
+[source]
+----
+A glob pattern that matches every item is <span class="glob">/**/*</span>.
+----
++
+[source,d-mark]
+----
+para. A glob pattern that matches every item is %glob{/**/*}.
+----
 
 AsciiDoc::
   AsciiDoc, along with its AsciiDoctor variant, are syntactically unambiguous, but complex languages. They prescribe a comparatively large set of elements which translates well to DocBook and HTML. They do not support custom markup or embedding raw HTML, which makes them harder t use for prose that requires more complex markup.
++
+_(No example, as this example cannot be represented with AsciiDoc.)_
 
 TeX, LaTeX::
   (pending)
++
+[source,latex]
+----
+A glob pattern that matches every item is \glob{/**/*}.
+----
++
+[source,d-mark]
+----
+para. A glob pattern that matches every item is %glob{/**/*}.
+----
 
 JSON, YAML::
   JSON and YAML are data interchange formats rather than markup languages, and thus are not well-suited for marking up prose.
++
+_(No example, as this example too verbose in either JSON or YAML.)_
 
 == Specification
 
