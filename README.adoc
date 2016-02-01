@@ -1,0 +1,139 @@
+= D★Mark
+Denis Defreyne <denis@stoneship.org>
+
+CAUTION: D★Mark is experimental — use at your own risk!
+
+_D★Mark_ is a language for marking up prose. It facilitates writing semantically meaningful text, without limiting itself to the semantics provided by HTML or Markdown.
+
+Here’s an example of D★Mark:
+
+[source]
+----
+h2. Patterns
+
+para. Patterns are used to find items and layouts based on their identifier. They come in three varieties:
+
+list[unordered].
+  item. glob patterns
+  item. regular expression patterns
+  item. legacy patterns
+
+para. A glob pattern that matches every item is %glob{/**/*}. A glob pattern that matches every item/layout with the extension %filename{md} is %glob{/**/*.md}.
+----
+
+== Samples
+
+The `samples/` directory contains some sample D★Mark files. They can be converted to HTML by running the `scripts/translate-to-html.rb` Ruby script, passing in the name of the file. The resulting HTML will be printed to standard output. For example:
+
+....
+ruby scripts/translate-to-html.rb samples/identifiers-and-patterns.dmark
+....
+
+== Structure of a D★Mark document
+
+_D★Mark_ knows two constructs:
+
+Block-level elements::
+  Every non-blank line of a D★Mark document corresponds to a block. A block can be a paragraph, a list, a header, a source code listing, or more. They start with the name of the element, a period, a space character, followed by the content. For example:
++
+[source]
+----
+para. Patterns are used to find items and layouts based on their identifier. They come in three varieties.
+----
+
+Inline elements::
+  Inside a block, text can be marked up using inline elements, which start with a percentage sign, the name of the element, and the content within braces. For example, `%emph{crazy}` is an `emph` element with the content `crazy`.
+
+Block-level elements can be nested. To do so, indent the nested block two spaces deeper than the enclosing block. For example, the following defines a `list` element with three `item` elements inside it:
+
+[source]
+----
+list[unordered].
+  item. glob patterns
+  item. regular expression patterns
+  item. legacy patterns
+----
+
+Block-level elements can also include plain text. In this case, the content is not wrapped inside a nested block-level element. This is particularly useful for source code listing. For example:
+
+[source]
+----
+listing[lang=ruby].
+  identifier = Nanoc::Identifier.new('/about.md')
+
+  identifier.without_ext
+  # => "/about"
+
+  identifier.ext
+  # => "md"
+----
+
+Block-level elements and inline elements are identical in the tree representation of D★Mark. This means that any inline element can be rewritten as a block-level element.
+
+NOTE: To do: Elaborate on the distinction and similarity of block-level and inline elements.
+
+=== Attributes
+
+Both block and inline elements can also have attributes. Attributes are enclosed in square brackets after the element name, as a comma-separated list of key-value pairs separated by an equal sign. The value part, along with the equal sign, can be omitted, in which case the value will be equal to the key name.
+
+For example:
+
+* `%code[lang=ruby]{Nanoc::VERSION}` is an inline `code` element with the `lang` attribute set to `ruby`.
+
+* `%only[web]{Refer to the release notes for details.}` is an inline `only` element with the `web` attribute set to `web`.
+
+* `h2[id=donkey]. All about donkeys` is a block-level `h2` element with the `id` attribute set to `donkey`.
+
+* `p[print]. This is a paragraph that only readers of the book will see.` is a block-level `para` element with the `print` attribute set to `print`.
+
+NOTE: The behavior of keys with missing values might change to default to booleans rather than to the key name.
+
+== Programmatic usage
+
+Handling a D★Mark file consists of three stages: lexing, parsing, and translating.
+
+The lexing stage converts the data into a stream of tokens. Construct a lexer with the data as input, and call `#run` to get the tokens, catching any `DMark::Lexer::LexerError`:
+
+[source,ruby]
+----
+begin
+  tokens = DMark::Lexer.new(File.read(ARGV[0])).run
+rescue DMark::Lexer::LexerError => e
+  $stderr.puts e.message_for_tty
+  exit 1
+end
+----
+
+The parsing stage converts the stream of tokens into a node tree. Construct a parser with the tokens as input, and call `#run` to get the tree.
+
+[source,ruby]
+----
+tree = DMark::Parser.new(tokens).run
+----
+
+The translating stage is not the responsibility of D★Mark. A translator is part of the domain of the source text, and D★Mark only deals with syntax rather than semantics. A translator will run over the tree and convert it into something else (usually another string). To do so, handle each node type (`RootNode`, `TextNode`, `ElementNode`). For example, the following translator will convert the tree into something that resembles XML:
+
+[source,ruby]
+----
+class MyXMLLikeTranslator < DMark::Translator
+  def handle(node)
+    case node
+    when DMark::Nodes::RootNode
+      handle_children(node)
+    when DMark::Nodes::TextNode
+      out << node.text
+    when DMark::Nodes::ElementNode
+      out << "<#{node.name}>"
+      handle_children(node)
+      out << "</#{node.name}>"
+    end
+  end
+end
+
+result = MyXMLLikeTranslator.new(tree).run
+puts result
+----
+
+== Comparison to other languages
+
+NOTE: To do: write this section.
