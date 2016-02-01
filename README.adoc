@@ -109,10 +109,10 @@ XML::
   Similar to HTML, with the major difference that XML does not prescribe a set of elements.
 
 Markdown::
-  Markdown has a compact syntax, but is ambiguous, as evidenced by the many different mutually incompatible implementations. It prescribes a small set of elements (smaller even than HTML). It supports embedding raw HTML, which in theory makes it possible to combine the best of both worlds, but in practice leads to markup that is harder to read than either Markdown or HTML separately, and occasionally trips up the parser and syntax highlighter.
+  Markdown has a compact syntax, but is complex and ambiguous, as evidenced by the many different mutually incompatible implementations. It prescribes a small set of elements (smaller even than HTML). It supports embedding raw HTML, which in theory makes it possible to combine the best of both worlds, but in practice leads to markup that is harder to read than either Markdown or HTML separately, and occasionally trips up the parser and syntax highlighter.
 
 AsciiDoc::
-  (pending)
+  AsciiDoc, along with its AsciiDoctor variant, are syntactically unambiguous, but complex languages. They prescribe a comparatively large set of elements which translates well to DocBook and HTML. They do not support custom markup or embedding raw HTML, which makes them harder t use for prose that requires more complex markup.
 
 TeX, LaTeX::
   (pending)
