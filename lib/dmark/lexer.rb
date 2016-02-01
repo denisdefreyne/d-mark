@@ -25,46 +25,62 @@ module DMark
     def handle_line(line, line_nr)
       case line
       when /^\s+$/
-        # blank line
-        @pending_blanks += 1
+        handle_blank_line(line_nr)
       when /^(\s*)([a-z0-9-]+)(\[(.*?)\])?\.\s*$/
-        # empty element
         indentation = Regexp.last_match[1]
-        element = Regexp.last_match[2]
-        attributes = parse_attributes(Regexp.last_match[4])
+        element_name = Regexp.last_match[2]
+        raw_attributes = Regexp.last_match[4]
 
-        unwind_stack_until(indentation.size)
-
-        @element_stack << element
-        @tokens << DMark::Tokens::TagBeginToken.new(name: element, attributes: attributes)
+        handle_block_line_without_content(line_nr, indentation, element_name, raw_attributes)
       when /^(\s*)([a-z0-9-]+)(\[(.*?)\])?\. (.*)$/
-        # element with inline content
         indentation = Regexp.last_match[1]
-        element = Regexp.last_match[2]
-        attributes = parse_attributes(Regexp.last_match[4])
-        data = Regexp.last_match[5]
+        element_name = Regexp.last_match[2]
+        raw_attributes = Regexp.last_match[4]
+        content = Regexp.last_match[5]
 
-        unwind_stack_until(indentation.size)
-
-        @tokens << DMark::Tokens::TagBeginToken.new(name: element, attributes: attributes)
-        @tokens.concat(lex_inline(data, line_nr + 1))
-        @tokens << DMark::Tokens::TagEndToken.new(name: element)
+        handle_block_line_with_content(line_nr, indentation, element_name, raw_attributes, content)
       when /^(\s*)(.*)$/
-        # other line (e.g. data)
         indentation = Regexp.last_match[1]
-        data = Regexp.last_match[2]
+        content = Regexp.last_match[2]
 
-        unwind_stack_until(indentation.size)
-
-        if @element_stack.empty?
-          # FIXME: unify format of messages (uppercase, lowercase, …)
-          raise LexerError.new("Can’t insert raw data at root level", line, line_nr, 1)
-        end
-
-        extra_indentation = [indentation.size - INDENTATION * @element_stack.size, 0].max
-
-        @tokens.concat(lex_inline(' ' * extra_indentation + data + "\n", line_nr + 1))
+        handle_other_line(line_nr, indentation, content)
       end
+    end
+
+    def handle_blank_line(line_nr)
+      @pending_blanks += 1
+    end
+
+    def handle_block_line_without_content(_line_nr, indentation, element_name, raw_attributes)
+      attributes = parse_attributes(raw_attributes)
+
+      unwind_stack_until(indentation.size)
+
+      @element_stack << element_name
+      @tokens << DMark::Tokens::TagBeginToken.new(name: element_name, attributes: attributes)
+    end
+
+    def handle_block_line_with_content(line_nr, indentation, element_name, raw_attributes, content)
+      attributes = parse_attributes(raw_attributes)
+
+      unwind_stack_until(indentation.size)
+
+      @tokens << DMark::Tokens::TagBeginToken.new(name: element_name, attributes: attributes)
+      @tokens.concat(lex_inline(content, line_nr + 1))
+      @tokens << DMark::Tokens::TagEndToken.new(name: element_name)
+    end
+
+    def handle_other_line(line_nr, indentation, content)
+      unwind_stack_until(indentation.size)
+
+      if @element_stack.empty?
+        # FIXME: unify format of messages (uppercase, lowercase, …)
+        raise LexerError.new("Can’t insert raw content at root level", line, line_nr, 1)
+      end
+
+      extra_indentation = [indentation.size - INDENTATION * @element_stack.size, 0].max
+
+      @tokens.concat(lex_inline(' ' * extra_indentation + content + "\n", line_nr + 1))
     end
 
     def parse_attributes(data)
