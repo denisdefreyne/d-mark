@@ -170,14 +170,16 @@ JSON, YAML::
 {
   "elements": [
     {
-      "type": "para",
+      "type": "element",
+      "name": "para",
       "children": [
         {
           "type": "text",
           "content": "A glob pattern that matches every item is "
         },
         {
-          "type": "glob",
+          "type": "element",
+          "name": "glob",
           "children": [
             {
               "type": "text",
