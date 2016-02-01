@@ -103,19 +103,22 @@ Be simple::
 D★Mark takes inspiration from a variety of other languages.
 
 HTML::
-  (pending)
+  HTML is syntactically unambiguous, but comparatively more verbose than other languages. It als prescribes only a small set of elements, which makes it awkward to use for prose that requires more thorough markup. It is possible use `span` or `div` elements with custom classes, but this approach turns an already verbose language into something even more verbose.
 
 XML::
-  (pending)
+  Similar to HTML, with the major difference that XML does not prescribe a set of elements.
 
-Markdown, AsciiDoc, Textile::
+Markdown::
+  Markdown has a compact syntax, but is ambiguous, as evidenced by the many different mutually incompatible implementations. It prescribes a small set of elements (smaller even than HTML). It supports embedding raw HTML, which in theory makes it possible to combine the best of both worlds, but in practice leads to markup that is harder to read than either Markdown or HTML separately, and occasionally trips up the parser and syntax highlighter.
+
+AsciiDoc::
   (pending)
 
 TeX, LaTeX::
   (pending)
 
 JSON, YAML::
-  (pending)
+  JSON and YAML are data interchange formats rather than markup languages, and thus are not well-suited for marking up prose.
 
 == Specification
 
