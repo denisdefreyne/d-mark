@@ -101,7 +101,7 @@ Be simple::
 Be compact::
   Introduce as little extra syntax as possible.
 
-== Comparison to other languages
+== Comparison with other languages
 
 D★Mark takes inspiration from a variety of other languages.
 
