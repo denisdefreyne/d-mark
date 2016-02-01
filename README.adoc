@@ -168,7 +168,7 @@ JSON, YAML::
 [source,json]
 ----
 {
-  "elements": [
+  "nodes": [
     {
       "type": "element",
       "name": "para",
