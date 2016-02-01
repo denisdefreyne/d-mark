@@ -18,7 +18,7 @@ list[unordered].
   item. regular expression patterns
   item. legacy patterns
 
-para. A glob pattern that matches every item is %glob{/**/*}. A glob pattern that matches every item/layout with the extension %filename{md} is %glob{/**/*.md}.
+para. A glob pattern that matches every item is %pattern{/**/*}. A glob pattern that matches every item/layout with the extension %filename{md} is %glob{/**/*.md}.
 ----
 
 == Samples
@@ -106,16 +106,16 @@ Be compact::
 D★Mark takes inspiration from a variety of other languages.
 
 HTML::
-  HTML is syntactically unambiguous, but comparatively more verbose than other languages. It als prescribes only a small set of elements, which makes it awkward to use for prose that requires more thorough markup. It is possible use `span` or `div` elements with custom classes, but this approach turns an already verbose language into something even more verbose.
+  HTML is syntactically unambiguous, but comparatively more verbose than other languages. It also prescribes only a small set of elements, which makes it awkward to use for prose that requires more thorough markup. It is possible use `span` or `div` elements with custom classes, but this approach turns an already verbose language into something even more verbose.
 +
 [source,html]
 ----
-<p>A glob pattern that matches every item is <span class="glob">/**/*</span>.</p>
+<p>A glob pattern that matches every item is <span class="pattern attr-type-glob">/**/*</span>.</p>
 ----
 +
 [source,d-mark]
 ----
-para. A glob pattern that matches every item is %glob{/**/*}.
+para. A glob pattern that matches every item is %pattern[glob]{/**/*}.
 ----
 
 XML::
@@ -123,12 +123,12 @@ XML::
 +
 [source,xml]
 ----
-<para>A glob pattern that matches every item is <glob>/**/*</glob>.</para>
+<para>A glob pattern that matches every item is <pattern kind="glob">/**/*</pattern>.</para>
 ----
 +
 [source,d-mark]
 ----
-para. A glob pattern that matches every item is %glob{/**/*}.
+para. A glob pattern that matches every item is %pattern[glob]{/**/*}.
 ----
 
 Markdown::
@@ -136,12 +136,12 @@ Markdown::
 +
 [source]
 ----
-A glob pattern that matches every item is <span class="glob">/**/*</span>.
+A glob pattern that matches every item is <span class="glob attr-type-glob">/**/*</span>.
 ----
 +
 [source,d-mark]
 ----
-para. A glob pattern that matches every item is %glob{/**/*}.
+para. A glob pattern that matches every item is %pattern[glob]{/**/*}.
 ----
 
 AsciiDoc::
@@ -154,12 +154,12 @@ TeX, LaTeX::
 +
 [source,latex]
 ----
-A glob pattern that matches every item is \glob{/**/*}.
+A glob pattern that matches every item is \pattern[glob]{/**/*}.
 ----
 +
 [source,d-mark]
 ----
-para. A glob pattern that matches every item is %glob{/**/*}.
+para. A glob pattern that matches every item is %pattern[glob]{/**/*}.
 ----
 
 JSON, YAML::
@@ -167,39 +167,16 @@ JSON, YAML::
 +
 [source,json]
 ----
-{
-  "nodes": [
-    {
-      "type": "element",
-      "name": "para",
-      "children": [
-        {
-          "type": "text",
-          "content": "A glob pattern that matches every item is "
-        },
-        {
-          "type": "element",
-          "name": "glob",
-          "children": [
-            {
-              "type": "text",
-              "content": "/**/*",
-            }
-          ]
-        },
-        {
-          "type": "text",
-          "content": "."
-        },
-      ]
-    }
-  ]
-}
+[
+  "A glob pattern that matches every item is ",
+  ["para", {"kind": "glob"}, ["/**/*"]],
+  "."
+]
 ----
 +
 [source,d-mark]
 ----
-para. A glob pattern that matches every item is %glob{/**/*}.
+para. A glob pattern that matches every item is %pattern[glob]{/**/*}.
 ----
 
 == Specification
