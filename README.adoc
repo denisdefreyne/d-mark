@@ -110,7 +110,7 @@ HTML::
 +
 [source,html]
 ----
-<p>A glob pattern that matches every item is <span class="pattern attr-type-glob">/**/*</span>.</p>
+<p>A glob pattern that matches every item is <span class="pattern attr-kind-glob">/**/*</span>.</p>
 ----
 +
 [source,d-mark]
@@ -136,7 +136,7 @@ Markdown::
 +
 [source]
 ----
-A glob pattern that matches every item is <span class="glob attr-type-glob">/**/*</span>.
+A glob pattern that matches every item is <span class="glob attr-kind-glob">/**/*</span>.
 ----
 +
 [source,d-mark]
