@@ -150,7 +150,7 @@ AsciiDoc::
 _(No example, as this example cannot be represented with AsciiDoc.)_
 
 TeX, LaTeX::
-  (pending)
+  TeX is a turing-complete programming language, as opposed to a markup language, intended for typesetting. This makes it impractical for using it as the source for converting it to other formats. Its syntax is simple and compact, and served as an inspiration for D★Mark.
 +
 [source,latex]
 ----
