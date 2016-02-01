@@ -174,7 +174,7 @@ JSON, YAML::
       "children": [
         {
           "type": "text",
-          "content": " glob pattern that matches every item is "
+          "content": "A glob pattern that matches every item is "
         },
         {
           "type": "glob",
