@@ -72,6 +72,8 @@ Block-level elements and inline elements are identical in the tree representatio
 
 NOTE: To do: Elaborate on the distinction and similarity of block-level and inline elements.
 
+NOTE: To do: Describe escaping rules.
+
 === Attributes
 
 Both block and inline elements can also have attributes. Attributes are enclosed in square brackets after the element name, as a comma-separated list of key-value pairs separated by an equal sign. The value part, along with the equal sign, can be omitted, in which case the value will be equal to the key name.
@@ -87,6 +89,37 @@ For example:
 * `p[print]. This is a paragraph that only readers of the book will see.` is a block-level `para` element with the `print` attribute set to `print`.
 
 NOTE: The behavior of keys with missing values might change to default to booleans rather than to the key name.
+
+== Goals
+
+Be extensible::
+  D★Mark defines only the syntax of the markup language, and doesn’t bother with semantics. It does not prescribe which element names are valid in the context of a vocabulary, because it does not come with a vocabulary.
+
+Be simple::
+  Simplicity implies being easy to write and easy to parse. D★Mark eschews ambiguity and aims to have a short formal syntactical definition. This also means that it is easy to syntax highlight.
+
+== Comparison to other languages
+
+D★Mark takes inspiration from a variety of other languages.
+
+HTML::
+  (pending)
+
+XML::
+  (pending)
+
+Markdown, AsciiDoc, Textile::
+  (pending)
+
+TeX, LaTeX::
+  (pending)
+
+JSON, YAML::
+  (pending)
+
+== Specification
+
+NOTE: To do: write this section.
 
 == Programmatic usage
 
@@ -133,7 +166,3 @@ end
 result = MyXMLLikeTranslator.new(tree).run
 puts result
 ----
-
-== Comparison to other languages
-
-NOTE: To do: write this section.
