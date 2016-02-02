@@ -82,6 +82,11 @@ describe DMark::Lexer do
       it { is_expected.to eql({ 'foo' => 'foo', 'bar' => 'bar' }) }
     end
 
+    context 'foo=x,bar=y' do
+      let(:data) { 'foo=x,bar=y' }
+      it { is_expected.to eql({ 'foo' => 'x', 'bar' => 'y' }) }
+    end
+
     context '' do
       let(:data) { '' }
 

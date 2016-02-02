@@ -1,6 +1,6 @@
 require 'treetop'
 
-Treetop.load('attributes_parser.treetop')
+Treetop.load(File.dirname(__FILE__) + '/../../attributes_parser.treetop')
 
 module DMark
   class Lexer
@@ -88,7 +88,7 @@ module DMark
 
       if @element_stack.empty?
         # FIXME: unify format of messages (uppercase, lowercase, …)
-        raise LexerError.new("Can’t insert raw content at root level", line, line_nr, 1)
+        raise LexerError.new("Can’t insert raw content at root level", indentation + content, line_nr, 1)
       end
 
       extra_indentation = [indentation.size - INDENTATION * @element_stack.size, 0].max
@@ -207,7 +207,7 @@ module DMark
       state = :root
       tokens = []
       name = ''
-      attributes = ''
+      attributes = nil
       col_nr = 0
 
       string.chars.each_with_index do |char|
@@ -260,7 +260,7 @@ module DMark
               name: name, attributes:
               parse_attributes(attributes, line_nr, 0))
             name = ''
-            attributes = ''
+            attributes = nil
           else
             raise LexerError.new("unexpected `#{char}` after `%`", string, line_nr, col_nr)
           end
@@ -270,6 +270,7 @@ module DMark
             # FIXME: might make sense to have after_rbracket instead (to prevent %foo[a][b]{…})
             state = :after_pct
           else
+            attributes ||= ''
             attributes << char
           end
         else

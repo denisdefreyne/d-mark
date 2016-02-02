@@ -9,10 +9,10 @@ grammar Attributes
   end
 
   rule key_value_pairs
-    a:key_value tail:(',' b:key_value_pairs)*
+    a:key_value tail:(',' b:key_value)*
     {
       def value
-        [a.value] + tail.elements.flat_map { |el| el.b.value }
+        [a.value] + tail.elements.map { |el| el.b.value }
       end
     }
   end
@@ -34,7 +34,7 @@ grammar Attributes
   end
 
   rule value
-    [^\]\=]*
+    [^\]=,]*
     {
       def value
         elements.map(&:text_value).join
