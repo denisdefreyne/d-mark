@@ -1,3 +1,7 @@
+require 'treetop'
+
+Treetop.load('attributes_parser.treetop')
+
 module DMark
   class Lexer
     INDENTATION = 2
@@ -58,8 +62,8 @@ module DMark
     end
 
     # @api private
-    def handle_block_line_without_content(_line_nr, indentation, element_name, raw_attributes)
-      attributes = parse_attributes(raw_attributes)
+    def handle_block_line_without_content(line_nr, indentation, element_name, raw_attributes)
+      attributes = parse_attributes(raw_attributes, line_nr, indentation.size + element_name.size + 2)
 
       unwind_stack_until(indentation.size)
 
@@ -69,7 +73,7 @@ module DMark
 
     # @api private
     def handle_block_line_with_content(line_nr, indentation, element_name, raw_attributes, content)
-      attributes = parse_attributes(raw_attributes)
+      attributes = parse_attributes(raw_attributes, line_nr, indentation.size + element_name.size + 2)
 
       unwind_stack_until(indentation.size)
 
@@ -93,11 +97,19 @@ module DMark
     end
 
     # @api private
-    def parse_attributes(data)
-      # FIXME: write a proper parser
-
-      (data || '').split(',').map { |part| part.split('=') }.each_with_object({}) do |pair, res|
-        res[pair.first] = pair.last || pair.first
+    def parse_attributes(data, start_line_nr, start_col_nr)
+      if data.nil?
+        {}
+      else
+        parser = AttributesParser.new
+        tree = parser.parse(data)
+        if tree.nil?
+          # FIXME: pass in full line
+          raise LexerError.new(parser.failure_reason, data, start_line_nr + parser.failure_line, start_col_nr + parser.failure_column)
+        end
+        tree.value.each_with_object({}) do |pair, res|
+          res[pair.first] = pair.last
+        end
       end
     end
 
@@ -243,7 +255,10 @@ module DMark
           when '{'
             state = :root
             stack << [:elem, name]
-            tokens << DMark::Tokens::TagBeginToken.new(name: name, attributes: parse_attributes(attributes))
+            # FIXME: pass in col nr
+            tokens << DMark::Tokens::TagBeginToken.new(
+              name: name, attributes:
+              parse_attributes(attributes, line_nr, 0))
             name = ''
             attributes = ''
           else

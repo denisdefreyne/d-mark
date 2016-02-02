@@ -58,4 +58,60 @@ describe DMark::Lexer do
       end
     end
   end
+
+  describe '#parse_attributes' do
+    subject { lexer.parse_attributes(data, 100, 200) }
+
+    context 'foo' do
+      let(:data) { 'foo' }
+      it { is_expected.to eql({ 'foo' => 'foo' }) }
+    end
+
+    context 'foo=' do
+      let(:data) { 'foo=' }
+      it { is_expected.to eql({ 'foo' => '' }) }
+    end
+
+    context 'foo=bar' do
+      let(:data) { 'foo=bar' }
+      it { is_expected.to eql({ 'foo' => 'bar' }) }
+    end
+
+    context 'foo,bar' do
+      let(:data) { 'foo,bar' }
+      it { is_expected.to eql({ 'foo' => 'foo', 'bar' => 'bar' }) }
+    end
+
+    context '' do
+      let(:data) { '' }
+
+      it 'raises' do
+        expect { subject }.to raise_error(DMark::Lexer::LexerError)
+      end
+    end
+
+    context 'foo=bar=baz' do
+      let(:data) { 'foo=bar=baz' }
+
+      it 'raises' do
+        expect { subject }.to raise_error(DMark::Lexer::LexerError)
+      end
+    end
+
+    context 'foo,' do
+      let(:data) { 'foo,' }
+
+      it 'raises' do
+        expect { subject }.to raise_error(DMark::Lexer::LexerError)
+      end
+    end
+
+    context ',' do
+      let(:data) { ',' }
+
+      it 'raises' do
+        expect { subject }.to raise_error(DMark::Lexer::LexerError)
+      end
+    end
+  end
 end
