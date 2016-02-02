@@ -20,7 +20,156 @@ module DMark
       @pending_blanks = 0
     end
 
+    class Line
+      attr_reader :nr
+      attr_reader :indentation
+      attr_reader :data
+      attr_reader :children
+
+      def initialize(nr, indentation, data)
+        @nr = nr
+        @indentation = indentation
+        @data = data
+
+        @children = []
+      end
+
+      def inspect
+        "<#{format '%-15s', self.class.name.split(/::/).last} ##{@nr} indent=#{@indentation.size} #{@data[0...40]}…>"
+      end
+
+      def print_tree(ind = 0)
+        puts '  ' * ind + "#{self.class.name} #{@data[0...40]}"
+        children.each { |c| c.print_tree(ind+2) }
+      end
+    end
+
+    class EmptyLine < Line
+      def initialize(line)
+        super(line.nr, line.indentation, line.data)
+      end
+    end
+
+    class BlockEmptyLine < Line
+      attr_reader :element_name
+      attr_reader :raw_attributes
+
+      def initialize(line, element_name, raw_attributes)
+        super(line.nr, line.indentation, line.data)
+
+        @element_name = element_name
+        @raw_attributes = raw_attributes
+      end
+    end
+
+    class BlockFilledLine < Line
+      attr_reader :element_name
+      attr_reader :raw_attributes
+      attr_reader :content
+
+      def initialize(line, element_name, raw_attributes, content)
+        super(line.nr, line.indentation, line.data)
+
+        @element_name = element_name
+        @raw_attributes = raw_attributes
+        @content = content
+      end
+    end
+
+    class OtherLine < Line
+      def initialize(line)
+        super(line.nr, line.indentation, line.data)
+      end
+    end
+
     def run
+      # Get raw lines
+      raw_lines = @string.lines.map.with_index do |line, line_nr|
+        if line !~ /^((  )*)($|[^ ].*)$/
+          raise "Line #{nr}: incorrect indentation detected (must be multiple of 2)"
+        end
+
+        Line.new(line_nr, $1, $3)
+      end
+
+      # Categorise them
+      lines = raw_lines.map do |line|
+        case line.data
+        when /^\s*$/
+          EmptyLine.new(line)
+        when /^([a-z0-9-]+)(\[(.*?)\])?\.\s*$/
+          BlockEmptyLine.new(line, Regexp.last_match[2], Regexp.last_match[4])
+        when /^([a-z0-9-]+)(\[(.*?)\])?\. (.*)$/
+          BlockFilledLine.new(line, Regexp.last_match[2], Regexp.last_match[4], Regexp.last_match[5])
+        when /^(.*)$/
+          OtherLine.new(line)
+        else
+          raise line.inspect
+        end
+      end
+
+      # Fix other line indentations to match preceding ones
+      prev_indentation = ''
+      lines.each do |line|
+        case line
+        when EmptyLine
+          # ignore
+        when BlockEmptyLine, BlockFilledLine
+          prev_indentation = line.indentation
+        when OtherLine
+          diff = line.indentation.size - prev_indentation.size - 2
+          if diff > 0
+            line.data[0,0] = ' ' * diff
+            line.indentation[0...diff] = ''
+          end
+        end
+      end
+
+      # Nest them
+      root_lines = [lines.first]
+      stack = []
+      prev_line = lines.first
+      lines.each_cons(2) do |_a, b|
+        case b
+        when EmptyLine
+          if stack.empty?
+            root_lines << b
+          else
+            stack.last.children << b
+          end
+        when BlockEmptyLine, BlockFilledLine, OtherLine
+          if b.indentation.size > prev_line.indentation.size
+            prev_line.children << b
+            stack << prev_line
+          elsif b.indentation.size == prev_line.indentation.size
+            if stack.empty?
+              root_lines << b
+            else
+              prev = stack.last
+              prev.children << b
+            end
+          else
+            while stack.size * 2 > b.indentation.size
+              stack.pop
+            end
+
+            if stack.empty?
+              root_lines << b
+            else
+              stack.last.children << b
+            end
+          end
+
+          prev_line = b
+        end
+      end
+
+      # root_lines.each { |l| l.print_tree }
+      # puts '-' * 80
+
+
+
+
       @string.lines.each_with_index do |line, line_nr|
         handle_line(line, line_nr)
       end
