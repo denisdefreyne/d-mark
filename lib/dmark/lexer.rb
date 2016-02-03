@@ -73,11 +73,8 @@ module DMark
     def run
       # Get raw lines
       raw_lines = @string.lines.map.with_index do |line, line_nr|
-        if line !~ /^((  )*)($|[^ ].*)$/
-          raise "Line #{nr}: incorrect indentation detected (must be multiple of 2)"
-        end
-
-        Line.new(line_nr, $1, $3)
+        line =~ /^( *)($|[^ ].*)$/
+        Line.new(line_nr, $1, $2)
       end
 
       # Categorise them
@@ -85,7 +82,7 @@ module DMark
         case line.data
         when /^\s*$/
           EmptyLine.new(line)
-        when /^([a-z][a-z0-9-]*)(\[(.*?)\])?\. ?(.*)$/
+        when /^([a-z][a-z0-9-]*)(\[(.*?)\])?\.($| .*$)/
           BlockLine.new(line, Regexp.last_match[1], Regexp.last_match[3], Regexp.last_match[4])
         when /^(.*)$/
           ContentLine.new(line)
@@ -150,9 +147,6 @@ module DMark
         end
       end
 
-      root_lines.each { |l| l.print_tree }
-      puts '-' * 80
-
       tokens = []
       pending_empty_lines = []
 
@@ -170,7 +164,8 @@ module DMark
       when BlockLine
         pending_empty_lines.each { |l| append_text(tokens, "\n") }
         pending_empty_lines.clear
-        tokens << DMark::Tokens::TagBeginToken.new(name: line.element_name, attributes: {})
+        attributes = parse_attributes(line.raw_attributes, line.nr, 0)
+        tokens << DMark::Tokens::TagBeginToken.new(name: line.element_name, attributes: attributes)
         if line.content
           tokens.concat(lex_inline(line.content, line.nr + 1))
         end
@@ -179,6 +174,8 @@ module DMark
         end
         tokens << DMark::Tokens::TagEndToken.new(name: line.element_name)
       when ContentLine
+        pending_empty_lines.each { |l| append_text(tokens, "\n") }
+        pending_empty_lines.clear
         tokens.concat(lex_inline(line.data + "\n", line.nr + 1))
       end
     end
