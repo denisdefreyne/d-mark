@@ -50,19 +50,7 @@ module DMark
       end
     end
 
-    class BlockEmptyLine < Line
-      attr_reader :element_name
-      attr_reader :raw_attributes
-
-      def initialize(line, element_name, raw_attributes)
-        super(line.nr, line.indentation, line.data)
-
-        @element_name = element_name
-        @raw_attributes = raw_attributes
-      end
-    end
-
-    class BlockFilledLine < Line
+    class BlockLine < Line
       attr_reader :element_name
       attr_reader :raw_attributes
       attr_reader :content
@@ -76,7 +64,7 @@ module DMark
       end
     end
 
-    class OtherLine < Line
+    class ContentLine < Line
       def initialize(line)
         super(line.nr, line.indentation, line.data)
       end
@@ -97,12 +85,10 @@ module DMark
         case line.data
         when /^\s*$/
           EmptyLine.new(line)
-        when /^([a-z0-9-]+)(\[(.*?)\])?\.\s*$/
-          BlockEmptyLine.new(line, Regexp.last_match[2], Regexp.last_match[4])
-        when /^([a-z0-9-]+)(\[(.*?)\])?\. (.*)$/
-          BlockFilledLine.new(line, Regexp.last_match[2], Regexp.last_match[4], Regexp.last_match[5])
+        when /^([a-z][a-z0-9-]*)(\[(.*?)\])?\. ?(.*)$/
+          BlockLine.new(line, Regexp.last_match[1], Regexp.last_match[3], Regexp.last_match[4])
         when /^(.*)$/
-          OtherLine.new(line)
+          ContentLine.new(line)
         else
           raise line.inspect
         end
@@ -114,9 +100,9 @@ module DMark
         case line
         when EmptyLine
           # ignore
-        when BlockEmptyLine, BlockFilledLine
+        when BlockLine
           prev_indentation = line.indentation
-        when OtherLine
+        when ContentLine
           diff = line.indentation.size - prev_indentation.size - 2
           if diff > 0
             line.data[0,0] = ' ' * diff
@@ -137,7 +123,7 @@ module DMark
           else
             stack.last.children << b
           end
-        when BlockEmptyLine, BlockFilledLine, OtherLine
+        when BlockLine, ContentLine
           if b.indentation.size > prev_line.indentation.size
             prev_line.children << b
             stack << prev_line
@@ -164,85 +150,37 @@ module DMark
         end
       end
 
-      # root_lines.each { |l| l.print_tree }
-      # puts '-' * 80
+      root_lines.each { |l| l.print_tree }
+      puts '-' * 80
 
+      tokens = []
+      pending_empty_lines = []
 
-
-
-      @string.lines.each_with_index do |line, line_nr|
-        handle_line(line, line_nr)
+      root_lines.each do |line|
+        handle_line_2(line, tokens, pending_empty_lines)
       end
 
-      unwind_stack_until(0)
-
-      @tokens
+      tokens
     end
 
-    # @api private
-    def handle_line(line, line_nr)
+    def handle_line_2(line, tokens, pending_empty_lines)
       case line
-      when /^\s+$/
-        handle_blank_line(line_nr)
-      when /^(\s*)([a-z0-9-]+)(\[(.*?)\])?\.\s*$/
-        indentation = Regexp.last_match[1]
-        element_name = Regexp.last_match[2]
-        raw_attributes = Regexp.last_match[4]
-
-        handle_block_line_without_content(line_nr, indentation, element_name, raw_attributes)
-      when /^(\s*)([a-z0-9-]+)(\[(.*?)\])?\. (.*)$/
-        indentation = Regexp.last_match[1]
-        element_name = Regexp.last_match[2]
-        raw_attributes = Regexp.last_match[4]
-        content = Regexp.last_match[5]
-
-        handle_block_line_with_content(line_nr, indentation, element_name, raw_attributes, content)
-      when /^(\s*)(.*)$/
-        indentation = Regexp.last_match[1]
-        content = Regexp.last_match[2]
-
-        handle_other_line(line_nr, indentation, content)
+      when EmptyLine
+        pending_empty_lines << line
+      when BlockLine
+        pending_empty_lines.each { |l| append_text(tokens, "\n") }
+        pending_empty_lines.clear
+        tokens << DMark::Tokens::TagBeginToken.new(name: line.element_name, attributes: {})
+        if line.content
+          tokens.concat(lex_inline(line.content, line.nr + 1))
+        end
+        line.children.each do |child_line|
+          handle_line_2(child_line, tokens, pending_empty_lines)
+        end
+        tokens << DMark::Tokens::TagEndToken.new(name: line.element_name)
+      when ContentLine
+        tokens.concat(lex_inline(line.data + "\n", line.nr + 1))
       end
-    end
-
-    # @api private
-    def handle_blank_line(line_nr)
-      @pending_blanks += 1
-    end
-
-    # @api private
-    def handle_block_line_without_content(line_nr, indentation, element_name, raw_attributes)
-      attributes = parse_attributes(raw_attributes, line_nr, indentation.size + element_name.size + 2)
-
-      unwind_stack_until(indentation.size)
-
-      @element_stack << element_name
-      @tokens << DMark::Tokens::TagBeginToken.new(name: element_name, attributes: attributes)
-    end
-
-    # @api private
-    def handle_block_line_with_content(line_nr, indentation, element_name, raw_attributes, content)
-      attributes = parse_attributes(raw_attributes, line_nr, indentation.size + element_name.size + 2)
-
-      unwind_stack_until(indentation.size)
-
-      @tokens << DMark::Tokens::TagBeginToken.new(name: element_name, attributes: attributes)
-      @tokens.concat(lex_inline(content, line_nr + 1))
-      @tokens << DMark::Tokens::TagEndToken.new(name: element_name)
-    end
-
-    # @api private
-    def handle_other_line(line_nr, indentation, content)
-      unwind_stack_until(indentation.size)
-
-      if @element_stack.empty?
-        # FIXME: unify format of messages (uppercase, lowercase, …)
-        raise LexerError.new("Can’t insert raw content at root level", indentation + content, line_nr, 1)
-      end
-
-      extra_indentation = [indentation.size - INDENTATION * @element_stack.size, 0].max
-
-      @tokens.concat(lex_inline(' ' * extra_indentation + content + "\n", line_nr + 1))
     end
 
     # @api private
@@ -263,23 +201,11 @@ module DMark
     end
 
     # @api private
-    def unwind_stack_until(num)
-      while @element_stack.size * INDENTATION > num
-        elem = @element_stack.pop
-
-        @tokens << DMark::Tokens::TagEndToken.new(name: elem)
-      end
-
-      append_text(@tokens, "\n" * @pending_blanks)
-      @pending_blanks = 0
-    end
-
-    # @api private
-    def append_text(out, text)
-      if out.empty? || !out.last.is_a?(DMark::Tokens::TextToken)
-        out << DMark::Tokens::TextToken.new(text: text)
+    def append_text(tokens, text)
+      if tokens.empty? || !tokens.last.is_a?(DMark::Tokens::TextToken)
+        tokens << DMark::Tokens::TextToken.new(text: text)
       else
-        out.last.text << text
+        tokens.last.text << text
       end
     end
 
