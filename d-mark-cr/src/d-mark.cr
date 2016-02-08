@@ -1,5 +1,3 @@
-require "./d-mark/*"
-
 module DMark
   struct ParseSuccess
     getter :pos
@@ -369,7 +367,11 @@ module DMark
                 inline_content,
               ]
             )
-          )
+          ),
+          DMark::P.peek(
+            DMark::P.or(
+              DMark::P.char('\n'),
+              DMark::P.eof)),
         ]
       )
     end
