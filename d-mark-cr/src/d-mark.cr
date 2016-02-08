@@ -93,6 +93,24 @@ module DMark
       end
     end
 
+    class And
+      def initialize(@p1, @p2)
+      end
+
+      def parse(input : String, pos : Int32)
+        res_a = @p1.parse(input, pos)
+        case res_a
+        when ParseSuccess
+          # FIXME: handle captures
+          @p2.parse(input, res_a.pos)
+        when ParseFailure
+          res_a
+        else
+          raise "???"
+        end
+      end
+    end
+
     class Or
       def initialize(@p1, @p2)
       end
@@ -272,10 +290,19 @@ module DMark
     end
 
     def self.or(p1, p2, p3)
-      Parsers::Or.new(
-        p1,
-        Parsers::Or.new(p2, p3),
-      )
+      or(p1, or(p2, p3))
+    end
+
+    def self.or(p1, p2, p3, p4)
+      or(p1, or(p2, p3, p4))
+    end
+
+    def self.or(p1, p2, p3, p4, p5)
+      or(p1, or(p2, p3, p4, p5))
+    end
+
+    def self.and(p1, p2)
+      Parsers::And.new(p1, p2)
     end
 
     def self.repeat_zero_or_more(p1)
@@ -350,6 +377,8 @@ module DMark
       DMark::P.repeat_zero_or_more(
         DMark::P.or(
           DMark::P.all_but(['%', '}', '\n']),
+          DMark::P.and(DMark::P.char('%'), DMark::P.char('%')),
+          DMark::P.and(DMark::P.char('%'), DMark::P.char('}')),
           DMark::P.lazy { inline_element },
         )
       )

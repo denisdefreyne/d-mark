@@ -108,6 +108,22 @@ describe "DMark::P.or" do
   end
 end
 
+describe "DMark::P.and" do
+  parser = DMark::P.and(DMark::P.char('a'), DMark::P.char('b'))
+
+  it "parses" do
+    parser.parse("ab", 0).should be_success(2)
+  end
+
+  it "does not parse" do
+    parser.parse("", 0).should be_failure(0, nil)
+    parser.parse("a", 0).should be_failure(1, nil)
+    parser.parse("b", 0).should be_failure(0, nil)
+    parser.parse("aa", 0).should be_failure(1, nil)
+    parser.parse("aab", 0).should be_failure(1, nil)
+  end
+end
+
 describe "DMark::P.repeat_zero_or_more" do
   parser = DMark::P.repeat_zero_or_more(DMark::P.char('a'))
 
@@ -221,6 +237,9 @@ describe "DMark::Px.inline_content" do
     parser.parse("%donkey{abc} bar", 0).should be_success(16)
 
     parser.parse("%donkey{%giraffe{moo}} bar", 0).should be_success(26)
+
+    parser.parse("foo %% bar", 0).should be_success(10)
+    parser.parse("foo %} bar", 0).should be_success(10)
   end
 
   it "half-parses until inline ends" do
