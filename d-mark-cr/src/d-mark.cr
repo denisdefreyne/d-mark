@@ -3,9 +3,9 @@ require "./d-mark/*"
 module DMark
   struct ParseSuccess
     getter :pos
-    getter :data
+    getter :captures
 
-    def initialize(@pos : Int32, @data)
+    def initialize(@pos : Int32, @captures)
     end
   end
 
@@ -52,12 +52,17 @@ module DMark
 
       def parse(input : String, pos : Int32)
         prev_pos = pos
+        captures = {} of Symbol => String | Array(String)
 
         @ps.each do |p1|
           res = p1.parse(input, prev_pos)
           case res
           when ParseSuccess
             prev_pos = res.pos
+            res_captures = res.captures
+            if res_captures
+              captures = captures.merge(res_captures)
+            end
           when ParseFailure
             return ParseFailure.new(pos, res.message)
           else
@@ -65,7 +70,7 @@ module DMark
           end
         end
 
-        ParseSuccess.new(prev_pos, nil)
+        ParseSuccess.new(prev_pos, captures)
       end
     end
 
@@ -78,8 +83,8 @@ module DMark
         case res
         when ParseSuccess
           capture = input[pos...res.pos]
-          data = res.data || {} of Symbol => String | Array(String)
-          ParseSuccess.new(res.pos, data.merge({ @name => capture }))
+          captures = res.captures || {} of Symbol => String | Array(String)
+          ParseSuccess.new(res.pos, captures.merge({ @name => capture }))
         when ParseFailure
           res
         else
@@ -323,7 +328,9 @@ module DMark
     def self.lone_block
       DMark::P.sequence(
         [
-          DMark::P.annotate_error("expected identifier", identifier),
+          DMark::P.capture(:name,
+            DMark::P.annotate_error("expected identifier",
+              identifier)),
           DMark::P.char('.'),
           DMark::P.or(
             DMark::P.peek(DMark::P.char('\n')),

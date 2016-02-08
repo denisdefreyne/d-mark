@@ -1,7 +1,7 @@
 require "./spec_helper"
 
 class BeSuccessExpectation
-  def initialize(@pos : Int32, @data)
+  def initialize(@pos : Int32, @captures)
   end
 
   def match(value)
@@ -9,10 +9,10 @@ class BeSuccessExpectation
 
     case value
     when DMark::ParseSuccess
-      if @data == :__irrelevant__
+      if @captures == :__irrelevant__
         value.pos == @pos
       else
-        value.pos == @pos && value.data == @data
+        value.pos == @pos && value.captures == @captures
       end
     else
       false
@@ -20,14 +20,17 @@ class BeSuccessExpectation
   end
 
   def failure_message
-    if @data == :__irrelevant__
-      "expected: #{@target.inspect}\nto be a success with end pos #{@pos}"
+    if @captures == :__irrelevant__
+      "expected: success, pos = #{@pos}\n" \
+      "     got: #{@target.inspect}"
     else
-      "expected: #{@target.inspect}\nto be a success with end pos #{@pos} and data #{@data.inspect}"
+      "expected: success, pos = #{@pos}, captures = #{@captures.inspect}\n" \
+      "     got: #{@target.inspect}"
     end
   end
 
   def negative_failure_message
+    # FIXME
     "expected: #{@target.inspect}\n not to be a success"
   end
 end
@@ -60,8 +63,8 @@ def be_success(pos)
   BeSuccessExpectation.new(pos, :__irrelevant__)
 end
 
-def be_success(pos, data)
-  BeSuccessExpectation.new(pos, data)
+def be_success(pos, captures)
+  BeSuccessExpectation.new(pos, captures)
 end
 
 def be_failure(pos, message)
@@ -159,6 +162,20 @@ describe "DMark::P.sequence" do
   end
 end
 
+describe "DMark::P.sequence + captures" do
+  parser =
+    DMark::P.sequence(
+      [
+        DMark::P.capture(:foo, DMark::P.char('a')),
+        DMark::P.capture(:bar, DMark::P.char('b')),
+      ]
+    )
+
+  it "parses" do
+    parser.parse("ab", 0).should be_success(2, { foo: "a", bar: "b" })
+  end
+end
+
 describe "DMark::Px.identifier" do
   it "parses identifiers" do
     DMark::Px.identifier.parse("a", 0).should be_success(1)
@@ -245,14 +262,14 @@ describe "DMark::Px.lone_block" do
   parser = DMark::Px.lone_block
 
   it "parses" do
-    parser.parse("p.", 0).should be_success(2)
-    parser.parse("p.\n", 0).should be_success(2)
-    parser.parse("p. ", 0).should be_success(3)
-    parser.parse("p. \n", 0).should be_success(3)
-    parser.parse("p. hi", 0).should be_success(5)
-    parser.parse("p. hi\n", 0).should be_success(5)
-    parser.parse("p. hello %emph{world}", 0).should be_success(21)
-    parser.parse("p. hello %emph{world}\n", 0).should be_success(21)
+    parser.parse("p.", 0).should be_success(2, { name: "p" })
+    parser.parse("p.\n", 0).should be_success(2, { name: "p" })
+    parser.parse("p. ", 0).should be_success(3, { name: "p" })
+    parser.parse("p. \n", 0).should be_success(3, { name: "p" })
+    parser.parse("p. hi", 0).should be_success(5, { name: "p" })
+    parser.parse("p. hi\n", 0).should be_success(5, { name: "p" })
+    parser.parse("p. hello %emph{world}", 0).should be_success(21, { name: "p" })
+    parser.parse("p. hello %emph{world}\n", 0).should be_success(21, { name: "p" })
   end
 
   it "refuses to parse" do
