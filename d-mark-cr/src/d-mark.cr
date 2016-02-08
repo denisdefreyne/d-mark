@@ -64,7 +64,7 @@ module DMark
               captures = captures.merge(res_captures)
             end
           when ParseFailure
-            return ParseFailure.new(pos, res.message)
+            return ParseFailure.new(prev_pos, res.message)
           else
             raise "???"
           end
@@ -356,9 +356,10 @@ module DMark
       DMark::P.sequence(
         [
           DMark::P.capture(:name,
-            DMark::P.annotate_error("expected identifier",
+            DMark::P.annotate_error("expected identifier at beginning of block",
               identifier)),
-          DMark::P.char('.'),
+          DMark::P.annotate_error("expected period after identifier",
+            DMark::P.char('.')),
           DMark::P.or(
             DMark::P.peek(DMark::P.char('\n')),
             DMark::P.eof,
@@ -388,8 +389,11 @@ module DMark
       DMark::P.sequence(
         [
           DMark::P.char('%'),
-          identifier,
-          DMark::P.char('{'),
+          DMark::P.capture(:name,
+            DMark::P.annotate_error("expected identifier after %",
+              identifier)),
+          DMark::P.annotate_error("expected { after identifier",
+            DMark::P.char('{')),
           DMark::P.lazy { inline_content as DMark::Parsers::RepeatZeroOrMore },
           DMark::P.char('}'),
         ]

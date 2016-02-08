@@ -172,7 +172,8 @@ describe "DMark::P.sequence" do
 
   it "does not parse" do
     parser.parse("", 0).should be_failure(0, nil)
-    parser.parse("a", 0).should be_failure(0, nil)
+    parser.parse("a", 0).should be_failure(1, nil)
+    parser.parse("ax", 0).should be_failure(1, nil)
     parser.parse("b", 0).should be_failure(0, nil)
     parser.parse("ba", 0).should be_failure(0, nil)
   end
@@ -270,10 +271,10 @@ describe "DMark::Px.inline_element" do
   end
 
   it "does not parse non-inline elements" do
-    parser.parse("%", 0).should be_failure(0, nil)
-    parser.parse("%a", 0).should be_failure(0, nil)
-    parser.parse("%a{", 0).should be_failure(0, nil)
-    parser.parse("%a}", 0).should be_failure(0, nil)
+    parser.parse("%", 0).should be_failure(1, "expected identifier after %")
+    parser.parse("%a", 0).should be_failure(2, "expected { after identifier")
+    parser.parse("%a{", 0).should be_failure(3, nil)
+    parser.parse("%a}", 0).should be_failure(2, "expected { after identifier")
   end
 end
 
@@ -292,9 +293,9 @@ describe "DMark::Px.lone_block" do
   end
 
   it "refuses to parse" do
-    parser.parse("", 0).should be_failure(0, "expected identifier")
-    parser.parse(".", 0).should be_failure(0, "expected identifier")
-    parser.parse("p", 0).should be_failure(0, nil)
-    parser.parse("p/", 0).should be_failure(0, nil)
+    parser.parse("", 0).should be_failure(0, "expected identifier at beginning of block")
+    parser.parse(".", 0).should be_failure(0, "expected identifier at beginning of block")
+    parser.parse("p", 0).should be_failure(1, "expected period after identifier")
+    parser.parse("p/", 0).should be_failure(1, "expected period after identifier")
   end
 end
