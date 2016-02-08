@@ -69,6 +69,25 @@ module DMark
       end
     end
 
+    struct Capture
+      def initialize(@name, @p)
+      end
+
+      def parse(input : String, pos : Int32)
+        res = @p.parse(input, pos)
+        case res
+        when ParseSuccess
+          capture = input[pos...res.pos]
+          data = res.data || {} of Symbol => String | Array(String)
+          ParseSuccess.new(res.pos, data.merge({ @name => capture }))
+        when ParseFailure
+          res
+        else
+          raise "???"
+        end
+      end
+    end
+
     class Or
       def initialize(@p1, @p2)
       end
@@ -237,6 +256,10 @@ module DMark
 
     def self.peek(p1)
       Parsers::Peek.new(p1)
+    end
+
+    def self.capture(name, p1)
+      Parsers::Capture.new(name, p1)
     end
 
     def self.or(p1, p2)

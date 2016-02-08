@@ -1,7 +1,7 @@
 require "./spec_helper"
 
 class BeSuccessExpectation
-  def initialize(@pos : Int32)
+  def initialize(@pos : Int32, @data)
   end
 
   def match(value)
@@ -9,14 +9,22 @@ class BeSuccessExpectation
 
     case value
     when DMark::ParseSuccess
-      value.pos == @pos
+      if @data == :__irrelevant__
+        value.pos == @pos
+      else
+        value.pos == @pos && value.data == @data
+      end
     else
       false
     end
   end
 
   def failure_message
-    "expected: #{@target.inspect}\nto be a success with end pos #{@pos}"
+    if @data == :__irrelevant__
+      "expected: #{@target.inspect}\nto be a success with end pos #{@pos}"
+    else
+      "expected: #{@target.inspect}\nto be a success with end pos #{@pos} and data #{@data.inspect}"
+    end
   end
 
   def negative_failure_message
@@ -49,7 +57,11 @@ class BeFailureExpectation
 end
 
 def be_success(pos)
-  BeSuccessExpectation.new(pos)
+  BeSuccessExpectation.new(pos, :__irrelevant__)
+end
+
+def be_success(pos, data)
+  BeSuccessExpectation.new(pos, data)
 end
 
 def be_failure(pos, message)
@@ -64,6 +76,14 @@ describe "DMark::P.char" do
   it "does not parse non-chars" do
     DMark::P.char('a').parse("b", 0).should be_failure(0, nil)
     DMark::P.char('a').parse("", 0).should be_failure(0, nil)
+  end
+end
+
+describe "DMark::P.capture" do
+  parser = DMark::P.capture(:donkey, DMark::P.char('a'))
+
+  it "captures" do
+    parser.parse("a", 0).should be_success(1, { donkey: "a" })
   end
 end
 
