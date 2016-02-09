@@ -276,7 +276,7 @@ module DMark
         when ParseSuccess
           res
         when ParseFailure
-          ParseFailure.new(res.pos, @message)
+          ParseFailure.new(res.pos, @message, res.cut)
         else
           raise "???"
         end

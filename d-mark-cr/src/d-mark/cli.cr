@@ -6,12 +6,13 @@ result = DMark::Px.lone_block.parse(data, 0)
 case result
 when DMark::ParseSuccess
   puts "Success!"
+  puts result.captures.inspect
   exit 0
 when DMark::ParseFailure
   left = [0, result.pos - 37].max
   right = result.pos + 37
 
-  puts "\e[31mError:\e[0m #{result.message}"
+  puts "\e[31mError:\e[0m #{result.message || "parse error at position #{result.pos}"}"
   puts
   puts data.gsub("\n", "␤")[left..right]
   puts "\e[31m" + " " * result.pos + '↑' + "\e[0m"
