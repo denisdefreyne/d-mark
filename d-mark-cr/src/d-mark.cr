@@ -403,10 +403,11 @@ module DMark
               [
                 DMark::P.char(' '),
                 inline_content,
-                DMark::P.peek(
-                  DMark::P.or(
-                    DMark::P.char('\n'),
-                    DMark::P.eof)),
+                DMark::P.annotate_error("expected inline content after start of block",
+                  DMark::P.peek(
+                    DMark::P.or(
+                      DMark::P.char('\n'),
+                      DMark::P.eof))),
               ]
             )
           )

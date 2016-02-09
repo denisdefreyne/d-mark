@@ -295,5 +295,7 @@ describe "DMark::Px.lone_block" do
     parser.parse(".", 0).should be_failure(0, "expected identifier at beginning of block")
     parser.parse("p", 0).should be_failure(1, "expected period after identifier")
     parser.parse("p/", 0).should be_failure(1, "expected period after identifier")
+    parser.parse("p. }", 0).should be_failure(3, "expected inline content after start of block")
+    parser.parse("p. %", 0).should be_failure(4, "expected identifier after %")
   end
 end
