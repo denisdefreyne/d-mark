@@ -243,14 +243,14 @@ describe "DMark::Px.inline_content" do
   end
 
   it "does not parse non-inlines" do
-    parser.parse("abc%", 0).should be_failure(4, nil)
+    parser.parse("abc%", 0).should be_failure(4, "expected identifier after %")
 
-    parser.parse("%", 0).should be_failure(1, nil)
+    parser.parse("%", 0).should be_failure(1, "expected identifier after %")
 
-    parser.parse("donkey %foo", 0).should be_failure(11, nil)
-    parser.parse("donkey %foo ", 0).should be_failure(11, nil)
-    parser.parse("donkey %foo}", 0).should be_failure(11, nil)
-    parser.parse("donkey %foo\n", 0).should be_failure(11, nil)
+    parser.parse("donkey %foo", 0).should be_failure(11, "expected { after identifier")
+    parser.parse("donkey %foo ", 0).should be_failure(11, "expected { after identifier")
+    parser.parse("donkey %foo}", 0).should be_failure(11, "expected { after identifier")
+    parser.parse("donkey %foo\n", 0).should be_failure(11, "expected { after identifier")
   end
 end
 
