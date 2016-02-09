@@ -402,9 +402,7 @@ module DMark
             DMark::P.sequence(
               [
                 DMark::P.char(' '),
-                DMark::P.trace("start of inline content"),
                 inline_content,
-                DMark::P.trace("end of inline content"),
                 DMark::P.peek(
                   DMark::P.or(
                     DMark::P.char('\n'),
