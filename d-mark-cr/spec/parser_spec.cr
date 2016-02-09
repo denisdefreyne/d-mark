@@ -51,10 +51,17 @@ class BeFailureExpectation
   end
 
   def failure_message
-    "expected: #{@target.inspect}\nto be a failure with end pos #{@pos} and message #{@message.inspect}"
+    if @message
+      "expected: failure, pos = #{@pos}, message = #{@message}\n" \
+      "     got: #{@target.inspect}"
+    else
+      "expected: failure, pos = #{@pos}\n" \
+      "     got: #{@target.inspect}"
+    end
   end
 
   def negative_failure_message
+    # FIXME
     "expected: #{@target.inspect}\n not to be a failure"
   end
 end
@@ -137,25 +144,6 @@ describe "DMark::P.repeat_zero_or_more" do
     parser.parse("b", 0).should be_success(0)
     parser.parse("ab", 0).should be_success(1)
     parser.parse("aab", 0).should be_success(2)
-  end
-end
-
-describe "DMark::P.repeat_one_or_more" do
-  parser = DMark::P.repeat_one_or_more(DMark::P.char('a'))
-
-  it "parses repeats" do
-    parser.parse("a", 0).should be_success(1)
-    parser.parse("aa", 0).should be_success(2)
-  end
-
-  it "half-parses until repeat end" do
-    parser.parse("ab", 0).should be_success(1)
-    parser.parse("aab", 0).should be_success(2)
-  end
-
-  it "does not parse non-repeats" do
-    parser.parse("", 0).should be_failure(0, nil)
-    parser.parse("b", 0).should be_failure(0, nil)
   end
 end
 
@@ -244,15 +232,25 @@ describe "DMark::Px.inline_content" do
   end
 
   it "half-parses until inline ends" do
-    parser.parse("abc%", 0).should be_success(3)
     parser.parse("abc}", 0).should be_success(3)
     parser.parse("abc\n", 0).should be_success(3)
+
+    parser.parse("}", 0).should be_success(0)
+    parser.parse("\n", 0).should be_success(0)
+
+    parser.parse("donkey }", 0).should be_success(7)
+    parser.parse("donkey\n", 0).should be_success(6)
   end
 
   it "does not parse non-inlines" do
-    parser.parse("%", 0).should be_success(0)
-    parser.parse("}", 0).should be_success(0)
-    parser.parse("\n", 0).should be_success(0)
+    parser.parse("abc%", 0).should be_failure(4, nil)
+
+    parser.parse("%", 0).should be_failure(1, nil)
+
+    parser.parse("donkey %foo", 0).should be_failure(11, nil)
+    parser.parse("donkey %foo ", 0).should be_failure(11, nil)
+    parser.parse("donkey %foo}", 0).should be_failure(11, nil)
+    parser.parse("donkey %foo\n", 0).should be_failure(11, nil)
   end
 end
 

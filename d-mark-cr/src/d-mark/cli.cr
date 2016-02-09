@@ -1,6 +1,6 @@
 require "../d-mark"
 
-data = File.read(ARGV[0])
+data = File.read(ARGV[0]).strip
 
 result = DMark::Px.lone_block.parse(data, 0)
 case result
@@ -13,7 +13,7 @@ when DMark::ParseFailure
 
   puts "\e[31mError:\e[0m #{result.message}"
   puts
-  puts data.gsub("\n", "↲")[left..right]
+  puts data.gsub("\n", "␤")[left..right]
   puts "\e[31m" + " " * result.pos + '↑' + "\e[0m"
   exit 1
 end

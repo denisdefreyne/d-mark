@@ -2,16 +2,18 @@ module DMark
   struct ParseSuccess
     getter :pos
     getter :captures
+    getter :cut
 
-    def initialize(@pos : Int32, @captures)
+    def initialize(@pos : Int32, @captures, @cut = 0)
     end
   end
 
   struct ParseFailure
     getter :pos
     getter :message
+    getter :cut
 
-    def initialize(@pos : Int32, @message)
+    def initialize(@pos : Int32, @message, @cut = 0)
     end
   end
 
@@ -21,13 +23,18 @@ module DMark
       end
 
       def parse(input : String, pos : Int32)
-        if pos >= input.size
-          ParseFailure.new(pos, nil)
-        elsif input[pos] == @char
-          ParseSuccess.new(pos+1, nil)
-        else
-          ParseFailure.new(pos, nil)
-        end
+        res =
+          if pos >= input.size
+            ParseFailure.new(pos, nil)
+          elsif input[pos] == @char
+            ParseSuccess.new(pos+1, nil)
+          else
+            ParseFailure.new(pos, nil)
+          end
+
+        #puts "[#{self.class.name}] #{res.inspect}"
+
+        res
       end
     end
 
@@ -36,11 +43,24 @@ module DMark
       end
 
       def parse(input : String, pos : Int32)
-        if pos == input.size
-          ParseSuccess.new(pos, nil)
-        else
-          ParseFailure.new(pos, nil)
-        end
+        res =
+          if pos == input.size
+            ParseSuccess.new(pos, nil)
+          else
+            ParseFailure.new(pos, nil)
+          end
+
+        #puts "[#{self.class.name}] #{res.inspect}"
+
+        res
+      end
+    end
+
+    struct Cut
+      def parse(input : String, pos : Int32)
+        res = ParseSuccess.new(pos, nil, pos)
+        #puts "[#{self.class.name}] #{res.inspect}"
+        res
       end
     end
 
@@ -51,9 +71,12 @@ module DMark
       def parse(input : String, pos : Int32)
         prev_pos = pos
         captures = {} of Symbol => String | Array(String)
+        cut = 0
 
         @ps.each do |p1|
           res = p1.parse(input, prev_pos)
+          #puts "[#{self.class.name}] (tmp) #{res.inspect}"
+          cut = [cut, res.cut].max
           case res
           when ParseSuccess
             prev_pos = res.pos
@@ -62,13 +85,17 @@ module DMark
               captures = captures.merge(res_captures)
             end
           when ParseFailure
-            return ParseFailure.new(prev_pos, res.message)
+            res = ParseFailure.new(res.pos, res.message, cut)
+            #puts "[#{self.class.name}] (final) #{res.inspect}"
+            return res
           else
             raise "???"
           end
         end
 
-        ParseSuccess.new(prev_pos, captures)
+        res = ParseSuccess.new(prev_pos, captures, cut)
+        #puts "[#{self.class.name}] (final) #{res.inspect}"
+        res
       end
     end
 
@@ -78,6 +105,7 @@ module DMark
 
       def parse(input : String, pos : Int32)
         res = @p.parse(input, pos)
+        #puts "[#{self.class.name}] #{res.inspect}"
         case res
         when ParseSuccess
           capture = input[pos...res.pos]
@@ -96,13 +124,14 @@ module DMark
       end
 
       def parse(input : String, pos : Int32)
-        res_a = @p1.parse(input, pos)
-        case res_a
+        res = @p1.parse(input, pos)
+        #puts "[#{self.class.name}] #{res.inspect}"
+        case res
         when ParseSuccess
           # FIXME: handle captures
-          @p2.parse(input, res_a.pos)
+          @p2.parse(input, res.pos)
         when ParseFailure
-          res_a
+          res
         else
           raise "???"
         end
@@ -114,12 +143,17 @@ module DMark
       end
 
       def parse(input : String, pos : Int32)
-        res_a = @p1.parse(input, pos)
-        case res_a
+        res = @p1.parse(input, pos)
+        #puts "[#{self.class.name}] #{res.inspect}"
+        case res
         when ParseSuccess
-          res_a
+          res
         when ParseFailure
-          @p2.parse(input, pos)
+          if pos < res.cut
+            res
+          else
+            @p2.parse(input, pos)
+          end
         else
           raise "???"
         end
@@ -132,6 +166,7 @@ module DMark
 
       def parse(input : String, pos : Int32)
         res = @p.parse(input, pos)
+        #puts "[#{self.class.name}] #{res.inspect}"
         case res
         when ParseSuccess
           ParseSuccess.new(pos, nil)
@@ -148,13 +183,18 @@ module DMark
       end
 
       def parse(input : String, pos : Int32)
-        if pos >= input.size
-          ParseFailure.new(pos, nil)
-        elsif @range.includes?(input[pos])
-          ParseSuccess.new(pos+1, nil)
-        else
-          ParseFailure.new(pos, nil)
-        end
+        res =
+          if pos >= input.size
+            ParseFailure.new(pos, nil)
+          elsif @range.includes?(input[pos])
+            ParseSuccess.new(pos+1, nil)
+          else
+            ParseFailure.new(pos, nil)
+          end
+
+        #puts "[#{self.class.name}] #{res.inspect}"
+
+        res
       end
     end
 
@@ -163,13 +203,18 @@ module DMark
       end
 
       def parse(input : String, pos : Int32)
-        if pos >= input.size
-          ParseFailure.new(pos, nil)
-        elsif @disallowed_chars.includes?(input[pos])
-          ParseFailure.new(pos, nil)
-        else
-          ParseSuccess.new(pos+1, nil)
-        end
+        res =
+          if pos >= input.size
+            ParseFailure.new(pos, nil)
+          elsif @disallowed_chars.includes?(input[pos])
+            ParseFailure.new(pos, nil)
+          else
+            ParseSuccess.new(pos+1, nil)
+          end
+
+        #puts "[#{self.class.name}] #{res.inspect}"
+
+        res
       end
     end
 
@@ -179,49 +224,27 @@ module DMark
 
       def parse(input : String, pos : Int32)
         prev_pos = pos
+        cut = 0
 
         loop do
           res = @p.parse(input, prev_pos)
+          #puts "[#{self.class.name}] #{res.inspect}"
+          cut = [cut, res.cut].max
           case res
           when ParseSuccess
             prev_pos = res.pos
           when ParseFailure
-            break
+            if prev_pos < cut
+              return ParseFailure.new(res.pos, nil, cut)
+            else
+              break
+            end
           else
             raise "???"
           end
         end
 
-        ParseSuccess.new(prev_pos, nil)
-      end
-    end
-
-    class RepeatOneOrMore
-      def initialize(@p)
-      end
-
-      def parse(input : String, pos : Int32)
-        prev_pos = pos
-        message = nil
-
-        loop do
-          res = @p.parse(input, prev_pos)
-          case res
-          when ParseSuccess
-            prev_pos = res.pos
-          when ParseFailure
-            message = res.message
-            break
-          else
-            raise "???"
-          end
-        end
-
-        if prev_pos == pos
-          ParseFailure.new(pos, message)
-        else
-          ParseSuccess.new(prev_pos, nil)
-        end
+        ParseSuccess.new(prev_pos, nil, cut)
       end
     end
 
@@ -248,6 +271,7 @@ module DMark
 
       def parse(input : String, pos : Int32)
         res = @p.parse(input, pos)
+        #puts "[#{self.class.name}] #{res.inspect}"
         case res
         when ParseSuccess
           res
@@ -258,11 +282,25 @@ module DMark
         end
       end
     end
+
+    class Trace
+      def initialize(@message)
+      end
+
+      def parse(input : String, pos : Int32)
+        puts "[trace] @#{pos} #{@message}"
+        ParseSuccess.new(pos, nil)
+      end
+    end
   end
 
   ###############################################################################
 
   module P
+    def self.cut
+      Parsers::Cut.new
+    end
+
     def self.char(char)
       Parsers::Char.new(char)
     end
@@ -307,10 +345,6 @@ module DMark
       Parsers::RepeatZeroOrMore.new(p1)
     end
 
-    def self.repeat_one_or_more(p1)
-      Parsers::RepeatOneOrMore.new(p1)
-    end
-
     def self.all_but(chars)
       Parsers::AllBut.new(chars)
     end
@@ -321,6 +355,10 @@ module DMark
 
     def self.annotate_error(message, parser)
       Parsers::ErrorAnnotation.new(message, parser)
+    end
+
+    def self.trace(message)
+      Parsers::Trace.new(message)
     end
   end
 
@@ -364,14 +402,16 @@ module DMark
             DMark::P.sequence(
               [
                 DMark::P.char(' '),
+                # DMark::P.trace("start of inline content"),
                 inline_content,
+                # DMark::P.trace("end of inline content"),
+                DMark::P.peek(
+                  DMark::P.or(
+                    DMark::P.char('\n'),
+                    DMark::P.eof)),
               ]
             )
-          ),
-          DMark::P.peek(
-            DMark::P.or(
-              DMark::P.char('\n'),
-              DMark::P.eof)),
+          )
         ]
       )
     end
@@ -391,9 +431,12 @@ module DMark
       DMark::P.sequence(
         [
           DMark::P.char('%'),
+          DMark::P.cut,
           DMark::P.capture(:name,
             DMark::P.annotate_error("expected identifier after %",
               identifier)),
+          # DMark::P.trace("end of identifier"),
+          DMark::P.cut,
           DMark::P.annotate_error("expected { after identifier",
             DMark::P.char('{')),
           DMark::P.lazy { inline_content as DMark::Parsers::RepeatZeroOrMore },
