@@ -23,8 +23,11 @@ module DMark
       end
 
       def inspect(io)
-        # TODO: add attributes
         io << "Element(" << @name << ", "
+        if @attributes.any?
+          @attributes.inspect(io)
+          io << ", "
+        end
         @children.inspect(io)
         io << ")"
       end
@@ -32,7 +35,9 @@ module DMark
       def ==(other)
         case other
         when ElementNode
-          @name == other.name && @children == other.children
+          @name == other.name &&
+            @children == other.children &&
+            @attributes == other.attributes
         else
           false
         end
@@ -191,6 +196,13 @@ module DMark
 
     def read_single_block
       identifier = read_identifier
+
+      if peek_char == '['
+        attributes = read_attributes
+      else
+        attributes = {} of String => String
+      end
+
       read_char('.')
 
       case peek_char
@@ -198,11 +210,6 @@ module DMark
         advance
         ElementNode.new(identifier, {} of String => String, [] of ElementNode | String)
       else
-        if peek_char == '['
-          attributes = read_attributes
-        else
-          attributes = {} of String => String
-        end
         read_char(' ')
         content = read_inline_content
         read_end_of_inline_content
@@ -257,10 +264,57 @@ module DMark
     end
 
     def read_attributes
-      # TODO
       read_char('[')
-      read_char(']')
-      {} of String => String
+
+      res = {} of String => String
+
+      at_start = true
+      loop do
+        char = peek_char
+        case char
+        when ']'
+          advance
+          break
+        else
+          # TODO: support optional values
+
+          unless at_start
+            read_char(',')
+          end
+
+          key = read_attribute_key
+          read_char('=')
+          value = read_attribute_value
+
+          res[key] = value
+
+          at_start = false
+        end
+      end
+
+      res
+    end
+
+    def read_attribute_key
+      read_identifier
+    end
+
+    def read_attribute_value
+      res = MemoryIO.new
+
+      loop do
+        char = peek_char
+        # TODO: support escaping ]
+        case char
+        when '\0', '\n', ']', ','
+          break
+        else
+          advance
+          res << char
+        end
+      end
+
+      res.to_s
     end
 
     def read_inline_content
