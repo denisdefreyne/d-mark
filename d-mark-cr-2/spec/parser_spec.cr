@@ -134,15 +134,27 @@ describe "DMark::Parser#parser" do
     ]
   end
 
-  it "parses single attributes" do
+  it "parses single attribute" do
     parse("p[foo=bar]. hi").should eq [
       element("p", { "foo" => "bar" }, children ["hi"]),
+    ]
+  end
+
+  it "parses single value-less attribute" do
+    parse("p[foo]. hi").should eq [
+      element("p", { "foo" => "foo" }, children ["hi"]),
     ]
   end
 
   it "parses multiple attributes" do
     parse("p[foo=bar,qux=donkey]. hi").should eq [
       element("p", { "foo" => "bar", "qux" => "donkey" }, children ["hi"]),
+    ]
+  end
+
+  it "parses multiple value-less attributes" do
+    parse("p[foo,qux]. hi").should eq [
+      element("p", { "foo" => "foo", "qux" => "qux" }, children ["hi"]),
     ]
   end
 

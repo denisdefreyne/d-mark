@@ -276,15 +276,17 @@ module DMark
           advance
           break
         else
-          # TODO: support optional values
-
           unless at_start
             read_char(',')
           end
 
           key = read_attribute_key
-          read_char('=')
-          value = read_attribute_value
+          if peek_char == '='
+            read_char('=')
+            value = read_attribute_value
+          else
+            value = key
+          end
 
           res[key] = value
 
