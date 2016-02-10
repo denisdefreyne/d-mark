@@ -51,16 +51,16 @@ module DMark
 
     ##########
 
-    def peek_char
+    def peek_char(pos = @pos)
       if eof?
         '\0'
       else
-        @input[@pos]
+        @input[pos]
       end
     end
 
-    def eof?
-      @pos >= @input.size
+    def eof?(pos = @pos)
+      pos >= @input.size
     end
 
     def advance
@@ -70,7 +70,7 @@ module DMark
     def read_char(c)
       char = peek_char
       if char != c
-        raise ParserError.new(@pos, "expected #{c.inspect}, but got #{char.inspect}")
+        raise ParserError.new(@pos, "expected #{c.inspect}, but got #{char == '\0' ? "EOF" : char.inspect}")
       else
         advance
         char
@@ -79,8 +79,97 @@ module DMark
 
     ##########
 
-    def read_block_with_children
-      read_single_block
+    def read_block_with_children(indentation = 0)
+      res = read_single_block
+
+      until eof?
+        blank_pos = try_read_blank_line
+        if blank_pos
+          # FIXME: instead of ignoring the blank line, add it somewhere else
+          @pos = blank_pos
+        else
+          sub_indentation = detect_indentation
+          if sub_indentation >= indentation + 1
+            read_indentation(indentation + 1)
+            if try_read_block_start
+              res.children << read_block_with_children(indentation + 1)
+            else
+              res.children << read_until_eol_or_eof
+            end
+          else
+            break
+          end
+        end
+      end
+
+      res
+    end
+
+    def try_read_blank_line
+      pos = @pos
+
+      loop do
+        case peek_char(pos)
+        when ' '
+          pos += 1
+        when '\0'
+          break pos + 1
+        when '\n'
+          break pos + 1
+        else
+          break nil
+        end
+      end
+    end
+
+    def try_read_block_start
+      # FIXME: ugly and duplicated
+      if @input[@pos..-1] =~ /[a-z][a-z0-9\-]*\./
+        true
+      else
+        false
+      end
+    end
+
+    def detect_indentation
+      indentation_chars = 0
+      pos = @pos
+
+      loop do
+        case peek_char(pos)
+        when ' '
+          pos += 1
+          indentation_chars += 1
+        else
+          break
+        end
+      end
+
+      indentation_chars / 2
+    end
+
+    def read_until_eol_or_eof
+      res = MemoryIO.new
+
+      loop do
+        char = peek_char
+        case char
+        when '\n', '\0'
+          break
+        else
+          advance
+          res << char
+        end
+      end
+
+      res.to_s
+    end
+
+    def read_indentation(indentation)
+      indentation.times do
+        read_char(' ')
+        read_char(' ')
+      end
     end
 
     def read_single_block
@@ -89,6 +178,7 @@ module DMark
 
       case peek_char
       when '\0', '\n'
+        advance
         ElementNode.new(identifier, [] of ElementNode | String)
       else
         read_char(' ')
@@ -123,7 +213,7 @@ module DMark
         advance
         char
       else
-        raise ParserError.new(@pos, "expected an identifier after %, but got #{char.inspect}")
+        raise ParserError.new(@pos, "expected an identifier, but got #{char.inspect}")
       end
     end
 
