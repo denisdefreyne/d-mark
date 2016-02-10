@@ -170,6 +170,12 @@ describe "DMark::Parser#parser" do
     ]
   end
 
+  it "parses block start on next line properly" do
+    parse("p.\n  this is not a child block.").should eq [
+      element("p", empty_attrs, children ["this is not a child block."]),
+    ]
+  end
+
   it "does not parse" do
     expect_raises(DMark::Parser::ParserError) { parse("p") }
     expect_raises(DMark::Parser::ParserError) { parse("0") }
