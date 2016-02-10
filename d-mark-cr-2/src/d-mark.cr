@@ -91,6 +91,7 @@ module DMark
       end
 
       @pos += 1
+      @col_nr += 1
     end
 
     def read_char(c)
