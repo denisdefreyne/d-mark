@@ -2,7 +2,6 @@
 /libs/
 /.crystal/
 /.shards/
-/cli
-*.html
+/target
 /shard.lock
 /Gemfile.lock
