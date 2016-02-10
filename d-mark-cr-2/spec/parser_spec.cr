@@ -164,6 +164,12 @@ describe "DMark::Parser#parser" do
     ]
   end
 
+  it "parses attributes in empty block" do
+    parse("p[foo=bar].\n  hi").should eq [
+      element("p", { "foo" => "bar" }, children ["hi"]),
+    ]
+  end
+
   it "does not parse" do
     expect_raises(DMark::Parser::ParserError) { parse("p") }
     expect_raises(DMark::Parser::ParserError) { parse("0") }

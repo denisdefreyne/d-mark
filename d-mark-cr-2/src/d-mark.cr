@@ -221,7 +221,7 @@ module DMark
       case peek_char
       when '\0', '\n'
         advance
-        ElementNode.new(identifier, {} of String => String, [] of ElementNode | String)
+        ElementNode.new(identifier, attributes, [] of ElementNode | String)
       else
         read_char(' ')
         content = read_inline_content
