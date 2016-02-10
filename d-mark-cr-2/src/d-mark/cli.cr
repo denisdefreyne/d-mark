@@ -9,13 +9,12 @@ begin
 rescue e
   case e
   when DMark::Parser::ParserError
-    left = [0, parser.pos - 37].max
-    right = parser.pos + 37
+    line = data.lines[e.line_nr]
 
-    puts "\e[31mError:\e[0m #{e.message || "parse error at position #{parser.pos}"}"
+    puts "\e[31mError:\e[0m #{e.message}}"
     puts
-    puts data.gsub("\n", "␤")[left..right]
-    puts "\e[31m" + " " * parser.pos + '↑' + "\e[0m"
+    puts line
+    puts "\e[31m" + " " * e.col_nr + '↑' + "\e[0m"
     exit 1
   else
     raise e

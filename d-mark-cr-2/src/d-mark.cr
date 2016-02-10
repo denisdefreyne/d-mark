@@ -1,8 +1,11 @@
 module DMark
   class Parser
     class ParserError < Exception
-      def initialize(@pos, @msg)
-        super("parse error at #{@pos}: #{@msg}")
+      getter :line_nr
+      getter :col_nr
+
+      def initialize(@line_nr, @col_nr, @msg)
+        super("parse error at line #{@line_nr+1}, col #{@col_nr+1}: #{@msg}")
       end
     end
 
@@ -48,6 +51,9 @@ module DMark
 
     def initialize(@input)
       @pos = 0
+
+      @col_nr = 0
+      @line_nr = 0
     end
 
     def parse
@@ -79,13 +85,18 @@ module DMark
     end
 
     def advance
+      if !eof? && @input[@pos] == '\n'
+        @line_nr += 1
+        @col_nr = 0
+      end
+
       @pos += 1
     end
 
     def read_char(c)
       char = peek_char
       if char != c
-        raise ParserError.new(@pos, "expected #{c.inspect}, but got #{char == '\0' ? "EOF" : char.inspect}")
+        raise_parse_error("expected #{c.inspect}, but got #{char == '\0' ? "EOF" : char.inspect}")
       else
         advance
         char
@@ -102,6 +113,8 @@ module DMark
         blank_pos = try_read_blank_line
         if blank_pos
           @pos = blank_pos
+          @line_nr += 1
+          @col_nr = 0
           pending_blanks += 1
         else
           sub_indentation = detect_indentation
@@ -223,9 +236,9 @@ module DMark
       when '\n', '\0'
         advance
       when '}'
-        raise ParserError.new(@pos, "unexpected } -- try escaping it as \"%}\"")
+        raise_parse_error("unexpected } -- try escaping it as \"%}\"")
       else
-        raise ParserError.new(@pos, "unexpected content")
+        raise_parse_error("unexpected content")
       end
     end
 
@@ -242,7 +255,7 @@ module DMark
         advance
         char
       else
-        raise ParserError.new(@pos, "expected an identifier, but got #{char.inspect}")
+        raise_parse_error("expected an identifier, but got #{char.inspect}")
       end
     end
 
@@ -379,7 +392,7 @@ module DMark
         advance
         char.to_s
       when '\0', '\n'
-        raise ParserError.new(@pos, "expected something after %")
+        raise_parse_error("expected something after %")
       else
         read_inline_element
       end
@@ -397,6 +410,10 @@ module DMark
       read_char('}')
 
       ElementNode.new(name, attributes, contents)
+    end
+
+    def raise_parse_error(msg)
+      raise ParserError.new(@line_nr, @col_nr, msg)
     end
   end
 end
