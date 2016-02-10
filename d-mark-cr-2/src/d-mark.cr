@@ -156,7 +156,7 @@ module DMark
 
     def try_read_block_start
       # FIXME: ugly and duplicated
-      if @input[@pos..-1] =~ /\A[a-z][a-z0-9\-]*\./
+      if @input[@pos..-1] =~ /\A[a-z][a-z0-9\-]*\. /
         true
       else
         false

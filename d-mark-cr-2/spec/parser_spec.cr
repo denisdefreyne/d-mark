@@ -176,6 +176,12 @@ describe "DMark::Parser#parser" do
     ]
   end
 
+  it "parses block start on next line with spacey" do
+    parse("p.\n  foo.bar").should eq [
+      element("p", empty_attrs, children ["foo.bar"]),
+    ]
+  end
+
   it "does not parse" do
     expect_raises(DMark::Parser::ParserError) { parse("p") }
     expect_raises(DMark::Parser::ParserError) { parse("0") }
