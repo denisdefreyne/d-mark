@@ -83,7 +83,6 @@ module DMark
       res = read_single_block
 
       pending_blanks = 0
-      have_data_lines = false
       until eof?
         blank_pos = try_read_blank_line
         if blank_pos
@@ -96,8 +95,7 @@ module DMark
             if try_read_block_start
               res.children << read_block_with_children(indentation + 1)
             else
-              res.children << "\n" unless have_data_lines || res.children.empty?
-              have_data_lines = true
+              res.children << "\n" unless res.children.empty?
               pending_blanks.times { res.children << "\n" }
               pending_blanks = 0
               res.children << read_until_eol_or_eof
@@ -162,7 +160,6 @@ module DMark
         case char
         when '\n'
           advance
-          res << char
           break
         when '\0'
           break

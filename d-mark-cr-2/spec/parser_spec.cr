@@ -107,22 +107,20 @@ describe "DMark::Parser#parser" do
   end
 
   it "includes raw content from multiple lines" do
-    # FIXME: remove last trailing line break
     parse("p. foo\n    donkey\n  giraffe\n    zebra\n").should eq [
-      element("p", children ["foo", "\n", "  donkey\n", "giraffe\n", "  zebra\n"]),
+      element("p", children ["foo", "\n", "  donkey", "\n", "giraffe", "\n", "  zebra"]),
     ]
   end
 
   it "includes empty lines in raw content" do
-    # FIXME: remove last trailing line break
     parse("p. foo\n\n  donkey\n\n    giraffe\n").should eq [
-      element("p", children ["foo", "\n", "\n", "donkey\n", "\n", "  giraffe\n"]),
+      element("p", children ["foo", "\n", "\n", "donkey", "\n", "\n", "  giraffe"]),
     ]
   end
 
   it "does not include line break after empty block element and before data lines" do
     parse("p.\n  donkey\n").should eq [
-      element("p", children ["donkey\n"]),
+      element("p", children ["donkey"]),
     ]
   end
 
