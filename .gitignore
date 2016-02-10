@@ -1,4 +1,7 @@
-*.html
-*.gem
-Gemfile.lock
-/coverage/
+/doc/
+/libs/
+/.crystal/
+/.shards/
+/target
+/shard.lock
+/Gemfile.lock
