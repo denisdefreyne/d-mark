@@ -5,7 +5,7 @@ def parse(s)
 end
 
 def element(name, children)
-  DMark::Parser::ElementNode.new(name, children)
+  DMark::Parser::ElementNode.new(name, {} of String => String, children)
 end
 
 def empty_children

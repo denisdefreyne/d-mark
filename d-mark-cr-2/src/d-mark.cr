@@ -8,12 +8,22 @@ module DMark
 
     class ElementNode
       getter :name
+      getter :attributes
       getter :children
 
-      def initialize(@name, @children)
+      def initialize(@name, @attributes, @children)
+      end
+
+      def to_s(at_root = false)
+        if at_root
+          "#{@name}. #{@children.map { |c| c.to_s }.join}"
+        else
+          "%#{@name}{#{@children.map { |c| c.to_s }.join}}"
+        end
       end
 
       def inspect(io)
+        # TODO: add attributes
         io << "Element(" << @name << ", "
         @children.inspect(io)
         io << ")"
@@ -186,12 +196,17 @@ module DMark
       case peek_char
       when '\0', '\n'
         advance
-        ElementNode.new(identifier, [] of ElementNode | String)
+        ElementNode.new(identifier, {} of String => String, [] of ElementNode | String)
       else
+        if peek_char == '['
+          attributes = read_attributes
+        else
+          attributes = {} of String => String
+        end
         read_char(' ')
         content = read_inline_content
         read_end_of_inline_content
-        ElementNode.new(identifier, content)
+        ElementNode.new(identifier, attributes, content)
       end
     end
 
@@ -239,6 +254,13 @@ module DMark
       end
 
       res.to_s
+    end
+
+    def read_attributes
+      # TODO
+      read_char('[')
+      read_char(']')
+      {} of String => String
     end
 
     def read_inline_content
@@ -294,11 +316,16 @@ module DMark
 
     def read_inline_element
       name = read_identifier
+      if peek_char == '['
+        attributes = read_attributes
+      else
+        attributes = {} of String => String
+      end
       read_char('{')
       contents = read_inline_content
       read_char('}')
 
-      ElementNode.new(name, contents)
+      ElementNode.new(name, attributes, contents)
     end
   end
 end

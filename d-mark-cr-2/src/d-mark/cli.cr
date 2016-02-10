@@ -5,10 +5,8 @@ data = File.read(ARGV[0]).strip
 parser = DMark::Parser.new(data)
 begin
   result = parser.parse
-  puts "Success!"
-  p result
+  result.each { |r| puts r.to_s(true) ; puts }
 rescue e
-  puts "Failure!"
   case e
   when DMark::Parser::ParserError
     left = [0, parser.pos - 37].max
