@@ -120,6 +120,12 @@ describe "DMark::Parser#parser" do
     ]
   end
 
+  it "does not include line break after empty block element and before data lines" do
+    parse("p.\n  donkey\n").should eq [
+      element("p", children ["donkey\n"]),
+    ]
+  end
+
   it "does not parse" do
     expect_raises(DMark::Parser::ParserError) { parse("p") }
     expect_raises(DMark::Parser::ParserError) { parse("0") }

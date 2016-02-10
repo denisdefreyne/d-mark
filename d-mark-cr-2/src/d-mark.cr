@@ -96,7 +96,7 @@ module DMark
             if try_read_block_start
               res.children << read_block_with_children(indentation + 1)
             else
-              res.children << "\n" unless have_data_lines
+              res.children << "\n" unless have_data_lines || res.children.empty?
               have_data_lines = true
               pending_blanks.times { res.children << "\n" }
               pending_blanks = 0
