@@ -158,6 +158,12 @@ describe "DMark::Parser#parser" do
     ]
   end
 
+  it "parses escaped attributes" do
+    parse("p[foo=%],bar=%%,donkey=%,]. hi").should eq [
+      element("p", { "foo" => "]", "bar" => "%", "donkey" => "," }, children ["hi"]),
+    ]
+  end
+
   it "does not parse" do
     expect_raises(DMark::Parser::ParserError) { parse("p") }
     expect_raises(DMark::Parser::ParserError) { parse("0") }

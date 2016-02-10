@@ -304,15 +304,30 @@ module DMark
     def read_attribute_value
       res = MemoryIO.new
 
+      is_escaping = false
       loop do
         char = peek_char
-        # TODO: support escaping ]
-        case char
-        when '\0', '\n', ']', ','
-          break
+
+        if is_escaping
+          case char
+          when '\0', '\n'
+            break
+          else
+            advance
+            res << char
+            is_escaping = false
+          end
         else
-          advance
-          res << char
+          case char
+          when '\0', '\n', ']', ','
+            break
+          when '%'
+            advance
+            is_escaping = true
+          else
+            advance
+            res << char
+          end
         end
       end
 
