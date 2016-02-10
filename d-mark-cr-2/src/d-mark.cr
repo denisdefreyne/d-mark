@@ -156,13 +156,54 @@ module DMark
       end
     end
 
+    # FIXME: ugly and duplicated
     def try_read_block_start
-      # FIXME: ugly and duplicated
-      if @input[@pos..-1] =~ /\A[a-z][a-z0-9\-]*\. /
-        true
+      old_pos = @pos
+
+      success =
+        if a = try_read_identifier_head
+          if b = try_read_identifier_tail
+            if peek_char == '.'
+              advance
+              if peek_char == ' '
+                true
+              end
+            end
+          end
+        end
+
+      @pos = old_pos
+      success
+    end
+
+    # FIXME: ugly and duplicated
+    def try_read_identifier_head
+      char = peek_char
+      case char
+      when 'a'..'z'
+        advance
+        char
       else
-        false
+        nil
       end
+    end
+
+    # FIXME: ugly and duplicated
+    def try_read_identifier_tail
+      res = MemoryIO.new
+
+      loop do
+        char = peek_char
+        case char
+        when 'a'..'z', '-', '0'..'9'
+          advance
+          res << char
+        else
+          break
+        end
+      end
+
+      res.to_s
     end
 
     def detect_indentation
