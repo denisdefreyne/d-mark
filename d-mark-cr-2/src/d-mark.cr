@@ -51,6 +51,7 @@ module DMark
 
     def initialize(@input)
       @pos = 0
+      @input_chars = @input.chars
 
       @col_nr = 0
       @line_nr = 0
@@ -76,16 +77,16 @@ module DMark
       if eof?
         '\0'
       else
-        @input[pos]
+        @input_chars[pos]
       end
     end
 
     def eof?(pos = @pos)
-      pos >= @input.size
+      pos >= @input_chars.size
     end
 
     def advance
-      if !eof? && @input[@pos] == '\n'
+      if !eof? && @input_chars[@pos] == '\n'
         @line_nr += 1
         @col_nr = 0
       end
