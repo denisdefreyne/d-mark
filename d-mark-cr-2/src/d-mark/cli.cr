@@ -4,8 +4,11 @@ data = File.read(ARGV[0]).strip
 
 parser = DMark::Parser.new(data)
 begin
+  before = Time.now
   result = parser.parse
-  result.each { |r| puts r.to_s(true) ; puts }
+  after = Time.now
+  result.each { |r| puts r.inspect ; puts }
+  puts "parse duration: #{(after - before).to_f}s"
 rescue e
   case e
   when DMark::Parser::ParserError

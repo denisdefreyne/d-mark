@@ -17,14 +17,6 @@ module DMark
       def initialize(@name, @attributes, @children)
       end
 
-      def to_s(at_root = false)
-        if at_root
-          "#{@name}. #{@children.map { |c| c.to_s }.join}"
-        else
-          "%#{@name}{#{@children.map { |c| c.to_s }.join}}"
-        end
-      end
-
       def inspect(io)
         io << "Element(" << @name << ", "
         if @attributes.any?
