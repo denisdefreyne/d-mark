@@ -82,11 +82,12 @@ module DMark
     def read_block_with_children(indentation = 0)
       res = read_single_block
 
+      pending_blanks = 0
       until eof?
         blank_pos = try_read_blank_line
         if blank_pos
-          # FIXME: instead of ignoring the blank line, add it somewhere else
           @pos = blank_pos
+          pending_blanks += 1
         else
           sub_indentation = detect_indentation
           if sub_indentation >= indentation + 1
@@ -94,6 +95,8 @@ module DMark
             if try_read_block_start
               res.children << read_block_with_children(indentation + 1)
             else
+              pending_blanks.times { res.children << "\n" }
+              pending_blanks = 0
               res.children << read_until_eol_or_eof
             end
           else
@@ -154,7 +157,11 @@ module DMark
       loop do
         char = peek_char
         case char
-        when '\n', '\0'
+        when '\n'
+          advance
+          res << char
+          break
+        when '\0'
           break
         else
           advance
