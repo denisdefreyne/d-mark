@@ -1,0 +1,32 @@
+p. In Nanoc, every item (page or asset) and every layout has a unique %firstterm{identifier}: a string derived from the file’s path. A %firstterm{pattern} is an expression that is used to select items or layouts based on their identifier.
+
+h2. Identifiers
+
+p. Identifiers come in two types: the %emph{full} type, new in Nanoc 4, and the %emph{legacy} type, used in Nanoc 3.
+
+dl.
+  dt. full
+  dd. An identifier with the full type is the filename, with the path to the content directory removed. For example, the file %filename{/Users/denis/stoneship/content/about.md} will have the full identifier %identifier{/about.md}.
+
+  dt. legacy
+  dd. An identifier with the legacy type is the filename, with the path to the content directory removed, the extension removed, and a slash appended. For example, the file %filename{/Users/denis/stoneship/content/about.md} will have the legacy identifier %identifier{/about/}. This corresponds closely with paths in clean URLs.
+
+p. The following methods are useful for full identifiers:
+
+dl.
+  dt. %code{identifier.without_ext} → %class{String}
+  dd. identifier with the last extension removed
+
+  dt. %code{identifier.without_exts} → %class{String}
+  dd. identifier with all extensions removed
+
+  dt. %code{identifier.ext} → %class{String}
+  dd. the last extension of this identifier
+
+  dt. %code{identifier.exts} → %class{String}
+  dd. all extensions of this identifier
+
+  dt. %code{identifier + string} → %class{String}
+  dd. identifier with the given string appended
+
+p. Here are some examples:
