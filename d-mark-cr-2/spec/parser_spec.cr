@@ -96,29 +96,27 @@ describe "DMark::Parser#parser" do
 
   it "includes raw content" do
     parse("p. foo\n  donkey").should eq [
-      element("p", children ["foo", "donkey"]),
+      element("p", children ["foo", "\n", "donkey"]),
     ]
   end
 
   it "includes raw content including initial indentation" do
     parse("p. foo\n    donkey").should eq [
-      element("p", children ["foo", "  donkey"]),
+      element("p", children ["foo", "\n", "  donkey"]),
     ]
   end
 
   it "includes raw content from multiple lines" do
     # FIXME: remove last trailing line break
-    # FIXME: add line break after element content
     parse("p. foo\n    donkey\n  giraffe\n    zebra\n").should eq [
-      element("p", children ["foo", "  donkey\n", "giraffe\n", "  zebra\n"]),
+      element("p", children ["foo", "\n", "  donkey\n", "giraffe\n", "  zebra\n"]),
     ]
   end
 
   it "includes empty lines in raw content" do
     # FIXME: remove last trailing line break
-    # FIXME: add line break after element content
     parse("p. foo\n\n  donkey\n\n    giraffe\n").should eq [
-      element("p", children ["foo", "\n", "donkey\n", "\n", "  giraffe\n"]),
+      element("p", children ["foo", "\n", "\n", "donkey\n", "\n", "  giraffe\n"]),
     ]
   end
 
