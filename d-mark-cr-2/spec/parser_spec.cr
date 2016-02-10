@@ -34,6 +34,34 @@ describe "DMark::Parser#parser" do
     parse("p. hi %}").should eq [element("p", empty_attrs, children ["hi ", "}"])]
   end
 
+  it "parses escaped % in block" do
+    parse("p. %%").should eq [
+      element("p", empty_attrs, children ["%"]),
+    ]
+  end
+
+  it "parses escaped } in block" do
+    parse("p. %}").should eq [
+      element("p", empty_attrs, children ["}"]),
+    ]
+  end
+
+  it "parses escaped % in inline block" do
+    parse("p. %foo{%%}").should eq [
+      element("p", empty_attrs, children [
+        element("foo", empty_attrs, children ["%"]),
+      ])
+    ]
+  end
+
+  it "parses escaped } in inline block" do
+    parse("p. %foo{%}}").should eq [
+      element("p", empty_attrs, children [
+        element("foo", empty_attrs, children ["}"]),
+      ])
+    ]
+  end
+
   it "parses block with text and element content" do
     parse("p. hi %em{ho}").should eq [
       element("p", empty_attrs, children [
@@ -125,6 +153,14 @@ describe "DMark::Parser#parser" do
   it "does not include line break after empty block element and before data lines" do
     parse("p.\n  donkey\n").should eq [
       element("p", empty_attrs, children ["donkey"]),
+    ]
+  end
+
+  it "parses inline element in data lines" do
+    parse("p.\n  %emph{donkey}\n").should eq [
+      element("p", empty_attrs, children [
+        element("emph", empty_attrs, children ["donkey"]),
+      ]),
     ]
   end
 

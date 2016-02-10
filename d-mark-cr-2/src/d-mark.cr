@@ -128,7 +128,9 @@ module DMark
               res.children << "\n" unless res.children.empty?
               pending_blanks.times { res.children << "\n" }
               pending_blanks = 0
-              res.children << read_until_eol_or_eof
+
+              res.children.concat(read_inline_content)
+              read_end_of_inline_content
             end
           else
             break
