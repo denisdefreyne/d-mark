@@ -1,4 +1,8 @@
 source 'https://rubygems.org'
 
+gemspec
+
 gem 'guard'
-gem 'guard-shell'
+gem 'guard-rake'
+gem 'rspec'
+gem 'rubocop'

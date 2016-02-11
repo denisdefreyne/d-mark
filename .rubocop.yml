@@ -1,0 +1,51 @@
+# ----- CONFIGURED -----
+
+FileName:
+  Exclude:
+    - 'lib/d-mark.rb'
+
+
+
+# ----- DISABLED (opinionated) -----
+
+# We should embrace UTF-8, not avoid it. Since the Encoding cop is enabled,
+# there’s no point in enforcing ASCII comments.
+AsciiComments:
+  Enabled: false
+
+# It does not make sense to enforce everything to have documentation.
+Documentation:
+  Enabled: false
+
+
+
+# ----- DISABLED (metrics) -----
+
+# Cops for metrics are disabled because they should not cause tests to fail.
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/BlockNesting:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Metrics/LineLength:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/ModuleLength:
+  Enabled: false
+
+Metrics/ParameterLists:
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Enabled: false
