@@ -13,12 +13,12 @@ Gem::Specification.new do |s|
 
   s.files =
     Dir['[A-Z]*'] +
-    Dir['{bin,lib,tasks,spec,samples,scripts}/**/*'] +
+    Dir['{lib,spec,samples}/**/*'] +
     ['d-mark.gemspec']
   s.require_paths = ['lib']
 
-  s.rdoc_options     = ['--main', 'README.md']
-  s.extra_rdoc_files = ['LICENSE', 'README.md', 'NEWS.md']
+  s.rdoc_options     = ['--main', 'README.adoc']
+  s.extra_rdoc_files = ['LICENSE', 'README.adoc', 'NEWS.md']
 
   s.required_ruby_version = '>= 2.1.0'
 
