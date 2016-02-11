@@ -162,15 +162,12 @@ module DMark
       success =
         if try_read_identifier_head
           if try_read_identifier_tail
-            if peek_char == '.'
+            case peek_char
+            when '['
+              true
+            when '.'
               advance
-
-              case peek_char
-              when ' ', "\n", nil
-                true
-              else
-                false
-              end
+              [' ', "\n", nil].include?(peek_char)
             end
           end
         end

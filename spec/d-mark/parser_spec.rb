@@ -249,6 +249,17 @@ describe 'DMark::Parser#parser' do
     ]
   end
 
+  it 'parses child block with attributes' do
+    expect(parse("ul.\n  li[foo].")).to eq [
+      element(
+        'ul', {},
+        [
+          element('li', { 'foo' => 'foo' }, [])
+        ]
+      )
+    ]
+  end
+
   it 'does not parse' do
     expect { parse('p') }.to raise_error(DMark::Parser::ParserError)
     expect { parse('0') }.to raise_error(DMark::Parser::ParserError)
