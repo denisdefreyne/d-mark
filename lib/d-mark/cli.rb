@@ -1,4 +1,4 @@
-require "../d-mark"
+require_relative '../d-mark'
 
 data = File.read(ARGV[0]).strip
 
@@ -9,7 +9,7 @@ begin
   after = Time.now
   result.each { |r| puts r.inspect ; puts }
   puts "parse duration: #{(after - before).to_f}s"
-rescue e
+rescue => e
   case e
   when DMark::Parser::ParserError
     line = data.lines[e.line_nr]

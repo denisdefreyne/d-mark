@@ -1,30 +1,39 @@
 module DMark
   class Parser
-    class ParserError < Exception
-      getter :line_nr
-      getter :col_nr
+    class ParserError < StandardError
+      attr_reader :line_nr
+      attr_reader :col_nr
 
-      def initialize(@line_nr, @col_nr, @msg)
+      def initialize(line_nr, col_nr, msg)
+        @line_nr = line_nr
+        @col_nr = col_nr
+        @msg = msg
+
         super("parse error at line #{@line_nr+1}, col #{@col_nr+1}: #{@msg}")
       end
     end
 
     class ElementNode
-      getter :name
-      getter :attributes
-      getter :children
+      attr_reader :name
+      attr_reader :attributes
+      attr_reader :children
 
-      def initialize(@name, @attributes, @children)
+      def initialize(name, attributes, children)
+        @name = name
+        @attributes = attributes
+        @children = children
       end
 
-      def inspect(io)
+      def inspect
+        io = ''
         io << "Element(" << @name << ", "
         if @attributes.any?
-          @attributes.inspect(io)
+          io << @attributes.inspect
           io << ", "
         end
-        @children.inspect(io)
+        io << @children.inspect
         io << ")"
+        io
       end
 
       def ==(other)
@@ -39,18 +48,19 @@ module DMark
       end
     end
 
-    getter :pos
+    attr_reader :pos
 
-    def initialize(@input)
-      @pos = 0
+    def initialize(input)
+      @input = input
       @input_chars = @input.chars
 
+      @pos = 0
       @col_nr = 0
       @line_nr = 0
     end
 
     def parse
-      res = [] of ElementNode
+      res = []
 
       loop do
         if eof?
@@ -67,7 +77,7 @@ module DMark
 
     def peek_char(pos = @pos)
       if eof?
-        '\0'
+        nil
       else
         @input_chars[pos]
       end
@@ -78,7 +88,7 @@ module DMark
     end
 
     def advance
-      if !eof? && @input_chars[@pos] == '\n'
+      if !eof? && @input_chars[@pos] == "\n"
         @line_nr += 1
         @col_nr = 0
       end
@@ -90,7 +100,7 @@ module DMark
     def read_char(c)
       char = peek_char
       if char != c
-        raise_parse_error("expected #{c.inspect}, but got #{char == '\0' ? "EOF" : char.inspect}")
+        raise_parse_error("expected #{c.inspect}, but got #{char == nil ? "EOF" : char.inspect}")
       else
         advance
         char
@@ -140,9 +150,9 @@ module DMark
         case peek_char(pos)
         when ' '
           pos += 1
-        when '\0'
+        when nil
           break pos + 1
-        when '\n'
+        when "\n"
           break pos + 1
         else
           break nil
@@ -184,7 +194,7 @@ module DMark
 
     # FIXME: ugly and duplicated
     def try_read_identifier_tail
-      res = MemoryIO.new
+      res = ''
 
       loop do
         char = peek_char
@@ -218,15 +228,15 @@ module DMark
     end
 
     def read_until_eol_or_eof
-      res = MemoryIO.new
+      res = ''
 
       loop do
         char = peek_char
         case char
-        when '\n'
+        when "\n"
           advance
           break
-        when '\0'
+        when nil
           break
         else
           advance
@@ -250,15 +260,15 @@ module DMark
       if peek_char == '['
         attributes = read_attributes
       else
-        attributes = {} of String => String
+        attributes = {}
       end
 
       read_char('.')
 
       case peek_char
-      when '\0', '\n'
+      when nil, "\n"
         advance
-        ElementNode.new(identifier, attributes, [] of ElementNode | String)
+        ElementNode.new(identifier, attributes, [])
       else
         read_char(' ')
         content = read_inline_content
@@ -270,7 +280,7 @@ module DMark
     def read_end_of_inline_content
       char = peek_char
       case char
-      when '\n', '\0'
+      when "\n", nil
         advance
       when '}'
         raise_parse_error("unexpected } -- try escaping it as \"%}\"")
@@ -297,7 +307,7 @@ module DMark
     end
 
     def read_identifier_tail
-      res = MemoryIO.new
+      res = ''
 
       loop do
         char = peek_char
@@ -316,7 +326,7 @@ module DMark
     def read_attributes
       read_char('[')
 
-      res = {} of String => String
+      res = {}
 
       at_start = true
       loop do
@@ -352,7 +362,7 @@ module DMark
     end
 
     def read_attribute_value
-      res = MemoryIO.new
+      res = ''
 
       is_escaping = false
       loop do
@@ -360,7 +370,7 @@ module DMark
 
         if is_escaping
           case char
-          when '\0', '\n'
+          when nil, "\n"
             break
           else
             advance
@@ -369,7 +379,7 @@ module DMark
           end
         else
           case char
-          when '\0', '\n', ']', ','
+          when nil, "\n", ']', ','
             break
           when '%'
             advance
@@ -385,12 +395,12 @@ module DMark
     end
 
     def read_inline_content
-      res = [] of String | ElementNode
+      res = []
 
       loop do
         char = peek_char
         case char
-        when '\n', '\0'
+        when "\n", nil
           break
         when '}'
           break
@@ -406,12 +416,12 @@ module DMark
     end
 
     def read_string
-      res = MemoryIO.new
+      res = ''
 
       loop do
         char = peek_char
         case char
-        when '\0', '\n', '%', '}'
+        when nil, "\n", '%', '}'
           break
         else
           advance
@@ -428,7 +438,7 @@ module DMark
       when '%', '}'
         advance
         char.to_s
-      when '\0', '\n'
+      when nil, "\n"
         raise_parse_error("expected something after %")
       else
         read_inline_element
@@ -440,7 +450,7 @@ module DMark
       if peek_char == '['
         attributes = read_attributes
       else
-        attributes = {} of String => String
+        attributes = {}
       end
       read_char('{')
       contents = read_inline_content

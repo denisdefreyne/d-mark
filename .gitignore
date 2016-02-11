@@ -1,7 +1,1 @@
-/doc/
-/libs/
-/.crystal/
-/.shards/
-/target
-/shard.lock
-/Gemfile.lock
+Gemfile.lock
