@@ -187,3 +187,36 @@ para. A glob pattern that matches every item is %pattern[glob]{/**/*}.
 == Specification
 
 NOTE: To do: write this section.
+
+== Programmatic usage
+
+Handling a D★Mark file consists of two stages: parsing and translating.
+
+The parsing stage converts text into a list of nodes. Construct a parser with the tokens as input, and call `#run` to get the list of nodes.
+
+[source,ruby]
+----
+content = File.read(ARGV[0])
+nodes = DMark::Parser.new(content).run
+----
+
+The translating stage is not the responsibility of D★Mark. A translator is part of the domain of the source text, and D★Mark only deals with syntax rather than semantics. A translator will run over the tree and convert it into something else (usually another string). To do so, handle each node type (`DMark::ElementNode` or `String`). For example, the following translator will convert the tree into something that resembles XML:
+
+[source,ruby]
+----
+class MyXMLLikeTranslator < DMark::Translator
+  def handle(node)
+    case node
+    when String
+      out << node
+    when DMark::Parser::ElementNode
+      out << "<#{node.name}>"
+      handle_children(node)
+      out << "</#{node.name}>"
+    end
+  end
+end
+
+result = MyXMLLikeTranslator.new(nodes).run
+puts result
+----
