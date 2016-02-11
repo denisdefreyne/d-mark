@@ -222,6 +222,33 @@ describe 'DMark::Parser#parser' do
     ]
   end
 
+  it 'parses child block without content' do
+    expect(parse("ul.\n  li.\n    p. You can.")).to eq [
+      element(
+        'ul', {},
+        [
+          element(
+            'li', {},
+            [
+              element('p', {}, ['You can.'])
+            ]
+          )
+        ]
+      )
+    ]
+  end
+
+  it 'parses child block without content at end' do
+    expect(parse("ul.\n  li.")).to eq [
+      element(
+        'ul', {},
+        [
+          element('li', {}, [])
+        ]
+      )
+    ]
+  end
+
   it 'does not parse' do
     expect { parse('p') }.to raise_error(DMark::Parser::ParserError)
     expect { parse('0') }.to raise_error(DMark::Parser::ParserError)

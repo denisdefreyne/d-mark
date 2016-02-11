@@ -164,7 +164,13 @@ module DMark
           if try_read_identifier_tail
             if peek_char == '.'
               advance
-              peek_char == ' '
+
+              case peek_char
+              when ' ', "\n", nil
+                true
+              else
+                false
+              end
             end
           end
         end
