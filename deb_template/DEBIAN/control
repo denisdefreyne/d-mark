@@ -1,0 +1,8 @@
+Package: d-mark
+Version: 0.1-1
+Section: base
+Priority: optional
+Architecture: i386
+Maintainer: Denis Defreyne <denis@stoneship.org>
+Description: D*Mark
+ A semantic markup language designed for prose
