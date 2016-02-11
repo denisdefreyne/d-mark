@@ -9,7 +9,7 @@ module DMark
         @col_nr = col_nr
         @msg = msg
 
-        super("parse error at line #{@line_nr+1}, col #{@col_nr+1}: #{@msg}")
+        super("parse error at line #{@line_nr + 1}, col #{@col_nr + 1}: #{@msg}")
       end
     end
 
@@ -26,13 +26,13 @@ module DMark
 
       def inspect
         io = ''
-        io << "Element(" << @name << ", "
+        io << 'Element(' << @name << ', '
         if @attributes.any?
           io << @attributes.inspect
-          io << ", "
+          io << ', '
         end
         io << @children.inspect
-        io << ")"
+        io << ')'
         io
       end
 
@@ -63,11 +63,8 @@ module DMark
       res = []
 
       loop do
-        if eof?
-          break
-        else
-          res << read_block_with_children
-        end
+        break if eof?
+        res << read_block_with_children
       end
 
       res
@@ -100,7 +97,7 @@ module DMark
     def read_char(c)
       char = peek_char
       if char != c
-        raise_parse_error("expected #{c.inspect}, but got #{char == nil ? "EOF" : char.inspect}")
+        raise_parse_error("expected #{c.inspect}, but got #{char.nil? ? 'EOF' : char.inspect}")
       else
         advance
         char
@@ -122,20 +119,18 @@ module DMark
           pending_blanks += 1
         else
           sub_indentation = detect_indentation
-          if sub_indentation >= indentation + 1
-            read_indentation(indentation + 1)
-            if try_read_block_start
-              res.children << read_block_with_children(indentation + 1)
-            else
-              res.children << "\n" unless res.children.empty?
-              pending_blanks.times { res.children << "\n" }
-              pending_blanks = 0
+          break if sub_indentation < indentation + 1
 
-              res.children.concat(read_inline_content)
-              read_end_of_inline_content
-            end
+          read_indentation(indentation + 1)
+          if try_read_block_start
+            res.children << read_block_with_children(indentation + 1)
           else
-            break
+            res.children << "\n" unless res.children.empty?
+            pending_blanks.times { res.children << "\n" }
+            pending_blanks = 0
+
+            res.children.concat(read_inline_content)
+            read_end_of_inline_content
           end
         end
       end
@@ -165,13 +160,11 @@ module DMark
       old_pos = @pos
 
       success =
-        if a = try_read_identifier_head
-          if b = try_read_identifier_tail
+        if try_read_identifier_head
+          if try_read_identifier_tail
             if peek_char == '.'
               advance
-              if peek_char == ' '
-                true
-              end
+              peek_char == ' '
             end
           end
         end
@@ -187,8 +180,6 @@ module DMark
       when 'a'..'z'
         advance
         char
-      else
-        nil
       end
     end
 
@@ -257,11 +248,12 @@ module DMark
     def read_single_block
       identifier = read_identifier
 
-      if peek_char == '['
-        attributes = read_attributes
-      else
-        attributes = {}
-      end
+      attributes =
+        if peek_char == '['
+          read_attributes
+        else
+          {}
+        end
 
       read_char('.')
 
@@ -283,9 +275,9 @@ module DMark
       when "\n", nil
         advance
       when '}'
-        raise_parse_error("unexpected } -- try escaping it as \"%}\"")
+        raise_parse_error('unexpected } -- try escaping it as "%}"')
       else
-        raise_parse_error("unexpected content")
+        raise_parse_error('unexpected content')
       end
     end
 
@@ -336,9 +328,7 @@ module DMark
           advance
           break
         else
-          unless at_start
-            read_char(',')
-          end
+          read_char(',') unless at_start
 
           key = read_attribute_key
           if peek_char == '='
@@ -447,11 +437,12 @@ module DMark
 
     def read_inline_element
       name = read_identifier
-      if peek_char == '['
-        attributes = read_attributes
-      else
-        attributes = {}
-      end
+      attributes =
+        if peek_char == '['
+          read_attributes
+        else
+          {}
+        end
       read_char('{')
       contents = read_inline_content
       read_char('}')
