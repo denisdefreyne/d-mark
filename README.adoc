@@ -23,15 +23,11 @@ para. A glob pattern that matches every item is %pattern{/**/*}. A glob pattern 
 
 == Samples
 
-The `samples/` directory contains some sample D★Mark files. They can be parsed by `d-mark` executable by executing `target/d-mark`, passing in the name of the file. The AST will be printed to standard output. For example:
+The `samples/` directory contains some sample D★Mark files. They can be processed by invoking the appropriate script with the same filename. For example:
 
 ....
-% make
-mkdir -p target
-crystal build --release -o target/d-mark src/d-mark/cli.cr
-
-% ./target/d-mark samples/trivial.dmark
-Element(p, ["I’m a ", Element(em, ["trivial"]), " example!"])
+% bundle exec ruby samples/trivial.rb
+<p>I’m a <em>trivial</em> example!</p>
 ....
 
 == Structure of a D★Mark document
