@@ -232,26 +232,6 @@ module DMark
       indentation_chars / 2
     end
 
-    def read_until_eol_or_eof
-      res = ''
-
-      loop do
-        char = peek_char
-        case char
-        when "\n"
-          advance
-          break
-        when nil
-          break
-        else
-          advance
-          res << char
-        end
-      end
-
-      res.to_s
-    end
-
     def read_indentation(indentation)
       indentation.times do
         read_char(' ')
