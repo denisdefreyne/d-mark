@@ -1,3 +1,3 @@
 module DMark
-  VERSION = '0.2.0'.freeze
+  VERSION = '1.0.0a1'.freeze
 end
