@@ -281,6 +281,16 @@ describe 'DMark::Parser#parser' do
       .to raise_error(DMark::Parser::ParserError, 'parse error at line 1, col 18: unexpected line break in attribute value')
   end
 
+  it 'does not parse escaped attribute values ending with an end-of-file' do
+    expect { parse('p. %ref[url=hello%') }
+      .to raise_error(DMark::Parser::ParserError, 'parse error at line 1, col 19: unexpected file end in attribute value')
+  end
+
+  it 'does not parse escaped attribute values ending with a line break' do
+    expect { parse("p. %ref[url=hello%\n") }
+      .to raise_error(DMark::Parser::ParserError, 'parse error at line 1, col 19: unexpected line break in attribute value')
+  end
+
   it 'does not parse' do
     expect { parse('p') }.to raise_error(DMark::Parser::ParserError)
     expect { parse('0') }.to raise_error(DMark::Parser::ParserError)
