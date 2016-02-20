@@ -373,24 +373,29 @@ module DMark
         char = peek_char
 
         if is_escaping
-          # FIXME: "\n" is impossible in attribute
           case char
-          when nil, "\n"
-            break
           when '%', ']', ','
             advance
             res << char
             is_escaping = false
+          when nil
+            raise_parse_error('unexpected file end in attribute value')
+          when "\n"
+            raise_parse_error('unexpected line break in attribute value')
           else
-            raise_parse_error("expected % or ] after %, but got #{char.inspect}")
+            raise_parse_error(%(expected "%", "," or "]" after "%", but got #{char.inspect}))
           end
         else
           case char
-          when nil, "\n", ']', ','
+          when ']', ','
             break
           when '%'
             advance
             is_escaping = true
+          when nil
+            raise_parse_error('unexpected file end in attribute value')
+          when "\n"
+            raise_parse_error('unexpected line break in attribute value')
           else
             advance
             res << char

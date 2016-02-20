@@ -267,7 +267,18 @@ describe 'DMark::Parser#parser' do
   end
 
   it 'does not parse percent escapes' do
-    expect { parse('p. %ref[url=https://github.com/pulls?q=is%3Aopen+user%3Ananoc]{eek}') }.to raise_error(DMark::Parser::ParserError)
+    expect { parse('p. %ref[url=https://github.com/pulls?q=is%3Aopen+user%3Ananoc]{eek}') }
+      .to raise_error(DMark::Parser::ParserError, 'parse error at line 1, col 43: expected "%", "," or "]" after "%", but got "3"')
+  end
+
+  it 'does not parse attribute values ending with an end-of-file' do
+    expect { parse('p. %ref[url=hello') }
+      .to raise_error(DMark::Parser::ParserError, 'parse error at line 1, col 18: unexpected file end in attribute value')
+  end
+
+  it 'does not parse attribute values ending with a line break' do
+    expect { parse("p. %ref[url=hello\n") }
+      .to raise_error(DMark::Parser::ParserError, 'parse error at line 1, col 18: unexpected line break in attribute value')
   end
 
   it 'does not parse' do
