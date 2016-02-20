@@ -266,6 +266,10 @@ describe 'DMark::Parser#parser' do
     ]
   end
 
+  it 'does not parse percent escapes' do
+    expect { parse('p. %ref[url=https://github.com/pulls?q=is%3Aopen+user%3Ananoc]{eek}') }.to raise_error(DMark::Parser::ParserError)
+  end
+
   it 'does not parse' do
     expect { parse('p') }.to raise_error(DMark::Parser::ParserError)
     expect { parse('0') }.to raise_error(DMark::Parser::ParserError)

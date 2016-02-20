@@ -373,13 +373,16 @@ module DMark
         char = peek_char
 
         if is_escaping
+          # FIXME: "\n" is impossible in attribute
           case char
           when nil, "\n"
             break
-          else
+          when '%', ']', ','
             advance
             res << char
             is_escaping = false
+          else
+            raise_parse_error("expected % or ] after %, but got #{char.inspect}")
           end
         else
           case char
