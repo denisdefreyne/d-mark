@@ -4,6 +4,8 @@ rvm:
   - 2.2.2
   - 2.3.0
   - ruby-head
+env:
+  - CODECOV_TOKEN=58607149-bb8e-486c-baa7-165a0a76a0d0
 branches:
   only:
     - "master"
