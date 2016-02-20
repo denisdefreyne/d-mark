@@ -5,7 +5,7 @@ class MyHTMLTranslator < DMark::Translator
     case node
     when String
       out << node
-    when DMark::Parser::ElementNode
+    when DMark::ElementNode
       out << "<#{node.name}>"
       handle_children(node)
       out << "</#{node.name}>"

@@ -3,7 +3,7 @@ def parse(s)
 end
 
 def element(name, attributes, children)
-  DMark::Parser::ElementNode.new(name, attributes, children)
+  DMark::ElementNode.new(name, attributes, children)
 end
 
 describe 'DMark::Parser#parser' do
