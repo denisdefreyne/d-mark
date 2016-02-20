@@ -172,14 +172,14 @@ module DMark
 
       success =
         if try_read_identifier_head
-          if try_read_identifier_tail
-            case peek_char
-            when '['
-              true
-            when '.'
-              advance
-              [' ', "\n", nil].include?(peek_char)
-            end
+          read_identifier_tail
+
+          case peek_char
+          when '['
+            true
+          when '.'
+            advance
+            [' ', "\n", nil].include?(peek_char)
           end
         end
 
@@ -195,24 +195,6 @@ module DMark
         advance
         char
       end
-    end
-
-    # FIXME: ugly and duplicated
-    def try_read_identifier_tail
-      res = ''
-
-      loop do
-        char = peek_char
-        case char
-        when 'a'..'z', '-', '0'..'9'
-          advance
-          res << char
-        else
-          break
-        end
-      end
-
-      res.to_s
     end
 
     def detect_indentation
