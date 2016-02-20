@@ -260,6 +260,12 @@ describe 'DMark::Parser#parser' do
     ]
   end
 
+  it 'parses document starting with blank lines' do
+    expect(parse("  \n \np. Hi!")).to eq [
+      element('p', {}, ['Hi!'])
+    ]
+  end
+
   it 'does not parse' do
     expect { parse('p') }.to raise_error(DMark::Parser::ParserError)
     expect { parse('0') }.to raise_error(DMark::Parser::ParserError)

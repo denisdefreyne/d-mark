@@ -64,6 +64,17 @@ module DMark
 
       loop do
         break if eof?
+
+        blank_pos = try_read_blank_line
+        break unless blank_pos
+
+        @pos = blank_pos
+        @line_nr += 1
+        @col_nr = 0
+      end
+
+      loop do
+        break if eof?
         res << read_block_with_children
       end
 
