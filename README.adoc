@@ -100,15 +100,6 @@ listing[lang=ruby].
 
 An element in block form can always be expressed in inline form and vice versa, with the exception of a top-level element, which always needs to be in block form.
 
-The characters `}`, `%` need to be escaped when used in plain text. To escape a character, prefix it with `%`. Thus, `%%` is the escaped form of `%`, and `%}` is the escaped form of `}`. Inside attributes, the characters `]` and `,` also need to be escaped; the same escaping method applies. For example:
-
-[source]
-----
-para[kind=joke%, ha ha]. They say 20%% of all statistics are made up.
-----
-
-This is a `para` element with the `kind` set to `joke, ha ha`, and the content “They say 20% of all statistics are made up.”
-
 === Attributes
 
 Both block and inline elements can also have attributes. Attributes are enclosed in square brackets after the element name, as a comma-separated list of key-value pairs separated by an equal sign. The value part, along with the equal sign, can be omitted, in which case the value will be equal to the key name.
@@ -122,6 +113,28 @@ For example:
 * `h2[id=donkey]. All about donkeys` is a block-level `h2` element with the `id` attribute set to `donkey`.
 
 * `p[print]. This is a paragraph that only readers of the book will see.` is a block-level `para` element with the `print` attribute set to `print`.
+
+An attribute key starts with a lowercase letter, followed by zero or more lowercase letters, digits or a dash. For instance, `lang` and `only-for` are valid attribute keys, while `OnlyFor` and `data_type` are not.
+
+NOTE: The restrictions on what can be an attribute key will likely be relaxed before the 1.0 release.
+
+=== Escaping
+
+The following characters need to be escaped:
+
+* `}`
+* `%`
+* `,` (only within attribute values)
+* `]` (only within attribute values)
+
+To escape a character, prefix it with `%`. Thus, `%%` is the escaped form of `%`, and `%}` is the escaped form of `}`. For example:
+
+[source]
+----
+para[kind=joke%, ha ha]. They say 20%% of all statistics are made up.
+----
+
+This is a `para` element with the `kind` set to `joke, ha ha`, and the content “They say 20% of all statistics are made up.”
 
 == Comparison with other languages
 
