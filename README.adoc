@@ -68,6 +68,10 @@ Inline form::
 para. I am a paragraph with an %emph{amazing} inline element.
 ----
 
+An element name starts with a lowercase letter, followed by zero or more lowercase letters, digits or a dash. For instance, `emph`, `h2`, and `section-header` are valid element names, while `SectionHeader`, `2` and `input_data` are not.
+
+NOTE: The restrictions on what can be an element name will likely be relaxed before the 1.0 release.
+
 At the top level, D★Mark documents consists _only_ of elements in block form.
 
 Elements in block form can be nested. To do so, indent the nested block two spaces deeper than the enclosing block. For example, the following defines a `list` element with three `item` elements inside it:
