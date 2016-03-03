@@ -139,12 +139,17 @@ module DMark
         if try_read_identifier_head
           read_identifier_tail
 
+          if peek_char == '['
+            new_pos = try_read_attributes
+            new_pos && @pos = new_pos
+          end
+
           case peek_char
-          when '['
-            true
           when '.'
             advance
             [' ', "\n", nil].include?(peek_char)
+          when '%'
+            false
           end
         end
 
@@ -160,6 +165,20 @@ module DMark
         advance
         char
       end
+    end
+
+    # FIXME: ugly and duplicated
+    def try_read_attributes
+      old_pos = @pos
+
+      begin
+        read_attributes
+        @pos
+      rescue
+        nil
+      end
+    ensure
+      @pos = old_pos
     end
 
     def detect_indentation
@@ -374,7 +393,7 @@ module DMark
     def read_percent_body
       char = peek_char
       case char
-      when '%', '}'
+      when '%', '}', '.'
         advance
         char.to_s
       when nil, "\n"

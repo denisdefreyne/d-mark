@@ -266,6 +266,18 @@ describe 'DMark::Parser#parser' do
     ]
   end
 
+  it 'parses escaped indented line' do
+    expect(parse("listing.\n  h1%. Foo\n")).to eq [
+      element('listing', {}, ['h1', '.', ' Foo'])
+    ]
+  end
+
+  it 'parses escaped indented line with attributes' do
+    expect(parse("listing.\n  h1[donkey]%. Foo\n")).to eq [
+      element('listing', {}, ['h1[donkey]', '.', ' Foo'])
+    ]
+  end
+
   it 'does not parse percent escapes' do
     expect { parse('p. %ref[url=https://github.com/pulls?q=is%3Aopen+user%3Ananoc]{eek}') }
       .to raise_error(DMark::Parser::ParserError, 'parse error at line 1, col 43: expected "%", "," or "]" after "%", but got "3"')
