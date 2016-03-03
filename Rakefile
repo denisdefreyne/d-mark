@@ -12,3 +12,7 @@ RuboCop::RakeTask.new(:rubocop) do |task|
 end
 
 task default: [:spec, :rubocop]
+
+rule 'doc.html' => 'doc.dmark' do |t|
+  sh "bundle exec ruby samples/doc2html.rb #{t.source} #{t.name}"
+end
