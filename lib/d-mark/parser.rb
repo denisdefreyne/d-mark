@@ -133,52 +133,12 @@ module DMark
 
     # FIXME: ugly and duplicated
     def try_read_block_start
-      old_pos = @pos
-
-      success =
-        if try_read_identifier_head
-          read_identifier_tail
-
-          if peek_char == '['
-            new_pos = try_read_attributes
-            new_pos && @pos = new_pos
-          end
-
-          case peek_char
-          when '.'
-            advance
-            [' ', "\n", nil].include?(peek_char)
-          when '%'
-            false
-          end
-        end
-
-      @pos = old_pos
-      success
-    end
-
-    # FIXME: ugly and duplicated
-    def try_read_identifier_head
-      char = peek_char
-      case char
-      when 'a'..'z'
-        advance
-        char
+      if peek_char == '#'
+        next_char = peek_char(@pos + 1)
+        ('a'..'z').cover?(next_char)
+      else
+        false
       end
-    end
-
-    # FIXME: ugly and duplicated
-    def try_read_attributes
-      old_pos = @pos
-
-      begin
-        read_attributes
-        @pos
-      rescue
-        nil
-      end
-    ensure
-      @pos = old_pos
     end
 
     def detect_indentation
@@ -206,6 +166,7 @@ module DMark
     end
 
     def read_single_block
+      read_char('#')
       identifier = read_identifier
 
       attributes =
@@ -214,8 +175,6 @@ module DMark
         else
           {}
         end
-
-      read_char('.')
 
       case peek_char
       when nil, "\n"
@@ -393,7 +352,7 @@ module DMark
     def read_percent_body
       char = peek_char
       case char
-      when '%', '}', '.'
+      when '%', '}', '#'
         advance
         char.to_s
       when nil, "\n"

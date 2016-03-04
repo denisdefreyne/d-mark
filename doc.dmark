@@ -1,69 +1,69 @@
-h1. D★Mark
+#h1 D★Mark
 
-p. %firstterm{D★Mark} is a language for marking up prose. It facilitates writing semantically meaningful text, without limiting itself to the semantics provided by HTML or Markdown. If you’re a technical writer looking for a flexible markup language, D★Mark might be a good fit.
+#p %firstterm{D★Mark} is a language for marking up prose. It facilitates writing semantically meaningful text, without limiting itself to the semantics provided by HTML or Markdown. If you’re a technical writer looking for a flexible markup language, D★Mark might be a good fit.
 
-p. Here’s an example of D★Mark:
+#p Here’s an example of D★Mark:
 
-listing.
-  para%. This a paragraph; an element in block form containing some text.
+#listing
+  %#para This a paragraph; an element in block form containing some text.
 
-  note[only=web]%. This is a note that will %%emph{only%} show up on web.
+  %#note[only=web] This is a note that will %%emph{only%} show up on web.
 
-p. For development details on D★Mark, see %link[target=https://github.com/ddfreyne/d-mark]{its GitHub repository}. Please %link[target=https://github.com/ddfreyne/d-mark/issues/new]{open an issue} for any problems that you find.
+#p For development details on D★Mark, see %link[target=https://github.com/ddfreyne/d-mark]{its GitHub repository}. Please %link[target=https://github.com/ddfreyne/d-mark/issues/new]{open an issue} for any problems that you find.
 
-h2. Goals
+#h2 Goals
 
-dl.
-  dt. Be extensible
-  dd. Define only the syntax of the markup language, and don’t bother with semantics. Do not define a vocabulary.
+#dl
+  #dt Be extensible
+  #dd Define only the syntax of the markup language, and don’t bother with semantics. Do not define a vocabulary.
 
-  dt. Be simple
-  dd. Be easy to write, easy to read, and easy to parse. Be unambiguous. Be easy to syntax highlight.
+  #dt Be simple
+  #dd Be easy to write, easy to read, and easy to parse. Be unambiguous. Be easy to syntax highlight.
 
-  dt. Be compact
-  dd. Introduce as little extra syntax as possible.
+  #dt Be compact
+  #dd Introduce as little extra syntax as possible.
 
-h2. Syntax
+#h2 Syntax
 
-p. D★Mark knows two constructs: %firstterm{elements} and %firstterm{text}. An element has a name, attributes, and wraps elements and/or text in order to give them meaning. Text is just that—text.
+#p D★Mark knows two constructs: %firstterm{elements} and %firstterm{text}. An element has a name, attributes, and wraps elements and/or text in order to give them meaning. Text is just that—text.
 
-p. An element in D★Mark can take two forms %firstterm{block-level} and %firstterm{inline}:
+#p An element in D★Mark can take two forms %firstterm{block-level} and %firstterm{inline}:
 
-dl.
-  dt. Block form
-  dd.
-    p. An element in block form consists of the name of the element, a period, optionally attributes enclosed in rectangular brackets, a space character, and finally the content. For example:
+#dl
+  #dt Block form
+  #dd
+    #p An element in block form consists of the %code{#} symbol, the name of the element, optionally attributes enclosed in rectangular brackets, a space character, and finally the content. For example:
 
-    listing.
-      para%. This a paragraph; an element in block form containing some text.
+    #listing
+      %#para This a paragraph; an element in block form containing some text.
 
-      note[only=web]%. This is an example “note” element with an “only” attribute.
+      %#note[only=web] This is an example “note” element with an “only” attribute.
 
-  dt. Inline form
-  dd.
-    p. Inside an element, text can be marked up using elements with the inline form. An element in inline form consists of a percentage sign, the name of the element, optionally attributes enclosed in rectangular brackets, and finally the content within braces. For example:
+  #dt Inline form
+  #dd
+    #p Inside an element, text can be marked up using elements with the inline form. An element in inline form consists of the %code{%%} symbol, the name of the element, optionally attributes enclosed in rectangular brackets, and finally the content within braces. For example:
 
-    listing.
-      para%. I am a paragraph with an %%emph{amazing%} inline element.
+    #listing
+      %#para I am a paragraph with an %%emph{amazing%} inline element.
 
-p. An element name starts with a lowercase letter, followed by zero or more lowercase letters, digits or a dash. For instance, %code{emph}, %code{h2}, and %code{section-header} are valid element names, while %code{SectionHeader}, %code{2} and %code{input_data} are not.
+#p An element name starts with a lowercase letter, followed by zero or more lowercase letters, digits or a dash. For instance, %code{emph}, %code{h2}, and %code{section-header} are valid element names, while %code{SectionHeader}, %code{2} and %code{input_data} are not.
 
-note. The restrictions on what can be an element name will likely be relaxed before the 1.0 release.
+#note The restrictions on what can be an element name will likely be relaxed before the 1.0 release.
 
-p. At the top level, D★Mark documents consists %emph{only} of elements in block form.
+#p At the top level, D★Mark documents consists %emph{only} of elements in block form.
 
-p. Elements in block form can be nested. To do so, indent the nested block two spaces deeper than the enclosing block. For example, the following defines a %code{list} element with three %code{item} elements inside it:
+#p Elements in block form can be nested. To do so, indent the nested block two spaces deeper than the enclosing block. For example, the following defines a %code{list} element with three %code{item} elements inside it:
 
-listing.
-  list[unordered]%.
-    item%. glob patterns
-    item%. regular expression patterns
-    item%. legacy patterns
+#listing
+  %#list[unordered]
+    %#item glob patterns
+    %#item regular expression patterns
+    %#item legacy patterns
 
-p. The block element form can also include text on indented lines following the element. In this case, the content is not wrapped inside a nested block-level element. This is particularly useful for source code listing. For example:
+#p The block element form can also include text on indented lines following the element. In this case, the content is not wrapped inside a nested block-level element. This is particularly useful for source code listing. For example:
 
-listing.
-  listing[lang=ruby]%.
+#listing
+  %#listing[lang=ruby]
     identifier = Nanoc::Identifier.new('/about.md')
 
     identifier.without_ext
@@ -72,134 +72,146 @@ listing.
     identifier.ext
     # => "md"
 
-p. An element in block form can always be expressed in inline form and vice versa, with the exception of a top-level element, which always needs to be in block form.
+#p An element in block form can always be expressed in inline form and vice versa, with the exception of a top-level element, which always needs to be in block form.
 
-h3. Attributes
+#h3 Attributes
 
-p. Both block and inline elements can also have attributes. Attributes are enclosed in square brackets after the element name, as a comma-separated list of key-value pairs separated by an equal sign. The value part, along with the equal sign, can be omitted, in which case the value will be equal to the key name.
+#p Both block and inline elements can also have attributes. Attributes are enclosed in square brackets after the element name, as a comma-separated list of key-value pairs separated by an equal sign. The value part, along with the equal sign, can be omitted, in which case the value will be equal to the key name.
 
-p. For example:
+#p For example:
 
-ul.
-  li.
-    p. %code{%%code[lang=ruby]{Nanoc::VERSION%}} is an inline %code{code} element with the %code{lang} attribute set to %code{ruby}.
+#ul
+  #li
+    #p %code{%%code[lang=ruby]{Nanoc::VERSION%}} is an inline %code{code} element with the %code{lang} attribute set to %code{ruby}.
 
-  li.
-    p. %code{%%only[web]{Refer to the release notes for details.%}} is an inline %code{only} element with the %code{web} attribute set to %code{web}.
+  #li
+    #p %code{%%only[web]{Refer to the release notes for details.%}} is an inline %code{only} element with the %code{web} attribute set to %code{web}.
 
-  li.
-    p. %code{h2[id=donkey]. All about donkeys} is a block-level %code{h2} element with the %code{id} attribute set to %code{donkey}.
+  #li
+    #p %code{#h2[id=donkey] All about donkeys} is a block-level %code{h2} element with the %code{id} attribute set to %code{donkey}.
 
-  li.
-    p. %code{p[print]. This is a paragraph that only readers of the book will see.} is a block-level %code{para} element with the %code{print} attribute set to %code{print}.
+  #li
+    #p %code{#p[print] This is a paragraph that only readers of the book will see.} is a block-level %code{para} element with the %code{print} attribute set to %code{print}.
 
-p. An attribute key starts with a lowercase letter, followed by zero or more lowercase letters, digits or a dash. For instance, %code{lang} and %code{only-for} are valid attribute keys, while %code{OnlyFor} and %code{data_type} are not.
+#p An attribute key starts with a lowercase letter, followed by zero or more lowercase letters, digits or a dash. For instance, %code{lang} and %code{only-for} are valid attribute keys, while %code{OnlyFor} and %code{data_type} are not.
 
-note. The restrictions on what can be an attribute key will likely be relaxed before the 1.0 release.
+#note The restrictions on what can be an attribute key will likely be relaxed before the 1.0 release.
 
-h3. Escaping
+#h3 Escaping
 
-p. The following characters need to be escaped:
+#p The following characters need to be escaped:
 
-ul.
-  li. %code{%}}
-  li. %code{%%}
-  li. %code{,} (only within attribute values)
-  li. %code{]} (only within attribute values)
+#ul
+  #li %code{%}}
+  #li %code{%%}
+  #li %code{#} (only at the beginning of a block)
+  #li %code{,} (only within attribute values)
+  #li %code{]} (only within attribute values)
 
-p. To escape a character, prefix it with %code{%%}. Thus, %code{%%%%} is the escaped form of %code{%%}, and %code{%%%}} is the escaped form of %code{%}}. For example:
+#p To escape a character, prefix it with %code{%%}.
 
-listing.
-  para [kind=joke%%, ha ha]. They say 20%% of all statistics are made up.
+#p The following is an example of escaping inline content:
 
-p. This is a %code{para} element with the %code{kind} set to %code{joke, ha ha}, and the content “They say 20%% of all statistics are made up.”
+#listing
+  %#p To escape a character, prefix it with %%code{%%%%%}.
 
-h2. Comparison with other languages
+#p The following is a listing element containing escaped D★Mark:
 
-p. D★Mark takes inspiration from a variety of other languages.
+#listing
+  %#listing
+    %%#para This is a paragraph element in block form.
 
-dl.
-  dt. HTML
-  dd.
-    p. HTML is syntactically unambiguous, but comparatively more verbose than other languages. It also prescribes only a small set of elements, which makes it awkward to use for prose that requires more thorough markup. It is possible use %code{span} or %code{div} elements with custom classes, but this approach turns an already verbose language into something even more verbose.
+#p Here’s an example of escaped characters in an attribute value:
 
-    listing[lang=html].
+#listing
+  %#para[kind=joke%%, ha ha] They say 20%%%% of all statistics are made up.
+
+#h2 Comparison with other languages
+
+#p D★Mark takes inspiration from a variety of other languages.
+
+#dl
+  #dt HTML
+  #dd
+    #p HTML is syntactically unambiguous, but comparatively more verbose than other languages. It also prescribes only a small set of elements, which makes it awkward to use for prose that requires more thorough markup. It is possible use %code{span} or %code{div} elements with custom classes, but this approach turns an already verbose language into something even more verbose.
+
+    #listing[lang=html]
       <p>A glob pattern that matches every item is <span class="pattern attr-kind-glob">/**/*</span>.</p>
 
-    listing[lang=d-mark].
-      para%. A glob pattern that matches every item is %%pattern[glob]{/**/*%}.
+    #listing[lang=d-mark]
+      %#para A glob pattern that matches every item is %%pattern[glob]{/**/*%}.
 
-  dt. XML
-  dd.
-    p. Similar to HTML, with the major difference that XML does not prescribe a set of elements.
+  #dt XML
+  #dd
+    #p Similar to HTML, with the major difference that XML does not prescribe a set of elements.
 
-    listing[lang=xml].
+    #listing[lang=xml]
       <para>A glob pattern that matches every item is <pattern kind="glob">/**/*</pattern>.</para>
 
-    listing[lang=d-mark].
-      para%. A glob pattern that matches every item is %%pattern[glob]{/**/*%}.
+    #listing[lang=d-mark]
+      %#para A glob pattern that matches every item is %%pattern[glob]{/**/*%}.
 
-  dt. Markdown
-  dd.
-    p. Markdown has a compact syntax, but is complex and ambiguous, as evidenced by the many different mutually incompatible implementations. It prescribes a small set of elements (smaller even than HTML). It supports embedding raw HTML, which in theory makes it possible to combine the best of both worlds, but in practice leads to markup that is harder to read than either Markdown or HTML separately, and occasionally trips up the parser and syntax highlighter.
+  #dt Markdown
+  #dd
+    #p Markdown has a compact syntax, but is complex and ambiguous, as evidenced by the many different mutually incompatible implementations. It prescribes a small set of elements (smaller even than HTML). It supports embedding raw HTML, which in theory makes it possible to combine the best of both worlds, but in practice leads to markup that is harder to read than either Markdown or HTML separately, and occasionally trips up the parser and syntax highlighter.
 
-    listing[lang=markdown].
+    #listing[lang=markdown]
       A glob pattern that matches every item is <span class="glob attr-kind-glob">/**/*</span>.
 
-    listing[lang=d-mark].
-      para%. A glob pattern that matches every item is %%pattern[glob]{/**/*%}.
+    #listing[lang=d-mark]
+      %#para A glob pattern that matches every item is %%pattern[glob]{/**/*%}.
 
-  dt. AsciiDoc
-  dd.
-    p. AsciiDoc, along with its AsciiDoctor variant, are syntactically unambiguous, but complex languages. They prescribe a comparatively large set of elements which translates well to DocBook and HTML. They do not support custom markup or embedding raw HTML, which makes them harder t use for prose that requires more complex markup.
+  #dt AsciiDoc
+  #dd
+    #p AsciiDoc, along with its AsciiDoctor variant, are syntactically unambiguous, but complex languages. They prescribe a comparatively large set of elements which translates well to DocBook and HTML. They do not support custom markup or embedding raw HTML, which makes them harder t use for prose that requires more complex markup.
 
-    note. There is no AsciiDoc example, as this example cannot be represented with AsciiDoc.
+    #note There is no AsciiDoc example, as this example cannot be represented with AsciiDoc.
 
-  dt. TeX, LaTeX
-  dd.
-    p. TeX is a turing-complete programming language, as opposed to a markup language, intended for typesetting. This makes it impractical for using it as the source for converting it to other formats. Its syntax is simple and compact, and served as an inspiration for D★Mark.
+  #dt TeX, LaTeX
+  #dd
+    #p TeX is a turing-complete programming language, as opposed to a markup language, intended for typesetting. This makes it impractical for using it as the source for converting it to other formats. Its syntax is simple and compact, and served as an inspiration for D★Mark.
 
-    listing[lang=latex].
+    #listing[lang=latex]
       A glob pattern that matches every item is \pattern[glob]{/**/*%}.
 
-    listing[lang=d-mark].
-      para%. A glob pattern that matches every item is %%pattern[glob]{/**/*%}.
+    #listing[lang=d-mark]
+      %#para A glob pattern that matches every item is %%pattern[glob]{/**/*%}.
 
-  dt. JSON, YAML
-  dd.
-    p. JSON and YAML are data interchange formats rather than markup languages, and thus are not well-suited for marking up prose.
+  #dt JSON, YAML
+  #dd
+    #p JSON and YAML are data interchange formats rather than markup languages, and thus are not well-suited for marking up prose.
 
-    listing[lang=json].
+    #listing[lang=json]
       [
         "A glob pattern that matches every item is ",
         ["pattern", {"kind": "glob"%}, ["/**/*"]],
         "."
       ]
 
-    listing[lang=d-mark].
-      para%. A glob pattern that matches every item is %%pattern[glob]{/**/*%}.
+    #listing[lang=d-mark]
+      %#para A glob pattern that matches every item is %%pattern[glob]{/**/*%}.
 
-h2. Samples
+#h2 Samples
 
-p. The %filename{samples/} directory contains some sample D★Mark files. They can be processed by invoking the appropriate script with the same filename. For example:
+#p The %filename{samples/} directory contains some sample D★Mark files. They can be processed by invoking the appropriate script with the same filename. For example:
 
-listing.
+#listing
   %prompt{%%} %kbd{bundle exec ruby samples/trivial.rb}
   <p>I’m a <em>trivial</em> example!</p>
 
-h2. Programmatic usage
+#h2 Programmatic usage
 
-p. Handling a D★Mark file consists of two stages: parsing and translating.
+#p Handling a D★Mark file consists of two stages: parsing and translating.
 
-p. The parsing stage converts text into a list of nodes. Construct a parser with the tokens as input, and call %code{#run} to get the list of nodes.
+#p The parsing stage converts text into a list of nodes. Construct a parser with the tokens as input, and call %code{#run} to get the list of nodes.
 
-listing[lang=ruby].
+#listing[lang=ruby]
   content = File.read(ARGV[0])
   nodes = DMark::Parser.new(content).run
 
-p. The translating stage is not the responsibility of D★Mark. A translator is part of the domain of the source text, and D★Mark only deals with syntax rather than semantics. A translator will run over the tree and convert it into something else (usually another string). To do so, handle each node type (%code{DMark::ElementNode} or %code{String}). For example, the following translator will convert the tree into something that resembles XML:
+#p The translating stage is not the responsibility of D★Mark. A translator is part of the domain of the source text, and D★Mark only deals with syntax rather than semantics. A translator will run over the tree and convert it into something else (usually another string). To do so, handle each node type (%code{DMark::ElementNode} or %code{String}). For example, the following translator will convert the tree into something that resembles XML:
 
-listing[lang=ruby].
+#listing[lang=ruby]
   class MyXMLLikeTranslator < DMark::Translator
     def handle(node)
       case node
