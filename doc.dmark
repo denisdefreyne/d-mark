@@ -11,6 +11,76 @@
 
 #p For development details on D★Mark, see %link[target=https://github.com/ddfreyne/d-mark]{its GitHub repository}. Please %link[target=https://github.com/ddfreyne/d-mark/issues/new]{open an issue} for any problems that you find.
 
+#section %h{Cheat sheet}
+  #p This cheat sheet covers the common uses of D★Mark. For more details on the syntax, see the %link[target=#syntax]{Syntax} section.
+
+  #p An element in block form is marked up with %code{#}:
+
+  #listing
+    %#para I am a paragraph!
+
+  #p An element in inline form is marked up with %code{%%}:
+
+  #listing
+    %#para It said %%quote{Destroy all humans!%}, I believe.
+
+  #p An element in block from can contain elements and/or text by indenting it with two spaces:
+
+  #listing
+    %#section
+      %#header Example
+
+      %#listing
+        content = File.read(ARGV[0])
+        nodes = DMark::Parser.new(content).run
+
+#section %h{Use cases}
+  #p D★Mark is particularly well-suited for some use cases that don’t work well in other markup languages, as they lack the flexibility to express certain ideas.
+
+  #section %h{First term}
+    #p On the %link[target=http://nanoc.ws]{Nanoc web site}, the first occurrence of a term is marked up using the %code{firstterm} element. For example, the first time the term “identifier” is used, it is marked up as %code{%%firstterm{identifier%}}.
+
+    #p When translated into HTML, this element is converted into a span with the class %code{firstterm}: %code{<span class="firstterm">identifier</span>}. The CSS for the %code{firstterm} class ensures that it is printed in italics.
+
+    #p Additionally, a term that is marked up as %code{firstterm} will end up in the index at the back of the book that is generated from the Nanoc documentation.
+
+  #section %h{Admonitions}
+    #p Admonitions, such as notes, tips, warnings and hints, can be expressed as elements in D★Mark. For example, the Nanoc web site contains the following caution admonition:
+
+    #listing
+      %#caution This will remove all files and directories that do not correspond to Nanoc items from the output directory.
+
+    #p The stylesheet renders this admonition with a red background, and a warning icon, to attract attention. The  D★Mark documentation, which you are looking at now, contains note admonitions. For example:
+
+    #note This is an example note.
+
+  #section %h{Cross-references}
+    #p One way of marking up a hyperlink in D★Mark is to use a %code{a} element. For example, the following code snippet represents a hyperlink to the Nanoc web site:
+
+    #listing
+      %#p I love the design of the %%a[href=http://nanoc.ws/]{Nanoc web site%}.
+
+    #note Because D★Mark itself does not prescribe any vocabulary, there is no single right way to mark up hyperlinks. For example, this document uses a %code{link} element with a %code{target} attribute for hyperlinks, rather than a more traditional %code{a} element.
+
+    #p The Nanoc documentation, however, does not use hyperlinks to link to other pages. While hyperlinks work well on the web, they are more cumbersome to use in print. Because a (distant) goal of the Nanoc documentation is to be readily convertible into a print book, it uses cross-references instead.
+
+    #p A reference is marked up using a %code{ref} element, and points to a chapter or section. For example, the following paragraph contains a reference to the Patterns chapter:
+
+    #listing
+      %#p For more information on patterns, see %%ref[chapter=/doc/patterns.*]{%}.
+
+    #p When generating a web version of a document that contains a reference, the reference will be translated into a hyperlink. The name of the chapter is filled in automatically. The above example could be rendered as follows:
+
+    #blockquote
+      #p For more information on patterns, see the %link[target=#]{Patterns} page.
+
+    #p In print, however, the reference is translated into the name of the chapter, along with the page number. Additionally, rather than referring to the Patterns %emph{page}, it refers to the Patterns %emph{chapter}, in order to prevent confusion between web pages and print pages. For example:
+
+    #blockquote
+      #p For more information on patterns, see the Patterns chapter on page 87.
+
+    #p In addition to chapter references, the Nanoc web site also supports references to sections and subsections.
+
 #section %h{Goals}
   #dl
     #dt Be extensible
@@ -121,53 +191,6 @@
 
     #listing
       %#para[kind=joke%%, ha ha] They say 20%%%% of all statistics are made up.
-
-#section %h{Use cases}
-  #p D★Mark is particularly well-suited for some use cases that don’t work well in other markup languages, as they lack the flexibility to express certain ideas.
-
-  #section %h{First term}
-    #p On the %link[target=http://nanoc.ws]{Nanoc web site}, the first occurrence of a term is marked up using the %code{firstterm} element. For example, the first time the term “identifier” is used, it is marked up as %code{%%firstterm{identifier%}}.
-
-    #p When translated into HTML, this element is converted into a span with the class %code{firstterm}: %code{<span class="firstterm">identifier</span>}. The CSS for the %code{firstterm} class ensures that it is printed in italics.
-
-    #p Additionally, a term that is marked up as %code{firstterm} will end up in the index at the back of the book that is generated from the Nanoc documentation.
-
-  #section %h{Admonitions}
-    #p Admonitions, such as notes, tips, warnings and hints, can be expressed as elements in D★Mark. For example, the Nanoc web site contains the following caution admonition:
-
-    #listing
-      %#caution This will remove all files and directories that do not correspond to Nanoc items from the output directory.
-
-    #p The stylesheet renders this admonition with a red background, and a warning icon, to attract attention. The  D★Mark documentation, which you are looking at now, contains note admonitions. For example:
-
-    #note This is an example note.
-
-  #section %h{Cross-references}
-    #p One way of marking up a hyperlink in D★Mark is to use a %code{a} element. For example, the following code snippet represents a hyperlink to the Nanoc web site:
-
-    #listing
-      %#p I love the design of the %%a[href=http://nanoc.ws/]{Nanoc web site%}.
-
-    #note Because D★Mark itself does not prescribe any vocabulary, there is no single right way to mark up hyperlinks. For example, this document uses a %code{link} element with a %code{target} attribute for hyperlinks, rather than a more traditional %code{a} element.
-
-    #p The Nanoc documentation, however, does not use hyperlinks to link to other pages. While hyperlinks work well on the web, they are more cumbersome to use in print. Because a (distant) goal of the Nanoc documentation is to be readily convertible into a print book, it uses cross-references instead.
-
-    #p A reference is marked up using a %code{ref} element, and points to a chapter or section. For example, the following paragraph contains a reference to the Patterns chapter:
-
-    #listing
-      %#p For more information on patterns, see %%ref[chapter=/doc/patterns.*]{%}.
-
-    #p When generating a web version of a document that contains a reference, the reference will be translated into a hyperlink. The name of the chapter is filled in automatically. The above example could be rendered as follows:
-
-    #blockquote
-      #p For more information on patterns, see the %link[target=#]{Patterns} page.
-
-    #p In print, however, the reference is translated into the name of the chapter, along with the page number. Additionally, rather than referring to the Patterns %emph{page}, it refers to the Patterns %emph{chapter}, in order to prevent confusion between web pages and print pages. For example:
-
-    #blockquote
-      #p For more information on patterns, see the Patterns chapter on page 87.
-
-    #p In addition to chapter references, the Nanoc web site also supports references to sections and subsections.
 
 #section %h{Comparison with other languages}
   #p D★Mark takes inspiration from a variety of other languages.
