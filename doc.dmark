@@ -2,6 +2,12 @@
 
 #p %firstterm{D★Mark} is a language for marking up prose. It facilitates writing semantically meaningful text, without limiting itself to the semantics provided by HTML or Markdown. If you’re a technical writer looking for a flexible markup language, D★Mark might be a good fit.
 
+#audience[only=ursula]
+  #p This paragraph is only for Ursula.
+
+#audience[except=ursula]
+  #p I’m conviced this is a badly written paragraph and my ask is to remove it.
+
 #p Here’s an example of D★Mark:
 
 #listing

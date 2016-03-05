@@ -158,6 +158,16 @@ class Doc2HTML < DMark::Translator
       case node.name
       when 'p', 'dl', 'dt', 'dd', 'ol', 'ul', 'li', 'code', 'kbd'
         wrap(node.name) { handle_children(node, depths) }
+      when 'audience'
+        if node.attributes['only']
+          if node.attributes['only'].split(';').include?(ENV['AUDIENCE'])
+            handle_children(node, depths)
+          end
+        elsif node.attributes['except']
+          unless node.attributes['except'].split(';').include?(ENV['AUDIENCE'])
+            handle_children(node, depths)
+          end
+        end
       when 'h'
         depth = depths.fetch('section', 0) + 1
         wrap("h#{depth}") { handle_children(node, depths) }
