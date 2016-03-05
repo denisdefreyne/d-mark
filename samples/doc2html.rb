@@ -123,20 +123,21 @@ HEADER = <<EOS
 
       .note:before {
         content: "NOTE: ";
-        font-size: 0.9em;
         font-weight: bold;
+        font-family: Montserrat, sans-serif;
       }
 
       .todo {
         padding: 1em;
-        color: #c00;
+        color: #d00;
+        background: rgba(255, 0, 0, 0.05);
         border: 1px solid #f00;
       }
 
       .todo:before {
         content: "TODO: ";
-        font-size: 0.9em;
         font-weight: bold;
+        font-family: Montserrat, sans-serif;
       }
     </style>
   </head>
@@ -165,33 +166,24 @@ class Doc2HTML < DMark::Translator
       when 'emph'
         wrap('em') { handle_children(node, depths) }
       when 'firstterm', 'prompt', 'filename'
-        out << '<span class="' << node.name << '">'
-        handle_children(node, depths)
-        out << '</span>'
-      when 'note'
-        out << '<div class="note">'
-        handle_children(node, depths)
-        out << '</div>'
-      when 'todo'
-        out << '<div class="todo">'
-        handle_children(node, depths)
-        out << '</div>'
+        wrap('span', class: node.name) { handle_children(node, depths) }
+      when 'note', 'todo'
+        wrap('div', class: node.name) { handle_children(node, depths) }
       when 'link'
-        out << '<a href="' << html_escape(node.attributes['target']) << '">'
-        handle_children(node, depths)
-        out << '</a>'
+        wrap('a', href: node.attributes['target']) { handle_children(node, depths) }
       when 'listing'
-        wrap('pre', 'code') { handle_children(node, depths) }
+        wrap('pre') { wrap('code') { handle_children(node, depths) } }
       else
         raise "Unhandled node name: #{node.name}"
       end
     end
   end
 
-  def wrap(*names)
-    names.each { |n| out << "<#{n}>" }
+  def wrap(name, params = {})
+    params_string = params.map { |k, v| " #{k}=\"#{html_escape(v)}\"" }.join('')
+    out << "<#{name}#{params_string}>"
     yield
-    names.reverse_each { |n| out << "</#{n}>" }
+    out << "</#{name}>"
   end
 
   def html_escape(s)
