@@ -18,3 +18,5 @@ para. This a paragraph; an element in block form containing some text.
 
 note[only=web]. This is a note that will %emph{only} show up on web.
 ----
+
+For details, see the http://ddfreyne.github.io/d-mark/[D★Mark web page].
