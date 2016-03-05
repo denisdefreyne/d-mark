@@ -143,7 +143,29 @@
     #note This is an example note.
 
   #section %h{Cross-references}
-    #todo Write me
+    #p In D★Mark, a hyperlink could be represented as an %code{a} element. For example, the following code snippet represents a hyperlink to the Nanoc web site:
+
+    #listing
+      %#p I love the design of the %%a[href=http://nanoc.ws/]{Nanoc web site%}.
+
+    #note Because D★Mark itself does not prescribe any vocabulary, there is no single right way to mark up hyperlinks. For example, this document uses a %code{link} element with a %code{target} attribute instead.
+
+    #p The Nanoc documentation, however, does not use hyperlinks to link to other pages. While hyperlinks work well on the web, they are more cumbersome to use in print. Because a (distant) goal of the Nanoc documentation is to be readily convertible into a print book, it uses cross-references instead.
+
+    #p A reference is marked up using a %code{ref} element, and points to a chapter or section. For example, the following paragraph contains a reference to the Patterns chapter:
+
+    #listing
+      %#p For more information on patterns, see %%ref[chapter=/doc/patterns.*]{%}.
+
+    #p When generating a web version of a document that contains a reference, the reference will be translated into a hyperlink. The above example could be rendered as follows:
+
+    #blockquote
+      #p For more information on patterns, see the %link[target=#]{Patterns} page.
+
+    #p In print, however, the reference is translated into the name of the chapter, along with the page number. Additionally, rather than referring to the Patterns %emph{page}, it refers to the Patterns %emph{chapter}, in order to prevent confusion between web pages and print pages. For example:
+
+    #blockquote
+      #p For more information on patterns, see the Patterns chapter on page 87.
 
 #section %h{Comparison with other languages}
   #p D★Mark takes inspiration from a variety of other languages.
