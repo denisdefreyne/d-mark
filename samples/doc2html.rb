@@ -162,7 +162,7 @@ class Doc2HTML < DMark::Translator
         depth = depths.fetch('section', 0) + 1
         wrap("h#{depth}") { handle_children(node, depths) }
       when 'section'
-        handle_children(node, depths)
+        wrap('section', id: id_for_section(node)) { handle_children(node, depths) }
       when 'emph'
         wrap('em') { handle_children(node, depths) }
       when 'firstterm', 'prompt', 'filename'
@@ -193,6 +193,12 @@ class Doc2HTML < DMark::Translator
   def handle_children(node, depths)
     new_depths = depths.merge({ node.name => depths.fetch(node.name, 0) + 1 })
     node.children.each { |child| handle(child, new_depths) }
+  end
+
+  def id_for_section(node)
+    header = node.children.find { |c| c.name == 'h' }
+    text = header.children.join('')
+    text.downcase.gsub(/[^a-zA-Z-]/, '-')
   end
 end
 
