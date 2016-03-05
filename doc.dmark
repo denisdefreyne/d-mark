@@ -143,12 +143,12 @@
     #note This is an example note.
 
   #section %h{Cross-references}
-    #p In D★Mark, a hyperlink could be represented as an %code{a} element. For example, the following code snippet represents a hyperlink to the Nanoc web site:
+    #p One way of marking up a hyperlink in D★Mark is to use a %code{a} element. For example, the following code snippet represents a hyperlink to the Nanoc web site:
 
     #listing
       %#p I love the design of the %%a[href=http://nanoc.ws/]{Nanoc web site%}.
 
-    #note Because D★Mark itself does not prescribe any vocabulary, there is no single right way to mark up hyperlinks. For example, this document uses a %code{link} element with a %code{target} attribute instead.
+    #note Because D★Mark itself does not prescribe any vocabulary, there is no single right way to mark up hyperlinks. For example, this document uses a %code{link} element with a %code{target} attribute for hyperlinks, rather than a more traditional %code{a} element.
 
     #p The Nanoc documentation, however, does not use hyperlinks to link to other pages. While hyperlinks work well on the web, they are more cumbersome to use in print. Because a (distant) goal of the Nanoc documentation is to be readily convertible into a print book, it uses cross-references instead.
 
@@ -157,7 +157,7 @@
     #listing
       %#p For more information on patterns, see %%ref[chapter=/doc/patterns.*]{%}.
 
-    #p When generating a web version of a document that contains a reference, the reference will be translated into a hyperlink. The above example could be rendered as follows:
+    #p When generating a web version of a document that contains a reference, the reference will be translated into a hyperlink. The name of the chapter is filled in automatically. The above example could be rendered as follows:
 
     #blockquote
       #p For more information on patterns, see the %link[target=#]{Patterns} page.
@@ -166,6 +166,8 @@
 
     #blockquote
       #p For more information on patterns, see the Patterns chapter on page 87.
+
+    #p In addition to chapter references, the Nanoc web site also supports references to sections and subsections.
 
 #section %h{Comparison with other languages}
   #p D★Mark takes inspiration from a variety of other languages.
