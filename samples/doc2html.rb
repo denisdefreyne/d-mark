@@ -65,7 +65,7 @@ HEADER = <<EOS
         color: #000;
       }
 
-      dl, p, pre, ul, ol, .note, .todo {
+      dl, p, pre, blockquote, ul, ol, .note, .todo {
         margin: 0 0 1.5rem 0;
       }
 
@@ -89,6 +89,17 @@ HEADER = <<EOS
         background: rgba(77, 103, 242, 0.1);
         color: #000;
         white-space: pre-wrap;
+      }
+
+      blockquote {
+        padding: 1em;
+        background: rgba(0, 0, 0, 0.05);
+        color: #000;
+        font-style: italic;
+      }
+
+      blockquote :last-child {
+        margin-bottom: 0;
       }
 
       code, kbd, samp, var {
@@ -156,7 +167,7 @@ class Doc2HTML < DMark::Translator
       out << html_escape(node)
     when DMark::ElementNode
       case node.name
-      when 'p', 'dl', 'dt', 'dd', 'ol', 'ul', 'li', 'code', 'kbd'
+      when 'p', 'dl', 'dt', 'dd', 'ol', 'ul', 'li', 'code', 'kbd', 'blockquote'
         wrap(node.name) { handle_children(node, depths) }
       when 'h'
         depth = depths.fetch('section', 0) + 1
