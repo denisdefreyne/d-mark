@@ -132,10 +132,17 @@
 
     #p Additionally, a term that is marked up as %code{firstterm} will end up in the index at the back of the book that is generated from the Nanoc documentation.
 
-  #section %h{Cross-references}
-    #todo Write me
-
   #section %h{Admonitions}
+    #p Admonitions, such as notes, tips, warnings and hints, can be expressed as elements in D★Mark. For example, the Nanoc web site contains the following caution admonition:
+
+    #listing
+      %#caution This will remove all files and directories that do not correspond to Nanoc items from the output directory.
+
+    #p The stylesheet renders this admonition with a red background, and a warning icon, to attract attention. The  D★Mark documentation, which you are looking at now, contains note admonitions. For example:
+
+    #note This is an example note.
+
+  #section %h{Cross-references}
     #todo Write me
 
 #section %h{Comparison with other languages}
