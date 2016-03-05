@@ -220,4 +220,3 @@
 
     result = MyXMLLikeTranslator.new(nodes).run
     puts result
-it
