@@ -14,12 +14,7 @@
 #section %h{Cheat sheet}
   #p This cheat sheet covers the common uses of D★Mark. For more details on the syntax, see the %link[target=#syntax]{Syntax} section.
 
-  #p An element in block form is marked up with %code{#}:
-
-  #listing
-    %#para I am a paragraph!
-
-  #p An element in inline form is marked up with %code{%%}:
+  #p An element is marked up in block form with %code{#}, and in inline form with %code{%%}:
 
   #listing
     %#para It said %%quote{Destroy all humans!%}, I believe.
@@ -33,6 +28,12 @@
       %#listing
         content = File.read(ARGV[0])
         nodes = DMark::Parser.new(content).run
+
+  #p Elements, both in block and inline form, can have attributes inside square brackets:
+
+  #listing
+    %#listing[lang=shell]
+      $ ls -l
 
 #section %h{Use cases}
   #p D★Mark is particularly well-suited for some use cases that don’t work well in other markup languages, as they lack the flexibility to express certain ideas.
