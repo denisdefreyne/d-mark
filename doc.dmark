@@ -122,6 +122,22 @@
     #listing
       %#para[kind=joke%%, ha ha] They say 20%%%% of all statistics are made up.
 
+#section %h{Use cases}
+  #p D★Mark is particularly well-suited for some use cases that don’t work well in other markup languages, as they lack the flexibility to express certain ideas.
+
+  #section %h{First term}
+    #p On the %link[target=http://nanoc.ws]{Nanoc web site}, the first occurrence of a term is marked up using the %code{firstterm} element. For example, the first time the term “identifier” is used, it is marked up as %code{%%firstterm{identifier%}}.
+
+    #p When translated into HTML, this element is converted into a span with the class %code{firstterm}: %code{<span class="firstterm">identifier</span>}. The CSS for the %code{firstterm} class ensures that it is printed in italics.
+
+    #p Additionally, a term that is marked up as %code{firstterm} will end up in the index at the back of the book that is generated from the Nanoc documentation.
+
+  #section %h{Cross-references}
+    #todo Write me
+
+  #section %h{Admonitions}
+    #todo Write me
+
 #section %h{Comparison with other languages}
   #p D★Mark takes inspiration from a variety of other languages.
 
