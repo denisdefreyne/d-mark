@@ -149,34 +149,39 @@ FOOTER = <<EOS
 EOS
 
 class Doc2HTML < DMark::Translator
-  def handle(node)
+  def handle(node, depths = {})
     case node
     when String
       out << html_escape(node)
     when DMark::ElementNode
       case node.name
-      when 'h1', 'h2', 'h3', 'p', 'dl', 'dt', 'dd', 'ol', 'ul', 'li', 'code', 'kbd'
-        wrap(node.name) { handle_children(node) }
+      when 'p', 'dl', 'dt', 'dd', 'ol', 'ul', 'li', 'code', 'kbd'
+        wrap(node.name) { handle_children(node, depths) }
+      when 'h'
+        depth = depths.fetch('section', 0) + 1
+        wrap("h#{depth}") { handle_children(node, depths) }
+      when 'section'
+        handle_children(node, depths)
       when 'emph'
-        wrap('em') { handle_children(node) }
+        wrap('em') { handle_children(node, depths) }
       when 'firstterm', 'prompt', 'filename'
         out << '<span class="' << node.name << '">'
-        handle_children(node)
+        handle_children(node, depths)
         out << '</span>'
       when 'note'
         out << '<div class="note">'
-        handle_children(node)
+        handle_children(node, depths)
         out << '</div>'
       when 'todo'
         out << '<div class="todo">'
-        handle_children(node)
+        handle_children(node, depths)
         out << '</div>'
       when 'link'
         out << '<a href="' << html_escape(node.attributes['target']) << '">'
-        handle_children(node)
+        handle_children(node, depths)
         out << '</a>'
       when 'listing'
-        wrap('pre', 'code') { handle_children(node) }
+        wrap('pre', 'code') { handle_children(node, depths) }
       else
         raise "Unhandled node name: #{node.name}"
       end
@@ -191,6 +196,11 @@ class Doc2HTML < DMark::Translator
 
   def html_escape(s)
     s.gsub('&', '&amp;').gsub('<', '&lt;')
+  end
+
+  def handle_children(node, depths)
+    new_depths = depths.merge({ node.name => depths.fetch(node.name, 0) + 1 })
+    node.children.each { |child| handle(child, new_depths) }
   end
 end
 
