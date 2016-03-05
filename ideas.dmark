@@ -1,35 +1,35 @@
-h1. Ideas
+#h1 Ideas
 
-ul.
-  li.
-    p. Use %code{%%ref{/doc/tutorial.*%}} to reference other pages. On web, this will become links (e.g. “see the Tutorial chapter”), and in PDF, these will be cross-references.
+#ul
+  #li
+    #p Use %code{%%ref{/doc/tutorial.*%}} to reference other pages. On web, this will become links (e.g. “see the Tutorial chapter”), and in PDF, these will be cross-references.
 
-  li.
-    p. We can now have proper admonitions (tips, notes and cautions) and the ugly hacks we currently have can be removed.
+  #li
+    #p We can now have proper admonitions (tips, notes and cautions) and the ugly hacks we currently have can be removed.
 
-  li.
-    p. Support line breaks in the same block-level element. A potential problem arises when the next line also starts with a valid element and a period, though.
+  #li
+    #p Support line breaks in the same block-level element. A potential problem arises when the next line also starts with a valid element and a period, though.
 
-  li.
-    p. Support comments. Maybe %% at the beginning of a line, or at the current indentation level?
+  #li
+    #p Support comments. Maybe %% at the beginning of a line, or at the current indentation level?
 
-  li.
-    p. Support escaping. Without it, code blocks that contain numbered lists will be treated badly.
+  #li
+    #p Support escaping. Without it, code blocks that contain numbered lists will be treated badly.
 
-  li.
-    p. Support validation. Which elements can contain which other elements? Which elements can live at the root?
+  #li
+    #p Support validation. Which elements can contain which other elements? Which elements can live at the root?
 
-  li.
-    p. A lone %% should probably be okay. Maybe everything that doesn’t fully look like an inline element (e.g. %%code) could be acceptable.
+  #li
+    #p A lone %% should probably be okay. Maybe everything that doesn’t fully look like an inline element (e.g. %%code) could be acceptable.
 
-  li.
-    p. We need attribute support. The example “identifiers and patterns” document already contains attributes, but they’re ignored at the moment. That file uses %code{listing[lang=ruby]} and %code{dl[legacy]} as examples.
+  #li
+    #p We need attribute support. The example “identifiers and patterns” document already contains attributes, but they’re ignored at the moment. That file uses %code{listing[lang=ruby]} and %code{dl[legacy]} as examples.
 
-  li.
-    p. The first term could also be added to the index, like %code{%%firstterm[index]{donkey%}}.
+  #li
+    #p The first term could also be added to the index, like %code{%%firstterm[index]{donkey%}}.
 
-  li.
-    p. Cross-references to other chapters is likely easy to implement, but how do we deal with cross-references to sections inside a chapter? The target chapter will need to have been parsed, and so many cross-references might cause the target chapter to be parsed too many times. This might be a use case for caching the compiled (parsed, in this case) content as a syntax tree rather than text.
+  #li
+    #p Cross-references to other chapters is likely easy to implement, but how do we deal with cross-references to sections inside a chapter? The target chapter will need to have been parsed, and so many cross-references might cause the target chapter to be parsed too many times. This might be a use case for caching the compiled (parsed, in this case) content as a syntax tree rather than text.
 
-  li.
-    p. Be very strict on what whitespace is accepted. It should be two spaces, period; no tabs. Additional indentation should go into the element itself.
+  #li
+    #p Be very strict on what whitespace is accepted. It should be two spaces, period; no tabs. Additional indentation should go into the element itself.
