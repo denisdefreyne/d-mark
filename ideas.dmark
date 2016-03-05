@@ -33,3 +33,6 @@
 
   #li
     #p Be very strict on what whitespace is accepted. It should be two spaces, period; no tabs. Additional indentation should go into the element itself.
+
+  #li
+    #p Have different translators built-in. I’m thinking %code{BasicMarkdown2HTML} and %code{HTMLForWriters2HTML}, and perhaps %code{DocBook2HTML}.
