@@ -13,6 +13,7 @@ module DMark
         yield(cursor, data)
       end
 
+      # TODO: remove me
       def bind_or_explode(&block)
         bind(&block)
       end

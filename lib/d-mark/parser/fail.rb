@@ -13,6 +13,7 @@ module DMark
         self
       end
 
+      # TODO: remove me
       def bind_or_explode(&_block)
         explode
       end
