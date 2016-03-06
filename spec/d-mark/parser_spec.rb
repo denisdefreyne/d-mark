@@ -301,6 +301,11 @@ describe 'DMark::Parser#parser' do
       .to raise_error(DMark::Parser::ParserError, 'parse error at line 1, col 19: unexpected line break in attribute value')
   end
 
+  it 'does not parse attributes with void after ,' do
+    expect { expect(parse('#p[foo=bar,] hi')) }
+      .to raise_error(DMark::Parser::ParserError, 'parse error at line 1, col 12: expected a..z, not "]"')
+  end
+
   it 'does not parse' do
     expect { parse('#') }.to raise_error(DMark::Parser::ParserError)
     expect { parse('p') }.to raise_error(DMark::Parser::ParserError)
