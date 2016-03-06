@@ -370,7 +370,10 @@ module DMark
                 pending_blanks = 0
 
                 res.children.concat(read_inline_content)
-                read_end_of_inline_content
+                opt_read_end_of_inline_content(new_cursor).bind_or_explode do |cursor, _|
+                  sync_cursor(cursor)
+                  nil
+                end
               end
             end
           end
@@ -394,18 +397,6 @@ module DMark
       end
 
       indentation_chars / 2
-    end
-
-    def read_end_of_inline_content
-      char = peek_char
-      case char
-      when "\n", nil
-        advance
-      when '}'
-        raise_parse_error('unexpected } -- try escaping it as "%}"')
-      else
-        raise_parse_error('unexpected content')
-      end
     end
 
     def read_inline_content
