@@ -284,6 +284,36 @@ module DMark
       end
     end
 
+    def opt_read_single_block(cursor)
+      opt_read_block_start(cursor).bind do |cursor, identifier|
+        opt_read_attributes(cursor).bind do |cursor, attributes|
+          case cursor.get
+          when nil, "\n"
+            Succ.new(cursor + 1, ElementNode.new(identifier, attributes, []))
+          else
+            opt_read_char(' ', cursor).bind do |cursor, _|
+              opt_read_inline_content(cursor).bind do |cursor, content|
+                opt_read_end_of_inline_content(cursor).bind do |cursor, _|
+                  Succ.new(cursor, ElementNode.new(identifier, attributes, content))
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+
+    def opt_read_end_of_inline_content(cursor)
+      case cursor.get
+      when "\n", nil
+        Succ.new(cursor + 1, nil)
+      when '}'
+        Fail.new(cursor, 'unexpected } -- try escaping it as "%}"')
+      else
+        Fail.new(cursor, 'unexpected content')
+      end
+    end
+
     ##########
 
     def read_block_with_children(indentation = 0)
@@ -303,9 +333,12 @@ module DMark
             break if sub_indentation < indentation + 1
 
             read_indentation(indentation + 1)
-            if try_read_block_start
+
+            block_start = opt_read_block_start(new_cursor)
+            case block_start
+            when Succ
               res.children << read_block_with_children(indentation + 1)
-            else
+            when Fail
               res.children << "\n" unless res.children.empty?
               pending_blanks.times { res.children << "\n" }
               pending_blanks = 0
@@ -337,10 +370,6 @@ module DMark
       end
     end
 
-    def try_read_block_start
-      opt_read_block_start(new_cursor).success?
-    end
-
     def detect_indentation
       indentation_chars = 0
       pos = @pos
@@ -362,36 +391,6 @@ module DMark
       indentation.times do
         read_char(' ')
         read_char(' ')
-      end
-    end
-
-    def opt_read_single_block(cursor)
-      opt_read_block_start(cursor).bind do |cursor, identifier|
-        opt_read_attributes(cursor).bind do |cursor, attributes|
-          case cursor.get
-          when nil, "\n"
-            Succ.new(cursor + 1, ElementNode.new(identifier, attributes, []))
-          else
-            opt_read_char(' ', cursor).bind do |cursor, _|
-              opt_read_inline_content(cursor).bind do |cursor, content|
-                opt_read_end_of_inline_content(cursor).bind do |cursor, _|
-                  Succ.new(cursor, ElementNode.new(identifier, attributes, content))
-                end
-              end
-            end
-          end
-        end
-      end
-    end
-
-    def opt_read_end_of_inline_content(cursor)
-      case cursor.get
-      when "\n", nil
-        Succ.new(cursor + 1, nil)
-      when '}'
-        Fail.new(cursor, 'unexpected } -- try escaping it as "%}"')
-      else
-        Fail.new(cursor, 'unexpected content')
       end
     end
 
