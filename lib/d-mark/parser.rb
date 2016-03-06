@@ -82,88 +82,6 @@ module DMark
 
     ##########
 
-    class Succ
-      attr_reader :cursor
-      attr_reader :data
-
-      def initialize(cursor, data)
-        @cursor = cursor
-        @data = data
-      end
-
-      def bind
-        yield(cursor, data)
-      end
-
-      def bind_or_explode(&block)
-        bind(&block)
-      end
-
-      def success?
-        true
-      end
-    end
-
-    class Fail
-      attr_reader :cursor
-      attr_reader :message
-
-      def initialize(cursor, message)
-        @cursor = cursor
-        @message = message
-      end
-
-      def bind
-        self
-      end
-
-      def bind_or_explode(&_block)
-        explode
-      end
-
-      def success?
-        false
-      end
-
-      # TODO: remove me
-      def explode
-        raise ParserError.new(cursor.line_nr, cursor.col_nr, message)
-      end
-    end
-
-    class Cursor
-      attr_reader :str
-      attr_reader :pos
-      attr_reader :line_nr
-      attr_reader :col_nr
-
-      def initialize(str, pos, line_nr, col_nr)
-        @str = str
-        @pos = pos
-        @line_nr = line_nr
-        @col_nr = col_nr
-      end
-
-      def get
-        @str[@pos]
-      end
-
-      def +(other)
-        # FIXME: incorrect!
-
-        case get
-        when "\n"
-          self.class.new(str, pos + other, line_nr + 1, 0)
-        else
-          self.class.new(str, pos + other, line_nr, col_nr + other)
-        end
-      end
-
-      def advance
-        self + 1
-      end
-    end
-
     def opt_read_char(c, cursor)
       if cursor.get == c
         Succ.new(cursor + 1, c)
@@ -506,3 +424,7 @@ module DMark
     end
   end
 end
+
+require_relative 'parser/cursor'
+require_relative 'parser/fail'
+require_relative 'parser/succ'
