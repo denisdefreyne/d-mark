@@ -1,0 +1,30 @@
+PATH
+  remote: ..
+  specs:
+    d-mark (1.0.0a1)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    colored (1.2)
+    cri (2.7.0)
+      colored (~> 1.2)
+    mini_portile2 (2.0.0)
+    nanoc (4.1.4)
+      cri (~> 2.3)
+    nanoc-git (1.0.1)
+      nanoc (>= 3.7.0, < 5.0.0)
+    nokogiri (1.6.7.2)
+      mini_portile2 (~> 2.0.0.rc2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  d-mark!
+  nanoc (~> 4.1)
+  nanoc-git (~> 1.0)
+  nokogiri
+
+BUNDLED WITH
+   1.11.2
