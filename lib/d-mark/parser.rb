@@ -355,12 +355,12 @@ module DMark
             sync_cursor(blank_line_res.cursor)
             pending_blanks += 1
           when Fail
-            sub_indentation = detect_indentation
+            sub_indentation = opt_detect_indentation(new_cursor)
             break if sub_indentation < indentation + 1
 
             opt_read_string('  ' * (indentation + 1), new_cursor).bind_or_explode do |cursor, _|
               sync_cursor(cursor)
-              block_start = opt_read_block_start(new_cursor)
+              block_start = opt_read_block_start(cursor)
               case block_start
               when Succ
                 res.children << read_block_with_children(indentation + 1)
@@ -380,14 +380,13 @@ module DMark
       end
     end
 
-    def detect_indentation
+    def opt_detect_indentation(cursor)
       indentation_chars = 0
-      pos = @pos
 
       loop do
-        case peek_char(pos)
+        case cursor.get
         when ' '
-          pos += 1
+          cursor += 1
           indentation_chars += 1
         else
           break
