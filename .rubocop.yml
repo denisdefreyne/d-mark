@@ -17,6 +17,14 @@ AsciiComments:
 Documentation:
   Enabled: false
 
+# Rubocop can’t distinguish between hash-style params, and a hash param.
+Style/BracesAroundHashParameters:
+  Enabled: false
+
+# Outer local variables (usually cursors) are purposefully shadowed to prevent
+# access to them.
+Lint/ShadowingOuterLocalVariable:
+  Enabled: false
 
 
 # ----- DISABLED (metrics) -----
