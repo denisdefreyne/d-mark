@@ -30,12 +30,13 @@ module DMark
       loop do
         break if eof?
 
-        blank_pos = try_read_blank_line
-        break unless blank_pos
-
-        @pos = blank_pos
-        @line_nr += 1
-        @col_nr = 0
+        blank_line_res = opt_read_blank_line(new_cursor)
+        case blank_line_res
+        when Succ
+          sync_cursor(blank_line_res.cursor)
+        when Fail
+          break
+        end
       end
 
       loop do
@@ -314,6 +315,21 @@ module DMark
       end
     end
 
+    def opt_read_blank_line(cursor)
+      loop do
+        case cursor.get
+        when ' '
+          cursor += 1
+        when nil
+          break Succ.new(cursor + 1, nil)
+        when "\n"
+          break Succ.new(cursor + 1, nil)
+        else
+          break Fail.new(cursor, nil)
+        end
+      end
+    end
+
     ##########
 
     def read_block_with_children(indentation = 0)
@@ -322,13 +338,12 @@ module DMark
 
         pending_blanks = 0
         until eof?
-          blank_pos = try_read_blank_line
-          if blank_pos
-            @pos = blank_pos
-            @line_nr += 1
-            @col_nr = 0
+          blank_line_res = opt_read_blank_line(new_cursor)
+          case blank_line_res
+          when Succ
+            sync_cursor(blank_line_res.cursor)
             pending_blanks += 1
-          else
+          when Fail
             sub_indentation = detect_indentation
             break if sub_indentation < indentation + 1
 
@@ -350,23 +365,6 @@ module DMark
         end
 
         res
-      end
-    end
-
-    def try_read_blank_line
-      pos = @pos
-
-      loop do
-        case peek_char(pos)
-        when ' '
-          pos += 1
-        when nil
-          break pos + 1
-        when "\n"
-          break pos + 1
-        else
-          break nil
-        end
       end
     end
 
