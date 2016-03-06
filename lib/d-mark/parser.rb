@@ -273,8 +273,11 @@ module DMark
         else
           read_char(',') unless at_start
 
-          key, value = *read_key_pair
-          res[key] = value
+          opt_read_attribute_pair(new_cursor).bind_or_explode do |cursor, pair|
+            sync_cursor(cursor)
+            key, value = *pair
+            res[key] = value
+          end
 
           at_start = false
         end
@@ -283,23 +286,18 @@ module DMark
       res
     end
 
-    def read_key_pair
-      opt_read_identifier(new_cursor).bind_or_explode do |cursor, key|
-        sync_cursor(cursor)
-
+    def opt_read_attribute_pair(cursor)
+      opt_read_identifier(cursor).bind do |cursor, key|
         eq = opt_read_char('=', cursor)
-        value =
-          case eq
-          when Fail
-            key
-          when Succ
-            opt_read_attribute_value(eq.cursor).bind_or_explode do |cursor, v|
-              sync_cursor(cursor)
-              v
-            end
-          end
 
-        [key, value]
+        case eq
+        when Fail
+          Succ.new(eq.cursor, [key, key])
+        when Succ
+          opt_read_attribute_value(eq.cursor).bind do |cursor, value|
+            Succ.new(cursor, [key, value])
+          end
+        end
       end
     end
 
