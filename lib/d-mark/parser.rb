@@ -91,6 +91,17 @@ module DMark
       end
     end
 
+    def opt_read_string(string, cursor)
+      string.each_char do |c|
+        if cursor.get == c
+          cursor += 1
+        else
+          return Fail.new(cursor, nil)
+        end
+      end
+      Succ.new(cursor, nil)
+    end
+
     def opt_read_char_range(range, cursor)
       if range.cover?(cursor.get)
         Succ.new(cursor + 1, cursor.get)
@@ -347,19 +358,20 @@ module DMark
             sub_indentation = detect_indentation
             break if sub_indentation < indentation + 1
 
-            read_indentation(indentation + 1)
+            opt_read_string('  ' * (indentation + 1), new_cursor).bind_or_explode do |cursor, _|
+              sync_cursor(cursor)
+              block_start = opt_read_block_start(new_cursor)
+              case block_start
+              when Succ
+                res.children << read_block_with_children(indentation + 1)
+              when Fail
+                res.children << "\n" unless res.children.empty?
+                pending_blanks.times { res.children << "\n" }
+                pending_blanks = 0
 
-            block_start = opt_read_block_start(new_cursor)
-            case block_start
-            when Succ
-              res.children << read_block_with_children(indentation + 1)
-            when Fail
-              res.children << "\n" unless res.children.empty?
-              pending_blanks.times { res.children << "\n" }
-              pending_blanks = 0
-
-              res.children.concat(read_inline_content)
-              read_end_of_inline_content
+                res.children.concat(read_inline_content)
+                read_end_of_inline_content
+              end
             end
           end
         end
@@ -383,13 +395,6 @@ module DMark
       end
 
       indentation_chars / 2
-    end
-
-    def read_indentation(indentation)
-      indentation.times do
-        read_char(' ')
-        read_char(' ')
-      end
     end
 
     def read_end_of_inline_content
