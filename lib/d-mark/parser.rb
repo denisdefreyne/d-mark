@@ -136,16 +136,49 @@ module DMark
       end
     end
 
+    def opt_read_attributes(cursor)
+      case cursor.get
+      when '['
+        opt_read_attribute_pairs(cursor + 1)
+      else
+        Succ.new(cursor, {})
+      end
+    end
+
+    def opt_read_attribute_pairs(cursor)
+      case cursor.get
+      when ']'
+        Succ.new(cursor + 1, {})
+      else
+        opt_read_attribute_pair(cursor).bind do |cursor, pair|
+          opt_read_attribute_pairs_tail(cursor, pair)
+        end
+      end
+    end
+
+    def opt_read_attribute_pairs_tail(cursor, pairs)
+      case cursor.get
+      when ']'
+        Succ.new(cursor + 1, pairs)
+      else
+        opt_read_char(',', cursor).bind do |cursor, _|
+          opt_read_attribute_pair(cursor).bind do |cursor, pair|
+            opt_read_attribute_pairs_tail(cursor, pairs.merge(pair))
+          end
+        end
+      end
+    end
+
     def opt_read_attribute_pair(cursor)
       opt_read_identifier(cursor).bind do |cursor, key|
         eq = opt_read_char('=', cursor)
 
         case eq
         when Fail
-          Succ.new(eq.cursor, [key, key])
+          Succ.new(eq.cursor, { key => key })
         when Succ
           opt_read_attribute_value(eq.cursor).bind do |cursor, value|
-            Succ.new(cursor, [key, value])
+            Succ.new(cursor, { key => value })
           end
         end
       end
@@ -322,41 +355,6 @@ module DMark
         res.data
       when Fail
         res.explode
-      end
-    end
-
-    def opt_read_attributes(cursor)
-      case cursor.get
-      when '['
-        opt_read_attribute_key_value_pairs(cursor + 1)
-      else
-        Succ.new(cursor, {})
-      end
-    end
-
-    def opt_read_attribute_key_value_pairs(cursor)
-      case cursor.get
-      when ']'
-        Succ.new(cursor + 1, {})
-      else
-        opt_read_attribute_pair(cursor).bind do |cursor, pair|
-          pair = { pair[0] => pair[1] }
-          opt_read_attribute_key_value_pairs_tail(cursor, pair)
-        end
-      end
-    end
-
-    def opt_read_attribute_key_value_pairs_tail(cursor, pairs)
-      case cursor.get
-      when ']'
-        Succ.new(cursor + 1, pairs)
-      else
-        opt_read_char(',', cursor).bind do |cursor, _|
-          opt_read_attribute_pair(cursor).bind do |cursor, pair|
-            pair = { pair[0] => pair[1] }
-            opt_read_attribute_key_value_pairs_tail(cursor, pairs.merge(pair))
-          end
-        end
       end
     end
 
