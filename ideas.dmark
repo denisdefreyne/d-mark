@@ -18,3 +18,12 @@
 
   #li
     #p Have different translators built-in. I’m thinking %code{BasicMarkdown2HTML} and %code{HTMLForWriters2HTML}, and perhaps %code{DocBook2HTML}.
+
+  #li
+    #p Concise nested block syntax, e.g. %code{#li #p} at the beginning of a block.
+
+  #li
+    #p Blocks that start with %code{%%}.
+
+  #li
+    #p A refactored parser that does not need to reset %code{@pos}, and maybe not even have any kind of mutable state at all.
