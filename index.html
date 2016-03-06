@@ -1,156 +1,15 @@
-<!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <title>D★Mark</title>
     <link href='https://fonts.googleapis.com/css?family=Montserrat:700' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Merriweather:400,400italic,700' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Cousine:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-      }
-
-      html {
-        font-size: 15px;
-        line-height: 1.5rem;
-        padding: 4rem;
-        border-left: 1rem solid #ee5070;
-      }
-
-      body {
-        max-width: 720px;
-        font-family: Merriweather, serif;
-        color: #444;
-        background-color: #f8fcff;
-      }
-
-      h1, h2, h3 {
-        font-family: Montserrat, sans-serif;
-        line-height: 1em;
-        margin: 1.5em 0 1em 0;
-        color: #ee5070;
-      }
-
-      h1 {
-        font-size: 48px;
-        margin-top: 0;
-      }
-
-      h2 {
-        font-size: 36px;
-      }
-
-      h3 {
-        font-size: 24px;
-      }
-
-      em, .firstterm {
-        font-style: italic;
-      }
-
-      a:link, a:visited {
-        color: rgb(77, 103, 242);
-      }
-
-      a:hover {
-        color: #ee5070;
-      }
-
-      a:active {
-        color: #000;
-      }
-
-      dl, p, pre, blockquote, ul, ol, .note, .todo {
-        margin: 0 0 1.5rem 0;
-      }
-
-      dt {
-        font-weight: bold;
-        color: #000;
-        margin: 2rem 0 1rem 0;
-      }
-
-      dd {
-        margin: 0 0 1em 0;
-        padding: 0 0 0 2em;
-      }
-
-      ul, ol {
-        margin-left: 2rem;
-      }
-
-      pre {
-        padding: 1em;
-        background: rgba(77, 103, 242, 0.1);
-        color: #000;
-        white-space: pre-wrap;
-      }
-
-      blockquote {
-        padding: 1em;
-        background: rgba(0, 0, 0, 0.05);
-        color: #000;
-        font-style: italic;
-      }
-
-      blockquote :last-child {
-        margin-bottom: 0;
-      }
-
-      code, kbd, samp, var {
-        font-size: 14px;
-        font-family: Cousine, monospace;
-      }
-
-      .dmark-punctuation {
-        color: #999;
-      }
-
-      .dmark-elem {
-        font-weight: bold;
-      }
-
-      .prompt {
-        color: #999;
-      }
-
-      kbd {
-        font-weight: bold;
-      }
-
-      .filename {
-        font-style: italic;
-      }
-
-      .note {
-        padding: 1em;
-        border: 1px solid #000;
-      }
-
-      .note:before {
-        content: "NOTE: ";
-        font-weight: bold;
-        font-family: Montserrat, sans-serif;
-      }
-
-      .todo {
-        padding: 1em;
-        color: #d00;
-        background: rgba(255, 0, 0, 0.05);
-        border: 1px solid #f00;
-      }
-
-      .todo:before {
-        content: "TODO: ";
-        font-weight: bold;
-        font-family: Montserrat, sans-serif;
-      }
-    </style>
+    <link rel="stylesheet" href="/stylesheet.css">
+    <meta name="generator" content="Nanoc 4.1.4">
   </head>
   <body>
-<h1>D★Mark</h1><p><span class="firstterm">D★Mark</span> is a language for marking up prose. It facilitates writing semantically meaningful text, without limiting itself to the semantics provided by HTML or Markdown. If you’re a technical writer looking for a flexible markup language, D★Mark might be a good fit.</p><p>Here’s an example of D★Mark:</p><pre><code>#para This a paragraph; an element in block form containing some text.
+    <h1>D★Mark</h1><p><span class="firstterm">D★Mark</span> is a language for marking up prose. It facilitates writing semantically meaningful text, without limiting itself to the semantics provided by HTML or Markdown. If you’re a technical writer looking for a flexible markup language, D★Mark might be a good fit.</p><p>Here’s an example of D★Mark:</p><pre><code>#para This a paragraph; an element in block form containing some text.
 
 #note[only=web] This is a note that will %emph{only} show up on web.</code></pre><p>For development details on D★Mark, see <a href="https://github.com/ddfreyne/d-mark">its GitHub repository</a>. Please <a href="https://github.com/ddfreyne/d-mark/issues/new">open an issue</a> for any problems that you find.</p><section id="cheat-sheet"><h2>Cheat sheet</h2><p>This cheat sheet covers the common uses of D★Mark. For more details on the syntax, see the <a href="#syntax">Syntax</a> section.</p><p>An element is marked up in block form with <code>#</code>, and in inline form with <code>%</code>:</p><pre><code>#para It said %quote{Destroy all humans!}, I believe.</code></pre><p>An element in block from can contain elements and/or text by indenting it with two spaces:</p><pre><code>#section
   #header Example
@@ -191,5 +50,6 @@ nodes = DMark::Parser.new(content).run</code></pre><p>The translating stage is n
 end
 
 result = MyXMLLikeTranslator.new(nodes).run
-puts result</code></pre></section>  </body>
+puts result</code></pre></section>
+  </body>
 </html>
