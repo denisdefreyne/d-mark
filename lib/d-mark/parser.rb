@@ -328,11 +328,9 @@ module DMark
     def opt_read_attributes(cursor)
       case cursor.get
       when '['
-        opt_read_attribute_key_value_pairs(cursor + 1).bind do |cursor, pairs|
-          Succ.new(cursor, pairs)
-        end
+        opt_read_attribute_key_value_pairs(cursor + 1)
       else
-        Succ.new(cursor + 1, {})
+        Succ.new(cursor, {})
       end
     end
 
@@ -343,15 +341,20 @@ module DMark
       else
         opt_read_attribute_pair(cursor).bind do |cursor, pair|
           pair = { pair[0] => pair[1] }
-          case cursor.get
-          when ','
-            opt_read_attribute_key_value_pairs(cursor + 1).bind do |cursor, other_pairs|
-              Succ.new(cursor, other_pairs.merge(pair))
-            end
-          when ']'
-            Succ.new(cursor + 1, pair)
-          else
-            raise '???'
+          opt_read_attribute_key_value_pairs_tail(cursor, pair)
+        end
+      end
+    end
+
+    def opt_read_attribute_key_value_pairs_tail(cursor, pairs)
+      case cursor.get
+      when ']'
+        Succ.new(cursor + 1, pairs)
+      else
+        opt_read_char(',', cursor).bind do |cursor, _|
+          opt_read_attribute_pair(cursor).bind do |cursor, pair|
+            pair = { pair[0] => pair[1] }
+            opt_read_attribute_key_value_pairs_tail(cursor, pairs.merge(pair))
           end
         end
       end
