@@ -342,13 +342,6 @@ module DMark
       Succ.new(cursor, res)
     end
 
-    def read_attribute_value
-      opt_read_attribute_value(new_cursor).bind_or_explode do |cursor, value|
-        sync_cursor(cursor)
-        value
-      end
-    end
-
     def read_inline_content
       res = []
 
