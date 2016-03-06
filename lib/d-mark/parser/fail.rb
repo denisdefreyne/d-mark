@@ -25,6 +25,10 @@ module DMark
       def explode
         raise ParserError.new(cursor.line_nr, cursor.col_nr, message)
       end
+
+      def inspect
+        "Fail(#{message}, #{cursor.inspect})"
+      end
     end
   end
 end

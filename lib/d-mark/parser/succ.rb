@@ -20,6 +20,10 @@ module DMark
       def success?
         true
       end
+
+      def inspect
+        "Succ(#{cursor.inspect}, #{data.inspect})"
+      end
     end
   end
 end

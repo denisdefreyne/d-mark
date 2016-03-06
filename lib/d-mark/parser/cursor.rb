@@ -31,6 +31,10 @@ module DMark
       def advance
         self + 1
       end
+
+      def inspect
+        "Cursor(#{line_nr + 1}:#{col_nr + 1}; #{pos})"
+      end
     end
   end
 end

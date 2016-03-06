@@ -115,7 +115,7 @@ module DMark
       end
     end
 
-    def opt_read_until(cursor, chars)
+    def opt_read_until(chars, cursor)
       res = ''
 
       loop do
@@ -134,6 +134,62 @@ module DMark
           Succ.new(cursor, identifier)
         end
       end
+    end
+
+    def opt_read_attribute_pair(cursor)
+      opt_read_identifier(cursor).bind do |cursor, key|
+        eq = opt_read_char('=', cursor)
+
+        case eq
+        when Fail
+          Succ.new(eq.cursor, [key, key])
+        when Succ
+          opt_read_attribute_value(eq.cursor).bind do |cursor, value|
+            Succ.new(cursor, [key, value])
+          end
+        end
+      end
+    end
+
+    def opt_read_attribute_value(cursor)
+      res = ''
+
+      is_escaping = false
+      loop do
+        char = cursor.get
+
+        if is_escaping
+          case char
+          when '%', ']', ','
+            cursor = cursor.advance
+            res << char
+            is_escaping = false
+          when nil
+            return Fail.new(cursor, 'unexpected file end in attribute value')
+          when "\n"
+            return Fail.new(cursor, 'unexpected line break in attribute value')
+          else
+            return Fail.new(cursor, %(expected "%", "," or "]" after "%", but got #{char.inspect}))
+          end
+        else
+          case char
+          when ']', ','
+            break
+          when '%'
+            cursor = cursor.advance
+            is_escaping = true
+          when nil
+            return Fail.new(cursor, 'unexpected file end in attribute value')
+          when "\n"
+            return Fail.new(cursor, 'unexpected line break in attribute value')
+          else
+            cursor = cursor.advance
+            res << char
+          end
+        end
+      end
+
+      Succ.new(cursor, res)
     end
 
     ##########
@@ -259,87 +315,46 @@ module DMark
     end
 
     def read_attributes
-      read_char('[')
-
-      res = {}
-
-      at_start = true
-      loop do
-        char = peek_char
-        case char
-        when ']'
-          advance
-          break
-        else
-          read_char(',') unless at_start
-
-          opt_read_attribute_pair(new_cursor).bind_or_explode do |cursor, pair|
-            sync_cursor(cursor)
-            key, value = *pair
-            res[key] = value
-          end
-
-          at_start = false
-        end
-      end
-
-      res
-    end
-
-    def opt_read_attribute_pair(cursor)
-      opt_read_identifier(cursor).bind do |cursor, key|
-        eq = opt_read_char('=', cursor)
-
-        case eq
-        when Fail
-          Succ.new(eq.cursor, [key, key])
-        when Succ
-          opt_read_attribute_value(eq.cursor).bind do |cursor, value|
-            Succ.new(cursor, [key, value])
-          end
-        end
+      res = opt_read_attributes(new_cursor)
+      case res
+      when Succ
+        sync_cursor(res.cursor)
+        res.data
+      when Fail
+        res.explode
       end
     end
 
-    def opt_read_attribute_value(cursor)
-      res = ''
+    def opt_read_attributes(cursor)
+      case cursor.get
+      when '['
+        opt_read_attribute_key_value_pairs(cursor + 1).bind do |cursor, pairs|
+          Succ.new(cursor, pairs)
+        end
+      else
+        Succ.new(cursor + 1, {})
+      end
+    end
 
-      is_escaping = false
-      loop do
-        char = cursor.get
-
-        if is_escaping
-          case char
-          when '%', ']', ','
-            cursor = cursor.advance
-            res << char
-            is_escaping = false
-          when nil
-            return Fail.new(cursor, 'unexpected file end in attribute value')
-          when "\n"
-            return Fail.new(cursor, 'unexpected line break in attribute value')
+    def opt_read_attribute_key_value_pairs(cursor)
+      case cursor.get
+      when ']'
+        Succ.new(cursor + 1, {})
+      else
+        opt_read_attribute_pair(cursor).bind do |cursor, pair|
+          pair = { pair[0] => pair[1] }
+          case cursor.get
+          when ','
+            opt_read_attribute_key_value_pairs(cursor + 1).bind do |cursor, other_pairs|
+              Succ.new(cursor, other_pairs.merge(pair))
+            end
+          when ']'
+            Succ.new(cursor + 1, pair)
           else
-            return Fail.new(cursor, %(expected "%", "," or "]" after "%", but got #{char.inspect}))
-          end
-        else
-          case char
-          when ']', ','
-            break
-          when '%'
-            cursor = cursor.advance
-            is_escaping = true
-          when nil
-            return Fail.new(cursor, 'unexpected file end in attribute value')
-          when "\n"
-            return Fail.new(cursor, 'unexpected line break in attribute value')
-          else
-            cursor = cursor.advance
-            res << char
+            raise '???'
           end
         end
       end
-
-      Succ.new(cursor, res)
     end
 
     def read_inline_content
@@ -364,7 +379,7 @@ module DMark
     end
 
     def read_string
-      opt_read_until(new_cursor, [nil, "\n", '%', '}']).bind_or_explode do |cursor, string|
+      opt_read_until([nil, "\n", '%', '}'], new_cursor).bind_or_explode do |cursor, string|
         sync_cursor(cursor)
         string
       end
