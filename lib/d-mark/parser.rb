@@ -287,35 +287,37 @@ module DMark
     ##########
 
     def read_block_with_children(indentation = 0)
-      res = read_single_block
+      opt_read_single_block(new_cursor).bind_or_explode do |cursor, res|
+        sync_cursor(cursor)
 
-      pending_blanks = 0
-      until eof?
-        blank_pos = try_read_blank_line
-        if blank_pos
-          @pos = blank_pos
-          @line_nr += 1
-          @col_nr = 0
-          pending_blanks += 1
-        else
-          sub_indentation = detect_indentation
-          break if sub_indentation < indentation + 1
-
-          read_indentation(indentation + 1)
-          if try_read_block_start
-            res.children << read_block_with_children(indentation + 1)
+        pending_blanks = 0
+        until eof?
+          blank_pos = try_read_blank_line
+          if blank_pos
+            @pos = blank_pos
+            @line_nr += 1
+            @col_nr = 0
+            pending_blanks += 1
           else
-            res.children << "\n" unless res.children.empty?
-            pending_blanks.times { res.children << "\n" }
-            pending_blanks = 0
+            sub_indentation = detect_indentation
+            break if sub_indentation < indentation + 1
 
-            res.children.concat(read_inline_content)
-            read_end_of_inline_content
+            read_indentation(indentation + 1)
+            if try_read_block_start
+              res.children << read_block_with_children(indentation + 1)
+            else
+              res.children << "\n" unless res.children.empty?
+              pending_blanks.times { res.children << "\n" }
+              pending_blanks = 0
+
+              res.children.concat(read_inline_content)
+              read_end_of_inline_content
+            end
           end
         end
-      end
 
-      res
+        res
+      end
     end
 
     def try_read_blank_line
@@ -360,13 +362,6 @@ module DMark
       indentation.times do
         read_char(' ')
         read_char(' ')
-      end
-    end
-
-    def read_single_block
-      opt_read_single_block(new_cursor).bind_or_explode do |cursor, element_node|
-        sync_cursor(cursor)
-        element_node
       end
     end
 
