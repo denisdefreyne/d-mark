@@ -1,5 +1,11 @@
 # D★Mark news
 
+## 1.0.0a2 (2016-03-06)
+
+Changes:
+
+* Changed block form from `elem. content` to `#elem content` (#6)
+
 ## 1.0.0a1 (2016-02-20)
 
 Fixes:
