@@ -358,60 +358,70 @@ module DMark
       end
     end
 
-    def read_inline_content
-      res = []
+    def opt_read_inline_content(cursor)
+      contents = []
 
       loop do
-        char = peek_char
-        case char
+        case cursor.get
         when "\n", nil
           break
         when '}'
           break
         when '%'
-          advance
-          res << read_percent_body
+          cursor = cursor.advance
+          elem_res = opt_read_percent_body(cursor)
+          case elem_res
+          when Succ
+            contents << elem_res.data
+            cursor = elem_res.cursor
+          when Fail
+            return elem_res
+          end
         else
-          res << read_string
+          string_res = opt_read_until([nil, "\n", '%', '}'], cursor)
+          case string_res
+          when Succ
+            contents << string_res.data
+            cursor = string_res.cursor
+          when Fail
+            return string_res
+          end
         end
       end
 
-      res
+      Succ.new(cursor, contents)
     end
 
-    def read_string
-      opt_read_until([nil, "\n", '%', '}'], new_cursor).bind_or_explode do |cursor, string|
-        sync_cursor(cursor)
-        string
-      end
-    end
-
-    def read_percent_body
-      char = peek_char
-      case char
+    def opt_read_percent_body(cursor)
+      case cursor.get
       when '%', '}', '#'
-        advance
-        char.to_s
+        Succ.new(cursor + 1, cursor.get)
       when nil, "\n"
-        raise_parse_error("expected something after %")
+        Fail.new(cursor, "expected something after %")
       else
-        read_inline_element
+        opt_read_inline_element(cursor)
       end
     end
 
-    def read_inline_element
-      name = read_identifier
-      attributes =
-        if peek_char == '['
-          read_attributes
-        else
-          {}
+    def opt_read_inline_element(cursor)
+      opt_read_identifier(cursor).bind do |cursor, name|
+        opt_read_attributes(cursor).bind do |cursor, attributes|
+          opt_read_char('{', cursor).bind do |cursor, _|
+            opt_read_inline_content(cursor).bind do |cursor, contents|
+              opt_read_char('}', cursor).bind do |cursor, _|
+                Succ.new(cursor, ElementNode.new(name, attributes, contents))
+              end
+            end
+          end
         end
-      read_char('{')
-      contents = read_inline_content
-      read_char('}')
+      end
+    end
 
-      ElementNode.new(name, attributes, contents)
+    def read_inline_content
+      opt_read_inline_content(new_cursor).bind_or_explode do |cursor, contents|
+        sync_cursor(cursor)
+        contents
+      end
     end
 
     def raise_parse_error(msg)
