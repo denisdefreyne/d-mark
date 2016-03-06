@@ -225,6 +225,65 @@ module DMark
       Succ.new(cursor, res)
     end
 
+    def opt_read_inline_content(cursor)
+      contents = []
+
+      loop do
+        case cursor.get
+        when "\n", nil
+          break
+        when '}'
+          break
+        when '%'
+          cursor = cursor.advance
+          elem_res = opt_read_percent_body(cursor)
+          case elem_res
+          when Succ
+            contents << elem_res.data
+            cursor = elem_res.cursor
+          when Fail
+            return elem_res
+          end
+        else
+          string_res = opt_read_until([nil, "\n", '%', '}'], cursor)
+          case string_res
+          when Succ
+            contents << string_res.data
+            cursor = string_res.cursor
+          when Fail
+            return string_res
+          end
+        end
+      end
+
+      Succ.new(cursor, contents)
+    end
+
+    def opt_read_percent_body(cursor)
+      case cursor.get
+      when '%', '}', '#'
+        Succ.new(cursor + 1, cursor.get)
+      when nil, "\n"
+        Fail.new(cursor, "expected something after %")
+      else
+        opt_read_inline_element(cursor)
+      end
+    end
+
+    def opt_read_inline_element(cursor)
+      opt_read_identifier(cursor).bind do |cursor, name|
+        opt_read_attributes(cursor).bind do |cursor, attributes|
+          opt_read_char('{', cursor).bind do |cursor, _|
+            opt_read_inline_content(cursor).bind do |cursor, contents|
+              opt_read_char('}', cursor).bind do |cursor, _|
+                Succ.new(cursor, ElementNode.new(name, attributes, contents))
+              end
+            end
+          end
+        end
+      end
+    end
+
     ##########
 
     def read_block_with_children(indentation = 0)
@@ -340,13 +399,6 @@ module DMark
       end
     end
 
-    def read_identifier
-      opt_read_identifier(new_cursor).bind_or_explode do |cursor, identifier|
-        sync_cursor(cursor)
-        identifier
-      end
-    end
-
     def read_attributes
       res = opt_read_attributes(new_cursor)
       case res
@@ -355,65 +407,6 @@ module DMark
         res.data
       when Fail
         res.explode
-      end
-    end
-
-    def opt_read_inline_content(cursor)
-      contents = []
-
-      loop do
-        case cursor.get
-        when "\n", nil
-          break
-        when '}'
-          break
-        when '%'
-          cursor = cursor.advance
-          elem_res = opt_read_percent_body(cursor)
-          case elem_res
-          when Succ
-            contents << elem_res.data
-            cursor = elem_res.cursor
-          when Fail
-            return elem_res
-          end
-        else
-          string_res = opt_read_until([nil, "\n", '%', '}'], cursor)
-          case string_res
-          when Succ
-            contents << string_res.data
-            cursor = string_res.cursor
-          when Fail
-            return string_res
-          end
-        end
-      end
-
-      Succ.new(cursor, contents)
-    end
-
-    def opt_read_percent_body(cursor)
-      case cursor.get
-      when '%', '}', '#'
-        Succ.new(cursor + 1, cursor.get)
-      when nil, "\n"
-        Fail.new(cursor, "expected something after %")
-      else
-        opt_read_inline_element(cursor)
-      end
-    end
-
-    def opt_read_inline_element(cursor)
-      opt_read_identifier(cursor).bind do |cursor, name|
-        opt_read_attributes(cursor).bind do |cursor, attributes|
-          opt_read_char('{', cursor).bind do |cursor, _|
-            opt_read_inline_content(cursor).bind do |cursor, contents|
-              opt_read_char('}', cursor).bind do |cursor, _|
-                Succ.new(cursor, ElementNode.new(name, attributes, contents))
-              end
-            end
-          end
-        end
       end
     end
 
