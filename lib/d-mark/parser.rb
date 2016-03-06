@@ -364,26 +364,39 @@ module DMark
     end
 
     def read_single_block
-      opt_read_block_start(new_cursor).bind_or_explode do |cursor, identifier|
+      opt_read_single_block(new_cursor).bind_or_explode do |cursor, element_node|
         sync_cursor(cursor)
+        element_node
+      end
+    end
 
-        attributes =
-          if peek_char == '['
-            read_attributes
+    def opt_read_single_block(cursor)
+      opt_read_block_start(cursor).bind do |cursor, identifier|
+        opt_read_attributes(cursor).bind do |cursor, attributes|
+          case cursor.get
+          when nil, "\n"
+            Succ.new(cursor + 1, ElementNode.new(identifier, attributes, []))
           else
-            {}
+            opt_read_char(' ', cursor).bind do |cursor, _|
+              opt_read_inline_content(cursor).bind do |cursor, content|
+                opt_read_end_of_inline_content(cursor).bind do |cursor, _|
+                  Succ.new(cursor, ElementNode.new(identifier, attributes, content))
+                end
+              end
+            end
           end
-
-        case peek_char
-        when nil, "\n"
-          advance
-          ElementNode.new(identifier, attributes, [])
-        else
-          read_char(' ')
-          content = read_inline_content
-          read_end_of_inline_content
-          ElementNode.new(identifier, attributes, content)
         end
+      end
+    end
+
+    def opt_read_end_of_inline_content(cursor)
+      case cursor.get
+      when "\n", nil
+        Succ.new(cursor + 1, nil)
+      when '}'
+        Fail.new(cursor, 'unexpected } -- try escaping it as "%}"')
+      else
+        Fail.new(cursor, 'unexpected content')
       end
     end
 
@@ -396,17 +409,6 @@ module DMark
         raise_parse_error('unexpected } -- try escaping it as "%}"')
       else
         raise_parse_error('unexpected content')
-      end
-    end
-
-    def read_attributes
-      res = opt_read_attributes(new_cursor)
-      case res
-      when Succ
-        sync_cursor(res.cursor)
-        res.data
-      when Fail
-        res.explode
       end
     end
 
