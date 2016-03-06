@@ -17,19 +17,13 @@ module DMark
         @str[@pos]
       end
 
-      def +(other)
-        # FIXME: incorrect!
-
+      def advance
         case get
         when "\n"
-          self.class.new(str, pos + other, line_nr + 1, 0)
+          self.class.new(str, pos + 1, line_nr + 1, 0)
         else
-          self.class.new(str, pos + other, line_nr, col_nr + other)
+          self.class.new(str, pos + 1, line_nr, col_nr + 1)
         end
-      end
-
-      def advance
-        self + 1
       end
 
       def inspect

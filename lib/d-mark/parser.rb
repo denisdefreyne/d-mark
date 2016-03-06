@@ -49,33 +49,15 @@ module DMark
 
     ##########
 
-    def peek_char(pos = @pos)
-      if eof?
-        nil
-      else
-        @input_chars[pos]
-      end
-    end
-
     def eof?(pos = @pos)
       pos >= @input_chars.size
-    end
-
-    def advance
-      if !eof? && @input_chars[@pos] == "\n"
-        @line_nr += 1
-        @col_nr = 0
-      end
-
-      @pos += 1
-      @col_nr += 1
     end
 
     ##########
 
     def opt_read_char(c, cursor)
       if cursor.get == c
-        Succ.new(cursor + 1, c)
+        Succ.new(cursor.advance, c)
       else
         Fail.new(cursor, "expected #{c.inspect}, but got #{cursor.get.nil? ? 'EOF' : cursor.get.inspect}")
       end
@@ -84,7 +66,7 @@ module DMark
     def opt_read_string(string, cursor)
       string.each_char do |c|
         if cursor.get == c
-          cursor += 1
+          cursor = cursor.advance
         else
           return Fail.new(cursor, nil)
         end
@@ -94,7 +76,7 @@ module DMark
 
     def opt_read_char_range(range, cursor)
       if range.cover?(cursor.get)
-        Succ.new(cursor + 1, cursor.get)
+        Succ.new(cursor.advance, cursor.get)
       else
         Fail.new(cursor, "expected #{range}, not #{cursor.get.inspect}")
       end
@@ -141,7 +123,7 @@ module DMark
     def opt_read_attributes(cursor)
       case cursor.get
       when '['
-        opt_read_attribute_pairs(cursor + 1)
+        opt_read_attribute_pairs(cursor.advance)
       else
         Succ.new(cursor, {})
       end
@@ -150,7 +132,7 @@ module DMark
     def opt_read_attribute_pairs(cursor)
       case cursor.get
       when ']'
-        Succ.new(cursor + 1, {})
+        Succ.new(cursor.advance, {})
       else
         opt_read_attribute_pair(cursor).bind do |cursor, pair|
           opt_read_attribute_pairs_tail(cursor, pair)
@@ -161,7 +143,7 @@ module DMark
     def opt_read_attribute_pairs_tail(cursor, pairs)
       case cursor.get
       when ']'
-        Succ.new(cursor + 1, pairs)
+        Succ.new(cursor.advance, pairs)
       else
         opt_read_char(',', cursor).bind do |cursor, _|
           opt_read_attribute_pair(cursor).bind do |cursor, pair|
@@ -264,7 +246,7 @@ module DMark
     def opt_read_percent_body(cursor)
       case cursor.get
       when '%', '}', '#'
-        Succ.new(cursor + 1, cursor.get)
+        Succ.new(cursor.advance, cursor.get)
       when nil, "\n"
         Fail.new(cursor, "expected something after %")
       else
@@ -291,7 +273,7 @@ module DMark
         opt_read_attributes(cursor).bind do |cursor, attributes|
           case cursor.get
           when nil, "\n"
-            Succ.new(cursor + 1, ElementNode.new(identifier, attributes, []))
+            Succ.new(cursor.advance, ElementNode.new(identifier, attributes, []))
           else
             opt_read_char(' ', cursor).bind do |cursor, _|
               opt_read_inline_content(cursor).bind do |cursor, content|
@@ -308,7 +290,7 @@ module DMark
     def opt_read_end_of_inline_content(cursor)
       case cursor.get
       when "\n", nil
-        Succ.new(cursor + 1, nil)
+        Succ.new(cursor.advance, nil)
       when '}'
         Fail.new(cursor, 'unexpected } -- try escaping it as "%}"')
       else
@@ -320,11 +302,11 @@ module DMark
       loop do
         case cursor.get
         when ' '
-          cursor += 1
+          cursor = cursor.advance
         when nil
-          break Succ.new(cursor + 1, nil)
+          break Succ.new(cursor.advance, nil)
         when "\n"
-          break Succ.new(cursor + 1, nil)
+          break Succ.new(cursor.advance, nil)
         else
           break Fail.new(cursor, nil)
         end
@@ -382,7 +364,7 @@ module DMark
       loop do
         case cursor.get
         when ' '
-          cursor += 1
+          cursor = cursor.advance
           indentation_chars += 1
         else
           break
