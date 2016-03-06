@@ -82,6 +82,107 @@ module DMark
 
     ##########
 
+    class Succ
+      attr_reader :pos
+      attr_reader :data
+
+      def initialize(pos, data)
+        @pos = pos
+        @data = data
+      end
+
+      def bind
+        yield(pos, data)
+      end
+
+      def success?
+        true
+      end
+    end
+
+    class Fail
+      attr_reader :pos
+      attr_reader :message
+
+      def initialize(pos, data)
+        @pos = pos
+        @data = data
+      end
+
+      def bind
+        self
+      end
+
+      def success?
+        false
+      end
+    end
+
+    class Cursor
+      attr_reader :str
+      attr_reader :pos
+
+      def initialize(str, pos)
+        @str = str
+        @pos = pos
+      end
+
+      def get
+        @str[@pos]
+      end
+
+      def +(other)
+        self.class.new(str, pos + other)
+      end
+
+      def advance
+        self + 1
+      end
+    end
+
+    def opt_read_char(c, cursor)
+      if cursor.get == c
+        Succ.new(cursor + 1, c)
+      else
+        Fail.new(cursor, "expected #{c}, not #{cursor.get.inspect}")
+      end
+    end
+
+    def opt_read_char_range(range, cursor)
+      if range.cover?(cursor.get)
+        Succ.new(cursor + 1, cursor.get)
+      else
+        Fail.new(cursor, "expected #{range}, not #{cursor.get.inspect}")
+      end
+    end
+
+    def opt_read_identifier(cursor)
+      opt_read_char_range('a'..'z', cursor).bind do |cursor, char|
+        identifier = ''
+        identifier << char
+        loop do
+          case cursor.get
+          when 'a'..'z', '-', '0'..'9'
+            identifier << cursor.get
+            cursor = cursor.advance
+          else
+            break
+          end
+        end
+        Succ.new(cursor, identifier)
+      end
+    end
+
+    def opt_read_block_start(cursor)
+      opt_read_char('#', cursor).bind do |cursor, _char|
+        opt_read_identifier(cursor).bind do |cursor, identifier|
+          Succ.new(cursor, identifier)
+        end
+      end
+    end
+
+    ##########
+
     def read_block_with_children(indentation = 0)
       res = read_single_block
 
@@ -131,14 +232,9 @@ module DMark
       end
     end
 
-    # FIXME: ugly and duplicated
     def try_read_block_start
-      if peek_char == '#'
-        next_char = peek_char(@pos + 1)
-        ('a'..'z').cover?(next_char)
-      else
-        false
-      end
+      cursor = Cursor.new(@input_chars, @pos)
+      opt_read_block_start(cursor).success?
     end
 
     def detect_indentation
@@ -168,6 +264,12 @@ module DMark
     def read_single_block
       read_char('#')
       identifier = read_identifier
+
+      # start = opt_read_block_start(@input_chars, @pos)
+      # raise_parse_error(start.message) unless start.success?
+      #
+      # identifier = start.data
+      # @pos = start.pos
 
       attributes =
         if peek_char == '['
