@@ -71,16 +71,6 @@ module DMark
       @col_nr += 1
     end
 
-    def read_char(c)
-      char = peek_char
-      if char != c
-        raise_parse_error("expected #{c.inspect}, but got #{char.nil? ? 'EOF' : char.inspect}")
-      else
-        advance
-        char
-      end
-    end
-
     ##########
 
     def opt_read_char(c, cursor)
@@ -369,10 +359,13 @@ module DMark
                 pending_blanks.times { res.children << "\n" }
                 pending_blanks = 0
 
-                res.children.concat(read_inline_content)
-                opt_read_end_of_inline_content(new_cursor).bind_or_explode do |cursor, _|
+                opt_read_inline_content(new_cursor).bind_or_explode do |cursor, contents|
                   sync_cursor(cursor)
-                  nil
+                  res.children.concat(contents)
+                  opt_read_end_of_inline_content(new_cursor).bind_or_explode do |cursor, _|
+                    sync_cursor(cursor)
+                    nil
+                  end
                 end
               end
             end
@@ -397,17 +390,6 @@ module DMark
       end
 
       indentation_chars / 2
-    end
-
-    def read_inline_content
-      opt_read_inline_content(new_cursor).bind_or_explode do |cursor, contents|
-        sync_cursor(cursor)
-        contents
-      end
-    end
-
-    def raise_parse_error(msg)
-      raise ParserError.new(@line_nr, @col_nr, msg)
     end
 
     # TODO: remove me
