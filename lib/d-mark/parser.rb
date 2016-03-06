@@ -204,9 +204,7 @@ module DMark
 
     def read_single_block
       opt_read_block_start(new_cursor).bind_or_explode do |cursor, identifier|
-        @pos = cursor.pos
-        @line_nr = cursor.line_nr
-        @col_nr = cursor.col_nr
+        sync_cursor(cursor)
 
         attributes =
           if peek_char == '['
@@ -242,10 +240,7 @@ module DMark
 
     def read_identifier
       opt_read_identifier(new_cursor).bind_or_explode do |cursor, identifier|
-        @pos = cursor.pos
-        @line_nr = cursor.line_nr
-        @col_nr = cursor.col_nr
-
+        sync_cursor(cursor)
         identifier
       end
     end
@@ -265,25 +260,24 @@ module DMark
         else
           read_char(',') unless at_start
 
-          key = read_attribute_key
-          if peek_char == '='
-            read_char('=')
-            value = read_attribute_value
-          else
-            value = key
-          end
+          opt_read_identifier(new_cursor).bind_or_explode do |cursor, key|
+            sync_cursor(cursor)
 
-          res[key] = value
+            if peek_char == '='
+              read_char('=')
+              value = read_attribute_value
+            else
+              value = key
+            end
+
+            res[key] = value
+          end
 
           at_start = false
         end
       end
 
       res
-    end
-
-    def read_attribute_key
-      read_identifier
     end
 
     def read_attribute_value
@@ -400,6 +394,13 @@ module DMark
     # TODO: remove me
     def new_cursor
       Cursor.new(@input_chars, @pos, @line_nr, @col_nr)
+    end
+
+    # TODO: remove me
+    def sync_cursor(cursor)
+      @pos = cursor.pos
+      @line_nr = cursor.line_nr
+      @col_nr = cursor.col_nr
     end
   end
 end
