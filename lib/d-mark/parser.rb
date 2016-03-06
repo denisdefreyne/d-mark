@@ -65,11 +65,8 @@ module DMark
 
     def opt_read_string(string, cursor)
       string.each_char do |c|
-        if cursor.get == c
-          cursor = cursor.advance
-        else
-          return Fail.new(cursor, nil)
-        end
+        return Fail.new(cursor, nil) if cursor.get != c
+        cursor = cursor.advance
       end
       Succ.new(cursor, nil)
     end
