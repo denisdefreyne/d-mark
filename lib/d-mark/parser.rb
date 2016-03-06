@@ -175,8 +175,7 @@ module DMark
     end
 
     def try_read_block_start
-      cursor = Cursor.new(@input_chars, @pos, @line_nr, @col_nr)
-      opt_read_block_start(cursor).success?
+      opt_read_block_start(new_cursor).success?
     end
 
     def detect_indentation
@@ -204,8 +203,7 @@ module DMark
     end
 
     def read_single_block
-      cursor = Cursor.new(@input_chars, @pos, @line_nr, @col_nr)
-      opt_read_block_start(cursor).bind_or_explode do |cursor, identifier|
+      opt_read_block_start(new_cursor).bind_or_explode do |cursor, identifier|
         @pos = cursor.pos
         @line_nr = cursor.line_nr
         @col_nr = cursor.col_nr
@@ -243,37 +241,13 @@ module DMark
     end
 
     def read_identifier
-      a = read_identifier_head
-      b = read_identifier_tail
-      "#{a}#{b}"
-    end
+      opt_read_identifier(new_cursor).bind_or_explode do |cursor, identifier|
+        @pos = cursor.pos
+        @line_nr = cursor.line_nr
+        @col_nr = cursor.col_nr
 
-    def read_identifier_head
-      char = peek_char
-      case char
-      when 'a'..'z'
-        advance
-        char
-      else
-        raise_parse_error("expected an identifier, but got #{char.inspect}")
+        identifier
       end
-    end
-
-    def read_identifier_tail
-      res = ''
-
-      loop do
-        char = peek_char
-        case char
-        when 'a'..'z', '-', '0'..'9'
-          advance
-          res << char
-        else
-          break
-        end
-      end
-
-      res.to_s
     end
 
     def read_attributes
@@ -421,6 +395,11 @@ module DMark
 
     def raise_parse_error(msg)
       raise ParserError.new(@line_nr, @col_nr, msg)
+    end
+
+    # TODO: remove me
+    def new_cursor
+      Cursor.new(@input_chars, @pos, @line_nr, @col_nr)
     end
   end
 end
