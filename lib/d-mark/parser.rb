@@ -115,6 +115,19 @@ module DMark
       end
     end
 
+    def opt_read_until(cursor, chars)
+      res = ''
+
+      loop do
+        char = cursor.get
+        break if chars.include?(char)
+        cursor = cursor.advance
+        res << char
+      end
+
+      Succ.new(cursor, res)
+    end
+
     def opt_read_block_start(cursor)
       opt_read_char('#', cursor).bind do |cursor, _char|
         opt_read_identifier(cursor).bind do |cursor, identifier|
@@ -343,20 +356,10 @@ module DMark
     end
 
     def read_string
-      res = ''
-
-      loop do
-        char = peek_char
-        case char
-        when nil, "\n", '%', '}'
-          break
-        else
-          advance
-          res << char
-        end
+      opt_read_until(new_cursor, [nil, "\n", '%', '}']).bind_or_explode do |cursor, string|
+        sync_cursor(cursor)
+        string
       end
-
-      res.to_s
     end
 
     def read_percent_body
