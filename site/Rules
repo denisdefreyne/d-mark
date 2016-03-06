@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+
+compile '/index.dmark' do
+  filter :dmark2html
+  layout '/default.*'
+  filter :relativize_paths, type: :html
+  write '/index.html'
+end
+
+passthrough '/stylesheet.css'
+
+layout '/**/*', :erb
