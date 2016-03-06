@@ -95,6 +95,10 @@ module DMark
         yield(cursor, data)
       end
 
+      def bind_or_explode(&block)
+        bind(&block)
+      end
+
       def success?
         true
       end
@@ -111,6 +115,10 @@ module DMark
 
       def bind
         self
+      end
+
+      def bind_or_explode(&_block)
+        explode
       end
 
       def success?
@@ -279,30 +287,28 @@ module DMark
 
     def read_single_block
       cursor = Cursor.new(@input_chars, @pos, @line_nr, @col_nr)
-      start = opt_read_block_start(cursor)
-      start.explode unless start.success?
+      opt_read_block_start(cursor).bind_or_explode do |cursor, identifier|
+        @pos = cursor.pos
+        @line_nr = cursor.line_nr
+        @col_nr = cursor.col_nr
 
-      @pos = start.cursor.pos
-      @line_nr = start.cursor.line_nr
-      @col_nr = start.cursor.col_nr
-      identifier = start.data
+        attributes =
+          if peek_char == '['
+            read_attributes
+          else
+            {}
+          end
 
-      attributes =
-        if peek_char == '['
-          read_attributes
+        case peek_char
+        when nil, "\n"
+          advance
+          ElementNode.new(identifier, attributes, [])
         else
-          {}
+          read_char(' ')
+          content = read_inline_content
+          read_end_of_inline_content
+          ElementNode.new(identifier, attributes, content)
         end
-
-      case peek_char
-      when nil, "\n"
-        advance
-        ElementNode.new(identifier, attributes, [])
-      else
-        read_char(' ')
-        content = read_inline_content
-        read_end_of_inline_content
-        ElementNode.new(identifier, attributes, content)
       end
     end
 
