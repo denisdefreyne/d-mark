@@ -276,6 +276,10 @@ module DMark
           opt_read_identifier(new_cursor).bind_or_explode do |cursor, key|
             sync_cursor(cursor)
 
+            # opt_read_char('=').bind do |cursor, _|
+            #
+            # end
+
             if peek_char == '='
               read_char('=')
               value = read_attribute_value
@@ -293,45 +297,52 @@ module DMark
       res
     end
 
-    def read_attribute_value
+    def opt_read_attribute_value(cursor)
       res = ''
 
       is_escaping = false
       loop do
-        char = peek_char
+        char = cursor.get
 
         if is_escaping
           case char
           when '%', ']', ','
-            advance
+            cursor = cursor.advance
             res << char
             is_escaping = false
           when nil
-            raise_parse_error('unexpected file end in attribute value')
+            return Fail.new(cursor, 'unexpected file end in attribute value')
           when "\n"
-            raise_parse_error('unexpected line break in attribute value')
+            return Fail.new(cursor, 'unexpected line break in attribute value')
           else
-            raise_parse_error(%(expected "%", "," or "]" after "%", but got #{char.inspect}))
+            return Fail.new(cursor, %(expected "%", "," or "]" after "%", but got #{char.inspect}))
           end
         else
           case char
           when ']', ','
             break
           when '%'
-            advance
+            cursor = cursor.advance
             is_escaping = true
           when nil
-            raise_parse_error('unexpected file end in attribute value')
+            return Fail.new(cursor, 'unexpected file end in attribute value')
           when "\n"
-            raise_parse_error('unexpected line break in attribute value')
+            return Fail.new(cursor, 'unexpected line break in attribute value')
           else
-            advance
+            cursor = cursor.advance
             res << char
           end
         end
       end
 
-      res.to_s
+      Succ.new(cursor, res)
+    end
+
+    def read_attribute_value
+      opt_read_attribute_value(new_cursor).bind_or_explode do |cursor, value|
+        sync_cursor(cursor)
+        value
+      end
     end
 
     def read_inline_content
