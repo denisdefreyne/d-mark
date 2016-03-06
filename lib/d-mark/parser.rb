@@ -83,16 +83,16 @@ module DMark
     ##########
 
     class Succ
-      attr_reader :pos
+      attr_reader :cursor
       attr_reader :data
 
-      def initialize(pos, data)
-        @pos = pos
+      def initialize(cursor, data)
+        @cursor = cursor
         @data = data
       end
 
       def bind
-        yield(pos, data)
+        yield(cursor, data)
       end
 
       def success?
@@ -101,12 +101,12 @@ module DMark
     end
 
     class Fail
-      attr_reader :pos
+      attr_reader :cursor
       attr_reader :message
 
-      def initialize(pos, data)
-        @pos = pos
-        @data = data
+      def initialize(cursor, message)
+        @cursor = cursor
+        @message = message
       end
 
       def bind
@@ -116,15 +116,24 @@ module DMark
       def success?
         false
       end
+
+      # TODO: remove me
+      def explode
+        raise ParserError.new(cursor.line_nr, cursor.col_nr, message)
+      end
     end
 
     class Cursor
       attr_reader :str
       attr_reader :pos
+      attr_reader :line_nr
+      attr_reader :col_nr
 
-      def initialize(str, pos)
+      def initialize(str, pos, line_nr, col_nr)
         @str = str
         @pos = pos
+        @line_nr = line_nr
+        @col_nr = col_nr
       end
 
       def get
@@ -132,7 +141,14 @@ module DMark
       end
 
       def +(other)
-        self.class.new(str, pos + other)
+        # FIXME: incorrect!
+
+        case get
+        when "\n"
+          self.class.new(str, pos + other, line_nr + 1, 0)
+        else
+          self.class.new(str, pos + other, line_nr, col_nr + other)
+        end
       end
 
       def advance
@@ -144,7 +160,7 @@ module DMark
       if cursor.get == c
         Succ.new(cursor + 1, c)
       else
-        Fail.new(cursor, "expected #{c}, not #{cursor.get.inspect}")
+        Fail.new(cursor, "expected #{c.inspect}, but got #{cursor.get.nil? ? 'EOF' : cursor.get.inspect}")
       end
     end
 
@@ -233,7 +249,7 @@ module DMark
     end
 
     def try_read_block_start
-      cursor = Cursor.new(@input_chars, @pos)
+      cursor = Cursor.new(@input_chars, @pos, @line_nr, @col_nr)
       opt_read_block_start(cursor).success?
     end
 
@@ -262,14 +278,14 @@ module DMark
     end
 
     def read_single_block
-      read_char('#')
-      identifier = read_identifier
+      cursor = Cursor.new(@input_chars, @pos, @line_nr, @col_nr)
+      start = opt_read_block_start(cursor)
+      start.explode unless start.success?
 
-      # start = opt_read_block_start(@input_chars, @pos)
-      # raise_parse_error(start.message) unless start.success?
-      #
-      # identifier = start.data
-      # @pos = start.pos
+      @pos = start.cursor.pos
+      @line_nr = start.cursor.line_nr
+      @col_nr = start.cursor.col_nr
+      identifier = start.data
 
       attributes =
         if peek_char == '['
