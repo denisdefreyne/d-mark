@@ -273,28 +273,34 @@ module DMark
         else
           read_char(',') unless at_start
 
-          opt_read_identifier(new_cursor).bind_or_explode do |cursor, key|
-            sync_cursor(cursor)
-
-            # opt_read_char('=').bind do |cursor, _|
-            #
-            # end
-
-            if peek_char == '='
-              read_char('=')
-              value = read_attribute_value
-            else
-              value = key
-            end
-
-            res[key] = value
-          end
+          key, value = *read_key_pair
+          res[key] = value
 
           at_start = false
         end
       end
 
       res
+    end
+
+    def read_key_pair
+      opt_read_identifier(new_cursor).bind_or_explode do |cursor, key|
+        sync_cursor(cursor)
+
+        eq = opt_read_char('=', cursor)
+        value =
+          case eq
+          when Fail
+            key
+          when Succ
+            opt_read_attribute_value(eq.cursor).bind_or_explode do |cursor, v|
+              sync_cursor(cursor)
+              v
+            end
+          end
+
+        [key, value]
+      end
     end
 
     def opt_read_attribute_value(cursor)
