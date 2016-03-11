@@ -356,7 +356,7 @@ module DMark
         advance
         char.to_s
       when nil, "\n"
-        raise_parse_error("expected something after %")
+        raise_parse_error('expected something after %')
       else
         read_inline_element
       end
