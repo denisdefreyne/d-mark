@@ -17,6 +17,10 @@ AsciiComments:
 Documentation:
   Enabled: false
 
+# This prevents using exceptions with attributes.
+Style/RaiseArgs:
+  Enabled: false
+
 
 
 # ----- DISABLED (metrics) -----

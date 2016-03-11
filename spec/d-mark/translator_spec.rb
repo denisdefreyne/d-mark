@@ -17,24 +17,23 @@ describe DMark::Translator do
 
     context 'translator base class' do
       it 'raises NotImplementedError' do
-        expect { subject }.to raise_error(NotImplementedError)
+        expect { subject }.to raise_error(DMark::Translator::UnhandledNode)
       end
     end
 
     context 'custom translator' do
       let(:translator_class) do
         Class.new(described_class) do
-          def handle(node)
-            case node
-            when String
-              out << node
-            when DMark::ElementNode
-              out << "<#{node.name}"
-              out << node.attributes.map { |k, v| ' ' + [k, v].join('=') }.join
-              out << '>'
-              handle_children(node)
-              out << "</#{node.name}>"
-            end
+          def handle_string(string)
+            out << string
+          end
+
+          def handle_element(element, path)
+            out << "<#{element.name}"
+            out << element.attributes.map { |k, v| ' ' + [k, v].join('=') }.join
+            out << '>'
+            handle_children(element, path)
+            out << "</#{element.name}>"
           end
         end
       end
