@@ -69,8 +69,13 @@ a.permalink:active {
 }
 
 pre code .k,
-pre code .nt {
+pre code .nt,
+pre code .no {
   font-weight: bold;
+}
+
+pre code .c1 {
+  color: rgba(0, 0, 0, 0.5);
 }
 
 em, .firstterm {
