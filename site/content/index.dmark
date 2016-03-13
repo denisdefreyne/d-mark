@@ -281,15 +281,14 @@ title: D★Mark
 
   #listing[lang=ruby]
     class MyXMLLikeTranslator < DMark::Translator
-      def handle(node)
-        case node
-        when String
-          out << node
-        when DMark::ElementNode
-          out << "<#{node.name%}>"
-          handle_children(node)
-          out << "</#{node.name%}>"
-        end
+      def handle_string(string)
+        out << string
+      end
+
+      def handle_element(element, path)
+        out << "<#{node.name%}>"
+        handle_children(node, path)
+        out << "</#{node.name%}>"
       end
     end
 
