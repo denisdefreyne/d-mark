@@ -14,25 +14,25 @@
     <h1>D★Mark</h1>
 <p><span class="firstterm">D★Mark</span> is a language for marking up prose. It facilitates writing semantically meaningful text, without limiting itself to the semantics provided by HTML or Markdown. If you’re a technical writer looking for a flexible markup language, D★Mark might be a good fit.</p>
 <p>Here’s an example of D★Mark:</p>
-<pre><code>#para This a paragraph; an element in block form containing some text.
+<pre><code><span class="nt">#para</span><span class="err"> This a paragraph; an element in block form containing some text.
 
-#note[only=web] This is a note that will %emph{only} show up on web.</code></pre>
+</span><span class="nt">#note</span><span class="err">[only=web] This is a note that will </span><span class="nt">%emph</span><span class="err">{only} show up on web.</span></code></pre>
 <p>For development details on D★Mark, see <a href="https://github.com/ddfreyne/d-mark">its GitHub repository</a>. Please <a href="https://github.com/ddfreyne/d-mark/issues/new">open an issue</a> for any problems that you find.</p>
 <section id="cheat-sheet"><h2>Cheat sheet<a href="#cheat-sheet" class="permalink">#</a>
 </h2>
 <p>This cheat sheet covers the common uses of D★Mark. For more details on the syntax, see the <a href="#syntax">Syntax</a> section.</p>
 <p>An element is marked up in block form with <code>#</code>, and in inline form with <code>%</code>:</p>
-<pre><code>#para It said %quote{Destroy all humans!}, I believe.</code></pre>
+<pre><code><span class="nt">#para</span><span class="err"> It said </span><span class="nt">%quote</span><span class="err">{Destroy all humans!}, I believe.</span></code></pre>
 <p>An element in block from can contain elements and/or text by indenting it with two spaces:</p>
-<pre><code>#section
-  #header Example
+<pre><code><span class="nt">#section</span><span class="err">
+</span><span class="nt">  #header</span><span class="err"> Example
 
-  #listing
+</span><span class="nt">  #listing</span><span class="err">
     content = File.read(ARGV[0])
-    nodes = DMark::Parser.new(content).run</code></pre>
+    nodes = DMark::Parser.new(content).run</span></code></pre>
 <p>Elements, both in block and inline form, can have attributes inside square brackets:</p>
-<pre><code>#listing[lang=shell]
-  $ ls -l</code></pre></section><section id="use-cases"><h2>Use cases<a href="#use-cases" class="permalink">#</a>
+<pre><code><span class="nt">#listing</span><span class="err">[lang=shell]
+  $ ls -l</span></code></pre></section><section id="use-cases"><h2>Use cases<a href="#use-cases" class="permalink">#</a>
 </h2>
 <p>D★Mark is particularly well-suited for some use cases that don’t work well in other markup languages, as they lack the flexibility to express certain ideas.</p>
 <section id="first-term"><h3>First term<a href="#first-term" class="permalink">#</a>
@@ -42,16 +42,16 @@
 <p>Additionally, a term that is marked up as <code>firstterm</code> will end up in the index at the back of the book that is generated from the Nanoc documentation.</p></section><section id="admonitions"><h3>Admonitions<a href="#admonitions" class="permalink">#</a>
 </h3>
 <p>Admonitions, such as notes, tips, warnings and hints, can be expressed as elements in D★Mark. For example, the Nanoc web site contains the following caution admonition:</p>
-<pre><code>#caution This will remove all files and directories that do not correspond to Nanoc items from the output directory.</code></pre>
+<pre><code><span class="nt">#caution</span><span class="err"> This will remove all files and directories that do not correspond to Nanoc items from the output directory.</span></code></pre>
 <p>The stylesheet renders this admonition with a red background, and a warning icon, to attract attention. The  D★Mark documentation, which you are looking at now, contains note admonitions. For example:</p>
 <div class="note">This is an example note.</div></section><section id="cross-references"><h3>Cross-references<a href="#cross-references" class="permalink">#</a>
 </h3>
 <p>One way of marking up a hyperlink in D★Mark is to use a <code>a</code> element. For example, the following code snippet represents a hyperlink to the Nanoc web site:</p>
-<pre><code>#p I love the design of the %a[href=http://nanoc.ws/]{Nanoc web site}.</code></pre>
+<pre><code><span class="nt">#p</span><span class="err"> I love the design of the </span><span class="nt">%a</span><span class="err">[href=http://nanoc.ws/]{Nanoc web site}.</span></code></pre>
 <div class="note">Because D★Mark itself does not prescribe any vocabulary, there is no single right way to mark up hyperlinks. For example, this document uses a <code>link</code> element with a <code>target</code> attribute for hyperlinks, rather than a more traditional <code>a</code> element.</div>
 <p>The Nanoc documentation, however, does not use hyperlinks to link to other pages. While hyperlinks work well on the web, they are more cumbersome to use in print. Because a (distant) goal of the Nanoc documentation is to be readily convertible into a print book, it uses cross-references instead.</p>
 <p>A reference is marked up using a <code>ref</code> element, and points to a chapter or section. For example, the following paragraph contains a reference to the Patterns chapter:</p>
-<pre><code>#p For more information on patterns, see %ref[chapter=/doc/patterns.*]{}.</code></pre>
+<pre><code><span class="nt">#p</span><span class="err"> For more information on patterns, see </span><span class="nt">%ref</span><span class="err">[chapter=/doc/patterns.*]{}.</span></code></pre>
 <p>When generating a web version of a document that contains a reference, the reference will be translated into a hyperlink. The name of the chapter is filled in automatically. The above example could be rendered as follows:</p>
 <blockquote><p>For more information on patterns, see the <a href="#">Patterns</a> page.</p></blockquote>
 <p>In print, however, the reference is translated into the name of the chapter, along with the page number. Additionally, rather than referring to the Patterns <em>page</em>, it refers to the Patterns <em>chapter</em>, in order to prevent confusion between web pages and print pages. For example:</p>
@@ -73,33 +73,33 @@
 <dt>Block form</dt>
 <dd>
 <p>An element in block form consists of the <code>#</code> symbol, the name of the element, optionally attributes enclosed in rectangular brackets, a space character, and finally the content. For example:</p>
-<pre><code>#para This a paragraph; an element in block form containing some text.
+<pre><code><span class="nt">#para</span><span class="err"> This a paragraph; an element in block form containing some text.
 
-#note[only=web] This is an example “note” element with an “only” attribute.</code></pre>
+</span><span class="nt">#note</span><span class="err">[only=web] This is an example “note” element with an “only” attribute.</span></code></pre>
 </dd>
 <dt>Inline form</dt>
 <dd>
 <p>Inside an element, text can be marked up using elements with the inline form. An element in inline form consists of the <code>%</code> symbol, the name of the element, optionally attributes enclosed in rectangular brackets, and finally the content within braces. For example:</p>
-<pre><code>#para I am a paragraph with an %emph{amazing} inline element.</code></pre>
+<pre><code><span class="nt">#para</span><span class="err"> I am a paragraph with an </span><span class="nt">%emph</span><span class="err">{amazing} inline element.</span></code></pre>
 </dd>
 </dl>
 <p>An element name starts with a lowercase letter, followed by zero or more lowercase letters, digits or a dash. For instance, <code>emph</code>, <code>h2</code>, and <code>section-header</code> are valid element names, while <code>SectionHeader</code>, <code>2</code> and <code>input_data</code> are not.</p>
 <div class="note">The restrictions on what can be an element name will likely be relaxed before the 1.0 release.</div>
 <p>At the top level, D★Mark documents consists <em>only</em> of elements in block form.</p>
 <p>Elements in block form can be nested. To do so, indent the nested block two spaces deeper than the enclosing block. For example, the following defines a <code>list</code> element with three <code>item</code> elements inside it:</p>
-<pre><code>#list[unordered]
-  #item glob patterns
-  #item regular expression patterns
-  #item legacy patterns</code></pre>
+<pre><code><span class="nt">#list</span><span class="err">[unordered]
+</span><span class="nt">  #item</span><span class="err"> glob patterns
+</span><span class="nt">  #item</span><span class="err"> regular expression patterns
+</span><span class="nt">  #item</span><span class="err"> legacy patterns</span></code></pre>
 <p>The block element form can also include text on indented lines following the element. In this case, the content is not wrapped inside a nested block-level element. This is particularly useful for source code listing. For example:</p>
-<pre><code>#listing[lang=ruby]
+<pre><code><span class="nt">#listing</span><span class="err">[lang=ruby]
   identifier = Nanoc::Identifier.new('/about.md')
 
   identifier.without_ext
   # =&gt; "/about"
 
   identifier.ext
-  # =&gt; "md"</code></pre>
+  # =&gt; "md"</span></code></pre>
 <p>An element in block form can always be expressed in inline form and vice versa, with the exception of a top-level element, which always needs to be in block form.</p>
 <section id="attributes"><h3>Attributes<a href="#attributes" class="permalink">#</a>
 </h3>
@@ -127,32 +127,32 @@
 </ul>
 <p>To escape a character, prefix it with <code>%</code>.</p>
 <p>The following is an example of escaping inline content:</p>
-<pre><code>#p To escape a character, prefix it with %code{%%}.</code></pre>
+<pre><code><span class="nt">#p</span><span class="err"> To escape a character, prefix it with </span><span class="nt">%code</span><span class="err">{%%}.</span></code></pre>
 <p>The following is a listing element containing escaped D★Mark:</p>
-<pre><code>#listing
-  %#para This is a paragraph element in block form.</code></pre>
+<pre><code><span class="nt">#listing</span><span class="err">
+  %#para This is a paragraph element in block form.</span></code></pre>
 <p>Here’s an example of escaped characters in an attribute value:</p>
-<pre><code>#para[kind=joke%, ha ha] They say 20%% of all statistics are made up.</code></pre></section></section><section id="comparison-with-other-languages"><h2>Comparison with other languages<a href="#comparison-with-other-languages" class="permalink">#</a>
+<pre><code><span class="nt">#para</span><span class="err">[kind=joke%, ha ha] They say 20%% of all statistics are made up.</span></code></pre></section></section><section id="comparison-with-other-languages"><h2>Comparison with other languages<a href="#comparison-with-other-languages" class="permalink">#</a>
 </h2>
 <p>D★Mark takes inspiration from a variety of other languages.</p>
 <dl>
 <dt>HTML</dt>
 <dd>
 <p>HTML is syntactically unambiguous, but comparatively more verbose than other languages. It also prescribes only a small set of elements, which makes it awkward to use for prose that requires more thorough markup. It is possible use <code>span</code> or <code>div</code> elements with custom classes, but this approach turns an already verbose language into something even more verbose.</p>
-<pre><code>&lt;p&gt;A glob pattern that matches every item is &lt;span class="pattern attr-kind-glob"&gt;/**/*&lt;/span&gt;.&lt;/p&gt;</code></pre>
-<pre><code>#para A glob pattern that matches every item is %pattern[glob]{/**/*}.</code></pre>
+<pre><code><span class="nt">&lt;p&gt;</span>A glob pattern that matches every item is <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">"pattern attr-kind-glob"</span><span class="nt">&gt;</span>/**/*<span class="nt">&lt;/span&gt;</span>.<span class="nt">&lt;/p&gt;</span></code></pre>
+<pre><code><span class="nt">#para</span><span class="err"> A glob pattern that matches every item is </span><span class="nt">%pattern</span><span class="err">[glob]{/**/*}.</span></code></pre>
 </dd>
 <dt>XML</dt>
 <dd>
 <p>Similar to HTML, with the major difference that XML does not prescribe a set of elements.</p>
-<pre><code>&lt;para&gt;A glob pattern that matches every item is &lt;pattern kind="glob"&gt;/**/*&lt;/pattern&gt;.&lt;/para&gt;</code></pre>
-<pre><code>#para A glob pattern that matches every item is %pattern[glob]{/**/*}.</code></pre>
+<pre><code><span class="nt">&lt;para&gt;</span>A glob pattern that matches every item is <span class="nt">&lt;pattern</span> <span class="na">kind=</span><span class="s">"glob"</span><span class="nt">&gt;</span>/**/*<span class="nt">&lt;/pattern&gt;</span>.<span class="nt">&lt;/para&gt;</span></code></pre>
+<pre><code><span class="nt">#para</span><span class="err"> A glob pattern that matches every item is </span><span class="nt">%pattern</span><span class="err">[glob]{/**/*}.</span></code></pre>
 </dd>
 <dt>Markdown</dt>
 <dd>
 <p>Markdown has a compact syntax, but is complex and ambiguous, as evidenced by the many different mutually incompatible implementations. It prescribes a small set of elements (smaller even than HTML). It supports embedding raw HTML, which in theory makes it possible to combine the best of both worlds, but in practice leads to markup that is harder to read than either Markdown or HTML separately, and occasionally trips up the parser and syntax highlighter.</p>
-<pre><code>A glob pattern that matches every item is &lt;span class="glob attr-kind-glob"&gt;/**/*&lt;/span&gt;.</code></pre>
-<pre><code>#para A glob pattern that matches every item is %pattern[glob]{/**/*}.</code></pre>
+<pre><code>A glob pattern that matches every item is <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">"glob attr-kind-glob"</span><span class="nt">&gt;</span>/<span class="ge">**</span>/<span class="err">*</span><span class="nt">&lt;/span&gt;</span>.</code></pre>
+<pre><code><span class="nt">#para</span><span class="err"> A glob pattern that matches every item is </span><span class="nt">%pattern</span><span class="err">[glob]{/**/*}.</span></code></pre>
 </dd>
 <dt>AsciiDoc</dt>
 <dd>
@@ -162,18 +162,18 @@
 <dt>TeX, LaTeX</dt>
 <dd>
 <p>TeX is a turing-complete programming language, as opposed to a markup language, intended for typesetting. This makes it impractical for using it as the source for converting it to other formats. Its syntax is simple and compact, and served as an inspiration for D★Mark.</p>
-<pre><code>A glob pattern that matches every item is \pattern[glob]{/**/*}.</code></pre>
-<pre><code>#para A glob pattern that matches every item is %pattern[glob]{/**/*}.</code></pre>
+<pre><code>A glob pattern that matches every item is <span class="k">\pattern</span><span class="na">[glob]</span><span class="p">{</span>/**/*<span class="p">}</span>.</code></pre>
+<pre><code><span class="nt">#para</span><span class="err"> A glob pattern that matches every item is </span><span class="nt">%pattern</span><span class="err">[glob]{/**/*}.</span></code></pre>
 </dd>
 <dt>JSON, YAML</dt>
 <dd>
 <p>JSON and YAML are data interchange formats rather than markup languages, and thus are not well-suited for marking up prose.</p>
-<pre><code>[
-  "A glob pattern that matches every item is ",
-  ["pattern", {"kind": "glob"}, ["/**/*"]],
-  "."
-]</code></pre>
-<pre><code>#para A glob pattern that matches every item is %pattern[glob]{/**/*}.</code></pre>
+<pre><code><span class="p">[</span><span class="w">
+  </span><span class="s2">"A glob pattern that matches every item is "</span><span class="p">,</span><span class="w">
+  </span><span class="p">[</span><span class="s2">"pattern"</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="nt">"kind"</span><span class="p">:</span><span class="w"> </span><span class="s2">"glob"</span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="s2">"/**/*"</span><span class="p">]],</span><span class="w">
+  </span><span class="s2">"."</span><span class="w">
+</span><span class="p">]</span></code></pre>
+<pre><code><span class="nt">#para</span><span class="err"> A glob pattern that matches every item is </span><span class="nt">%pattern</span><span class="err">[glob]{/**/*}.</span></code></pre>
 </dd>
 </dl></section><section id="samples"><h2>Samples<a href="#samples" class="permalink">#</a>
 </h2>
@@ -183,29 +183,29 @@
 </h2>
 <p>Handling a D★Mark file consists of two stages: parsing and translating.</p>
 <p>The parsing stage converts text into a list of nodes. Construct a parser with the tokens as input, and call <code>#run</code> to get the list of nodes.</p>
-<pre><code>content = File.read(ARGV[0])
-nodes = DMark::Parser.new(content).run</code></pre>
+<pre><code><span class="n">content</span> <span class="o">=</span> <span class="no">File</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="no">ARGV</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">nodes</span> <span class="o">=</span> <span class="no">DMark</span><span class="o">::</span><span class="no">Parser</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">content</span><span class="p">).</span><span class="nf">run</span></code></pre>
 <p>Translating means converting the list of nodes into something else. For example, the translation step could translate each element into HTML or LaTeX.</p>
 <p>D★Mark does not come with any translators. It does, however, provide a class named <code>DMark::Translator</code>, which is intended as the base class for translators.</p>
 <p>For example, the following translator will convert the tree into XML:</p>
-<pre><code>class MyXMLLikeTranslator &lt; DMark::Translator
-  def handle_string(string)
-    out &lt;&lt; escape(string)
-  end
+<pre><code><span class="k">class</span> <span class="nc">MyXMLLikeTranslator</span> <span class="o">&lt;</span> <span class="no">DMark</span><span class="o">::</span><span class="no">Translator</span>
+  <span class="k">def</span> <span class="nf">handle_string</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="n">escape</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+  <span class="k">end</span>
 
-  def handle_element(element, path)
-    out &lt;&lt; "&lt;#{node.name}&gt;"
-    handle_children(node, path)
-    out &lt;&lt; "&lt;/#{node.name}&gt;"
-  end
+  <span class="k">def</span> <span class="nf">handle_element</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="s2">"&lt;</span><span class="si">#{</span><span class="n">node</span><span class="p">.</span><span class="nf">name</span><span class="si">}</span><span class="s2">&gt;"</span>
+    <span class="n">handle_children</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="s2">"&lt;/</span><span class="si">#{</span><span class="n">node</span><span class="p">.</span><span class="nf">name</span><span class="si">}</span><span class="s2">&gt;"</span>
+  <span class="k">end</span>
 
-  def escape(string)
-    string.gsub('&amp;', '&amp;amp;').gsub('&lt;', '&amp;lt;')
-  end
-end
+  <span class="k">def</span> <span class="nf">escape</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+    <span class="n">string</span><span class="p">.</span><span class="nf">gsub</span><span class="p">(</span><span class="s1">'&amp;'</span><span class="p">,</span> <span class="s1">'&amp;amp;'</span><span class="p">).</span><span class="nf">gsub</span><span class="p">(</span><span class="s1">'&lt;'</span><span class="p">,</span> <span class="s1">'&lt;'</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 
-result = MyXMLLikeTranslator.new(nodes).run
-puts result</code></pre>
+<span class="n">result</span> <span class="o">=</span> <span class="no">MyXMLLikeTranslator</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">nodes</span><span class="p">).</span><span class="nf">run</span>
+<span class="nb">puts</span> <span class="n">result</span></code></pre>
 <p>To create a translator, create a subclass of <code>DMark::Translator</code>, and implement <code>#handle_string</code> and <code>#handle_element</code>, which should write their translated content to <code>out</code>.</p>
 <dl>
 <dt><code>#handle_string(string)</code></dt>
@@ -216,14 +216,14 @@ puts result</code></pre>
 <p>The way an element is translated often depends on the element name, <code>element.name</code> (a string), and might depend on the element’s attributes, <code>element.attributes</code> (a hash).</p>
 <p>When handling an element, make sure to handle all its child elements. The built-in <code>#handle_children</code> function can be used for this, and is typically called like <code>handle_children(element, path)</code>. Handling child elements does not happen automatically, in order to provide the possibility of conditional output.</p>
 <p>The <code>path</code> argument is useful in cases where the resulting output depends on the nesting level. For example, this page uses nested <code>section</code> elements that start with a <code>h</code> (header) element, which is translated to any of the HTML header elements (such as <code>h1</code>) depending on the number of <code>section</code> ancestors:</p>
-<pre><code>def handle_element(element, path)
-  case element.name
-  when 'h'
-    depth = path.count { |ancestor| ancestor.name == 'section' } + 1
-    out &lt;&lt; "&lt;h#{depth}"&gt;
-    handle_children(element, path)
-    out &lt;&lt; "&lt;/h#{depth}"&gt;
-  # … handle other elements here …</code></pre>
+<pre><code><span class="k">def</span> <span class="nf">handle_element</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+  <span class="k">case</span> <span class="n">element</span><span class="p">.</span><span class="nf">name</span>
+  <span class="k">when</span> <span class="s1">'h'</span>
+    <span class="n">depth</span> <span class="o">=</span> <span class="n">path</span><span class="p">.</span><span class="nf">count</span> <span class="p">{</span> <span class="o">|</span><span class="n">ancestor</span><span class="o">|</span> <span class="n">ancestor</span><span class="p">.</span><span class="nf">name</span> <span class="o">==</span> <span class="s1">'section'</span> <span class="p">}</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="s2">"&lt;h</span><span class="si">#{</span><span class="n">depth</span><span class="si">}</span><span class="s2">"</span><span class="o">&gt;</span>
+    <span class="n">handle_children</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="s2">"&lt;/h</span><span class="si">#{</span><span class="n">depth</span><span class="si">}</span><span class="s2">"</span><span class="o">&gt;</span>
+  <span class="c1"># … handle other elements here …</span></code></pre>
 </dd>
 </dl></section>
   </body>

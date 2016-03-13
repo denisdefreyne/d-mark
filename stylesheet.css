@@ -68,6 +68,11 @@ a.permalink:active {
   color: #000;
 }
 
+pre code .k,
+pre code .nt {
+  font-weight: bold;
+}
+
 em, .firstterm {
   font-style: italic;
 }
