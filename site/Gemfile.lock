@@ -1,7 +1,7 @@
 PATH
   remote: ..
   specs:
-    d-mark (1.0.0a1)
+    d-mark (1.0.0a2)
 
 GEM
   remote: https://rubygems.org/
