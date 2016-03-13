@@ -1,32 +1,31 @@
 require 'd-mark'
 
 class Doc2HTML < DMark::Translator
-  def handle(node, depths = {})
-    case node
-    when String
-      out << html_escape(node)
-    when DMark::ElementNode
-      case node.name
-      when 'p', 'dl', 'dt', 'dd', 'ol', 'ul', 'li', 'code', 'kbd', 'blockquote'
-        wrap(node.name) { handle_children(node, depths) }
-      when 'h'
-        depth = depths.fetch('section', 0) + 1
-        wrap("h#{depth}") { handle_children(node, depths) }
-      when 'section'
-        wrap('section', id: id_for_section(node)) { handle_children(node, depths) }
-      when 'emph'
-        wrap('em') { handle_children(node, depths) }
-      when 'firstterm', 'prompt', 'filename'
-        wrap('span', class: node.name) { handle_children(node, depths) }
-      when 'note', 'todo'
-        wrap('div', class: node.name) { handle_children(node, depths) }
-      when 'link'
-        wrap('a', href: node.attributes['target']) { handle_children(node, depths) }
-      when 'listing'
-        wrap('pre') { wrap('code') { handle_children(node, depths) } }
-      else
-        raise "Unhandled node name: #{node.name}"
-      end
+  def handle_string(string)
+    out << html_escape(string)
+  end
+
+  def handle_element(element, path)
+    case element.name
+    when 'p', 'dl', 'dt', 'dd', 'ol', 'ul', 'li', 'code', 'kbd', 'blockquote'
+      wrap(element.name) { handle_children(element, path) }
+    when 'h'
+      depth = path.count { |el| el.name == 'section' } + 1
+      wrap("h#{depth}") { handle_children(element, path) }
+    when 'section'
+      wrap('section', id: id_for_section(element)) { handle_children(element, path) }
+    when 'emph'
+      wrap('em') { handle_children(element, path) }
+    when 'firstterm', 'prompt', 'filename'
+      wrap('span', class: element.name) { handle_children(element, path) }
+    when 'note', 'todo'
+      wrap('div', class: element.name) { handle_children(element, path) }
+    when 'link'
+      wrap('a', href: element.attributes['target']) { handle_children(element, path) }
+    when 'listing'
+      wrap('pre') { wrap('code') { handle_children(element, path) } }
+    else
+      raise "Unhandled element name: #{element.name}"
     end
   end
 
@@ -39,11 +38,6 @@ class Doc2HTML < DMark::Translator
 
   def html_escape(s)
     s.gsub('&', '&amp;').gsub('<', '&lt;')
-  end
-
-  def handle_children(node, depths)
-    new_depths = depths.merge({ node.name => depths.fetch(node.name, 0) + 1 })
-    node.children.each { |child| handle(child, new_depths) }
   end
 
   def id_for_section(node)
