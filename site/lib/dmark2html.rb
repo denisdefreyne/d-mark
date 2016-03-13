@@ -76,7 +76,7 @@ class Doc2HTML < DMark::Translator
 
   # FIXME: ugly that we need this
   def html_unescape(s)
-    s.gsub('&amp;', '&').gsub('&lt;', '<')
+    s.gsub('&lt;', '<').gsub('&amp;', '&')
   end
 
   def id_for_section(element)
