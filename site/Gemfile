@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
+gem 'adsf'
 gem 'd-mark', path: '..'
 gem 'nanoc', '~> 4.1'
 gem 'nanoc-git', '~> 1.0'

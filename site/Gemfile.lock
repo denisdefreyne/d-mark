@@ -6,6 +6,8 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
+    adsf (1.2.0)
+      rack (>= 1.0.0)
     colored (1.2)
     cri (2.7.0)
       colored (~> 1.2)
@@ -16,11 +18,13 @@ GEM
       nanoc (>= 3.7.0, < 5.0.0)
     nokogiri (1.6.7.2)
       mini_portile2 (~> 2.0.0.rc2)
+    rack (1.6.4)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  adsf
   d-mark!
   nanoc (~> 4.1)
   nanoc-git (~> 1.0)
