@@ -100,7 +100,7 @@ title: D★Mark
 #section %h{Syntax}
   #p D★Mark knows two constructs: %firstterm{elements} and %firstterm{text}. An element has a name, attributes, and wraps elements and/or text in order to give them meaning. Text is just that—text.
 
-  #p An element in D★Mark can take two forms %firstterm{block-level} and %firstterm{inline}:
+  #p An element in D★Mark can take two forms: %firstterm{block-level}, and %firstterm{inline}.
 
   #dl
     #dt Block form
