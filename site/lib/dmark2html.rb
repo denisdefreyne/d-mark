@@ -11,7 +11,12 @@ class Doc2HTML < DMark::Translator
       wrap(element.name) { handle_children(element, path) }
     when 'h'
       depth = path.count { |el| el.name == 'section' } + 1
-      wrap("h#{depth}") { handle_children(element, path) }
+      wrap("h#{depth}") do
+        handle_children(element, path)
+        unless depth == 1
+          wrap('a', href: '#' + id_for_header(element), class: 'permalink') { out << '#' }
+        end
+      end
     when 'section'
       wrap('section', id: id_for_section(element)) { handle_children(element, path) }
     when 'emph'
@@ -40,10 +45,12 @@ class Doc2HTML < DMark::Translator
     s.gsub('&', '&amp;').gsub('<', '&lt;')
   end
 
-  def id_for_section(node)
-    header = node.children.find { |c| c.name == 'h' }
-    text = header.children.join('')
-    text.downcase.gsub(/[^a-zA-Z-]/, '-')
+  def id_for_section(element)
+    id_for_header(element.children.find { |c| c.name == 'h' })
+  end
+
+  def id_for_header(element)
+    element.children.join('').downcase.gsub(/[^a-zA-Z-]/, '-')
   end
 end
 

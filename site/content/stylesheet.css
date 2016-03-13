@@ -22,6 +22,7 @@ h1, h2, h3 {
   line-height: 1em;
   margin: 1.5em 0 1em 0;
   color: #ee5070;
+  position: relative;
 }
 
 h1 {
@@ -37,8 +38,21 @@ h3 {
   font-size: 24px;
 }
 
-em, .firstterm {
-  font-style: italic;
+a.permalink {
+  position: absolute;
+  left: -110px;
+  width: 100px;
+  text-align: right;
+  text-decoration: none;
+}
+
+a.permalink:link,
+a.permalink:visited {
+  color: rgba(0, 0, 0, 0.1);
+}
+
+a.permalink:hover {
+  color: rgba(0, 0, 0, 0.2);
 }
 
 a:link, a:visited {
@@ -49,8 +63,13 @@ a:hover {
   color: #ee5070;
 }
 
-a:active {
+a:active,
+a.permalink:active {
   color: #000;
+}
+
+em, .firstterm {
+  font-style: italic;
 }
 
 dl, p, pre, blockquote, ul, ol, .note, .todo {
