@@ -173,21 +173,46 @@
 <p>The parsing stage converts text into a list of nodes. Construct a parser with the tokens as input, and call <code>#run</code> to get the list of nodes.</p>
 <pre><code>content = File.read(ARGV[0])
 nodes = DMark::Parser.new(content).run</code></pre>
-<p>The translating stage is not the responsibility of D★Mark. A translator is part of the domain of the source text, and D★Mark only deals with syntax rather than semantics. A translator will run over the tree and convert it into something else (usually another string). To do so, handle each node type (<code>DMark::ElementNode</code> or <code>String</code>). For example, the following translator will convert the tree into something that resembles XML:</p>
+<p>Translating means converting the list of nodes into something else. For example, the translation step could translate each element into HTML or LaTeX.</p>
+<p>D★Mark does not come with any translators. It does, however, provide a class named <code>DMark::Translator</code>, which is intended as the base class for translators.</p>
+<p>For example, the following translator will convert the tree into XML:</p>
 <pre><code>class MyXMLLikeTranslator &lt; DMark::Translator
-  def handle(node)
-    case node
-    when String
-      out &lt;&lt; node
-    when DMark::ElementNode
-      out &lt;&lt; "&lt;#{node.name}&gt;"
-      handle_children(node)
-      out &lt;&lt; "&lt;/#{node.name}&gt;"
-    end
+  def handle_string(string)
+    out &lt;&lt; escape(string)
+  end
+
+  def handle_element(element, path)
+    out &lt;&lt; "&lt;#{node.name}&gt;"
+    handle_children(node, path)
+    out &lt;&lt; "&lt;/#{node.name}&gt;"
+  end
+
+  def escape(string)
+    string.gsub('&amp;', '&amp;amp;').gsub('&lt;', '&amp;lt;')
   end
 end
 
 result = MyXMLLikeTranslator.new(nodes).run
-puts result</code></pre></section>
+puts result</code></pre>
+<p>To create a translator, create a subclass of <code>DMark::Translator</code>, and implement <code>#handle_string</code> and <code>#handle_element</code>, which should write their translated content to <code>out</code>.</p>
+<dl>
+<dt><code>#handle_string(string)</code></dt>
+<dd><p>This convert plain strings. The <code>string</code> argument is the string to convert. Typically, this copies the string to the output using <code>out &lt;&lt; escape(string)</code>, where the <code>#escape</code> function performs escaping (such as replacing <code>&amp;</code> and <code>&lt;</code> with <code>&amp;amp;</code> and <code>&amp;lt;</code> in HTML and XML).</p></dd>
+<dt><code>#handle_element(element, path)</code></dt>
+<dd>
+<p>This converts elements. The <code>element</code> argument is the element to convert, and <code>path</code> is an array containing the ancestors of this element, starting with the root. Like with strings, this function also writes translated content to <code>out</code> using the <code>#&lt;&lt;</code> method.</p>
+<p>The way an element is translated often depends on the element name, <code>element.name</code> (a string), and might depend on the element’s attributes, <code>element.attributes</code> (a hash).</p>
+<p>When handling an element, make sure to handle all its child elements. The built-in <code>#handle_children</code> function can be used for this, and is typically called like <code>handle_children(element, path)</code>. Handling child elements does not happen automatically, in order to provide the possibility of conditional output.</p>
+<p>The <code>path</code> argument is useful in cases where the resulting output depends on the nesting level. For example, this page uses nested <code>section</code> elements that start with a <code>h</code> (header) element, which is translated to any of the HTML header elements (such as <code>h1</code>) depending on the number of <code>section</code> ancestors:</p>
+<pre><code>def handle_element(element, path)
+  case element.name
+  when 'h'
+    depth = path.count { |ancestor| ancestor.name == 'section' } + 1
+    out &lt;&lt; "&lt;h#{depth}"&gt;
+    handle_children(element, path)
+    out &lt;&lt; "&lt;/h#{depth}"&gt;
+  # … handle other elements here …</code></pre>
+</dd>
+</dl></section>
   </body>
 </html>
