@@ -23,6 +23,8 @@ h1, h2, h3 {
   margin: 1.5em 0 1em 0;
   color: #ee5070;
   position: relative;
+  padding-left: 60px;
+  margin-left: -60px;
 }
 
 h1 {
@@ -40,10 +42,18 @@ h3 {
 
 a.permalink {
   position: absolute;
-  left: -110px;
-  width: 100px;
+  left: 0;
+  padding-right: 10px;
+  width: 50px;
   text-align: right;
   text-decoration: none;
+  visibility: hidden;
+}
+
+h1:hover a.permalink,
+h2:hover a.permalink,
+h3:hover a.permalink {
+  visibility: visible;
 }
 
 a.permalink:link,
