@@ -1,4 +1,15 @@
 require 'd-mark'
+require 'rouge'
+
+class DMarkRougLexer < Rouge::RegexLexer
+  tag 'd-mark'
+  filenames '*.dmark'
+
+  state :root do
+    rule /^(  )*#[a-z][a-z0-9]*/, Name::Tag
+    rule /%[a-z][a-z0-9]*/, Name::Tag
+  end
+end
 
 class Doc2HTML < DMark::Translator
   def handle_string(string)
@@ -28,7 +39,25 @@ class Doc2HTML < DMark::Translator
     when 'link'
       wrap('a', href: element.attributes['target']) { handle_children(element, path) }
     when 'listing'
-      wrap('pre') { wrap('code') { handle_children(element, path) } }
+      wrap('pre') do
+        wrap('code') do
+          # capture (icky)
+          out_end = out.size
+          handle_children(element, path)
+          addition = out[out_end..-1]
+          out[out_end..-1] = ''
+
+          if element.attributes['lang']
+            formatter = ::Rouge::Formatters::HTML.new(wrap: false)
+            lexer = ::Rouge::Lexer.find(element.attributes['lang'])
+            raise "Can’t find lexer for #{element.attributes['lang']}" if lexer.nil?
+
+            out << formatter.format(lexer.lex(html_unescape(addition)))
+          else
+            out << addition
+          end
+        end
+      end
     else
       raise "Unhandled element name: #{element.name}"
     end
@@ -43,6 +72,11 @@ class Doc2HTML < DMark::Translator
 
   def html_escape(s)
     s.gsub('&', '&amp;').gsub('<', '&lt;')
+  end
+
+  # FIXME: ugly that we need this
+  def html_unescape(s)
+    s.gsub('&amp;', '&').gsub('&lt;', '<')
   end
 
   def id_for_section(element)

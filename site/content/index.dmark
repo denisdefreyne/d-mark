@@ -8,7 +8,7 @@ title: D★Mark
 
 #p Here’s an example of D★Mark:
 
-#listing
+#listing[lang=d-mark]
   %#para This a paragraph; an element in block form containing some text.
 
   %#note[only=web] This is a note that will %%emph{only%} show up on web.
@@ -20,12 +20,12 @@ title: D★Mark
 
   #p An element is marked up in block form with %code{#}, and in inline form with %code{%%}:
 
-  #listing
+  #listing[lang=d-mark]
     %#para It said %%quote{Destroy all humans!%}, I believe.
 
   #p An element in block from can contain elements and/or text by indenting it with two spaces:
 
-  #listing
+  #listing[lang=d-mark]
     %#section
       %#header Example
 
@@ -35,7 +35,7 @@ title: D★Mark
 
   #p Elements, both in block and inline form, can have attributes inside square brackets:
 
-  #listing
+  #listing[lang=d-mark]
     %#listing[lang=shell]
       $ ls -l
 
@@ -52,7 +52,7 @@ title: D★Mark
   #section %h{Admonitions}
     #p Admonitions, such as notes, tips, warnings and hints, can be expressed as elements in D★Mark. For example, the Nanoc web site contains the following caution admonition:
 
-    #listing
+    #listing[lang=d-mark]
       %#caution This will remove all files and directories that do not correspond to Nanoc items from the output directory.
 
     #p The stylesheet renders this admonition with a red background, and a warning icon, to attract attention. The  D★Mark documentation, which you are looking at now, contains note admonitions. For example:
@@ -62,7 +62,7 @@ title: D★Mark
   #section %h{Cross-references}
     #p One way of marking up a hyperlink in D★Mark is to use a %code{a} element. For example, the following code snippet represents a hyperlink to the Nanoc web site:
 
-    #listing
+    #listing[lang=d-mark]
       %#p I love the design of the %%a[href=http://nanoc.ws/]{Nanoc web site%}.
 
     #note Because D★Mark itself does not prescribe any vocabulary, there is no single right way to mark up hyperlinks. For example, this document uses a %code{link} element with a %code{target} attribute for hyperlinks, rather than a more traditional %code{a} element.
@@ -71,7 +71,7 @@ title: D★Mark
 
     #p A reference is marked up using a %code{ref} element, and points to a chapter or section. For example, the following paragraph contains a reference to the Patterns chapter:
 
-    #listing
+    #listing[lang=d-mark]
       %#p For more information on patterns, see %%ref[chapter=/doc/patterns.*]{%}.
 
     #p When generating a web version of a document that contains a reference, the reference will be translated into a hyperlink. The name of the chapter is filled in automatically. The above example could be rendered as follows:
@@ -107,7 +107,7 @@ title: D★Mark
     #dd
       #p An element in block form consists of the %code{#} symbol, the name of the element, optionally attributes enclosed in rectangular brackets, a space character, and finally the content. For example:
 
-      #listing
+      #listing[lang=d-mark]
         %#para This a paragraph; an element in block form containing some text.
 
         %#note[only=web] This is an example “note” element with an “only” attribute.
@@ -116,7 +116,7 @@ title: D★Mark
     #dd
       #p Inside an element, text can be marked up using elements with the inline form. An element in inline form consists of the %code{%%} symbol, the name of the element, optionally attributes enclosed in rectangular brackets, and finally the content within braces. For example:
 
-      #listing
+      #listing[lang=d-mark]
         %#para I am a paragraph with an %%emph{amazing%} inline element.
 
   #p An element name starts with a lowercase letter, followed by zero or more lowercase letters, digits or a dash. For instance, %code{emph}, %code{h2}, and %code{section-header} are valid element names, while %code{SectionHeader}, %code{2} and %code{input_data} are not.
@@ -127,7 +127,7 @@ title: D★Mark
 
   #p Elements in block form can be nested. To do so, indent the nested block two spaces deeper than the enclosing block. For example, the following defines a %code{list} element with three %code{item} elements inside it:
 
-  #listing
+  #listing[lang=d-mark]
     %#list[unordered]
       %#item glob patterns
       %#item regular expression patterns
@@ -135,7 +135,7 @@ title: D★Mark
 
   #p The block element form can also include text on indented lines following the element. In this case, the content is not wrapped inside a nested block-level element. This is particularly useful for source code listing. For example:
 
-  #listing
+  #listing[lang=d-mark]
     %#listing[lang=ruby]
       identifier = Nanoc::Identifier.new('/about.md')
 
@@ -183,18 +183,18 @@ title: D★Mark
 
     #p The following is an example of escaping inline content:
 
-    #listing
+    #listing[lang=d-mark]
       %#p To escape a character, prefix it with %%code{%%%%%}.
 
     #p The following is a listing element containing escaped D★Mark:
 
-    #listing
+    #listing[lang=d-mark]
       %#listing
         %%#para This is a paragraph element in block form.
 
     #p Here’s an example of escaped characters in an attribute value:
 
-    #listing
+    #listing[lang=d-mark]
       %#para[kind=joke%%, ha ha] They say 20%%%% of all statistics are made up.
 
 #section %h{Comparison with other languages}
