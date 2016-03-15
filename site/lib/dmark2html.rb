@@ -45,7 +45,7 @@ class Doc2HTML < DMark::Translator
     when 'listing'
       wrap('pre') do
         wrap('code') do
-          addition = [handle_children(element, path)].flatten.join
+          addition = translate(element.children, path)
 
           if element.attributes['lang']
             formatter = ::Rouge::Formatters::HTML.new(wrap: false)
@@ -91,6 +91,6 @@ Class.new(Nanoc::Filter) do
 
   def run(content, params = {})
     tree = DMark::Parser.new(content).parse
-    Doc2HTML.new(tree).run
+    Doc2HTML.translate(tree)
   end
 end

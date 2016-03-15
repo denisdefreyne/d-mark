@@ -302,7 +302,7 @@ title: D★Mark
       end
     end
 
-    result = MyXMLLikeTranslator.new(nodes).run
+    result = MyXMLLikeTranslator.translate(nodes)
     puts result
 
   #p To create a translator, create a subclass of %code{DMark::Translator}, and implement %code{#handle_string} and %code{#handle_element}, which should return an (optionally nested) array of strings, which will then be joined into a single string after processing.
@@ -310,26 +310,48 @@ title: D★Mark
   #dl
     #dt %code{#handle_string(string)}
     #dd
-      #p This convert plain strings. The %code{string} argument is the string to convert. Typically, this returns an array with the escaped string, e.g. %code{[escape(string)]}, where the %code{#escape} function performs escaping (such as replacing %code{&} and %code{<} with %code{&amp;} and %code{&lt;} in HTML and XML).
+      #p This function translates strings. The %code{string} argument is the string to convert. Typically, this returns an array with the escaped string, e.g. %code{[escape(string)]}, where the %code{#escape} function performs escaping (such as replacing %code{&} and %code{<} with %code{&amp;} and %code{&lt;} in HTML and XML).
 
     #dt %code{#handle_element(element, path)}
     #dd
-      #p This converts elements. The %code{element} argument is the element to convert, and %code{path} is an array containing the ancestors of this element, starting with the root.
+      #p This function translates elements. The %code{element} argument is the element to convert, and %code{path} is an array containing the ancestors of this element, starting with the root.
 
       #p The way an element is translated often depends on the element name, %code{element.name} (a string), and might depend on the element’s attributes, %code{element.attributes} (a hash).
 
       #p When handling an element, make sure to handle all its child elements. The built-in %code{#handle_children} function can be used for this, and is typically called like %code{handle_children(element, path)}. Handling child elements does not happen automatically, in order to provide the possibility of conditional output.
 
-      #p The %code{path} argument is useful in cases where the resulting output depends on the nesting level. For example, this page uses nested %code{section} elements that start with a %code{h} (header) element, which is translated to any of the HTML header elements (such as %code{h1}) depending on the number of %code{section} ancestors:
+  #section %h{Tips and tricks}
+    #p The %code{path} argument of %code{#handle_element} is useful in cases where the resulting output depends on the nesting level. For example, this page uses nested %code{section} elements that start with a %code{h} (header) element, which is translated to any of the HTML header elements (such as %code{h1}) depending on the number of %code{section} ancestors:
 
-      #listing[lang=ruby]
-        def handle_element(element, path)
-          case element.name
-          when 'h'
-            depth = path.count { |ancestor| ancestor.name == 'section' %} + 1
-            [
-              "<h#{depth%}>",
-              handle_children(element, path),
-              "</h#{depth%}>",
-            ]
-          # … handle other elements here …
+    #listing[lang=ruby]
+      def handle_element(element, path)
+        case element.name
+        when 'h'
+          depth = path.count { |ancestor| ancestor.name == 'section' %} + 1
+          [
+            "<h#{depth%}>",
+            handle_children(element, path),
+            "</h#{depth%}>",
+          ]
+        # … handle other elements here …
+
+    #p It can be useful to do some further processing on child nodes before returning them. To get a string containing translated child nodes’ content, call %code{#translate_children}, passing in the element containing the children, along with the path. Here is an example of this function being used to syntax-highlight source code listings:
+
+    #listing[lang=ruby]
+      def handle_element(element, path)
+        case element.name
+        when 'listing'
+          [
+            '<pre><code>',
+            syntax_highlight(element, path),
+            '</code></pre>',
+          ]
+        # … handle other elements here …
+      end
+
+      def syntax_highlight(element, path)
+        content = translate_children(element, path)
+        language = element.attributes['lang']
+
+        # … implementation here …
+      end
