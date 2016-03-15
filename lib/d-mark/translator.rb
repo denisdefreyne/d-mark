@@ -19,19 +19,12 @@ module DMark
       end
     end
 
-    attr_reader :out
-
     def initialize(nodes)
       @nodes = nodes
-
-      @out = ''
     end
 
     def run
-      @nodes.each do |node|
-        handle(node)
-      end
-      @out
+      [@nodes.map { |node| handle(node) }].flatten.join('')
     end
 
     def handle(node, path = [])
@@ -59,7 +52,7 @@ module DMark
 
     def handle_children(node, path)
       new_path = path + [node]
-      node.children.each { |child| handle(child, new_path) }
+      node.children.map { |child| handle(child, new_path) }
     end
   end
 end

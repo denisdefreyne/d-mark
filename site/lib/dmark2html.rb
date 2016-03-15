@@ -13,7 +13,7 @@ end
 
 class Doc2HTML < DMark::Translator
   def handle_string(string)
-    out << html_escape(string)
+    [html_escape(string)]
   end
 
   def handle_element(element, path)
@@ -23,10 +23,14 @@ class Doc2HTML < DMark::Translator
     when 'h'
       depth = path.count { |el| el.name == 'section' } + 1
       wrap("h#{depth}") do
-        handle_children(element, path)
-        unless depth == 1
-          wrap('a', href: '#' + id_for_header(element), class: 'permalink') { out << '#' }
-        end
+        before =
+          if depth == 1
+            []
+          else
+            wrap('a', href: '#' + id_for_header(element), class: 'permalink') { ['#'] }
+          end
+
+        [before, handle_children(element, path)]
       end
     when 'section'
       wrap('section', id: id_for_section(element)) { handle_children(element, path) }
@@ -41,20 +45,16 @@ class Doc2HTML < DMark::Translator
     when 'listing'
       wrap('pre') do
         wrap('code') do
-          # capture (icky)
-          out_end = out.size
-          handle_children(element, path)
-          addition = out[out_end..-1]
-          out[out_end..-1] = ''
+          addition = [handle_children(element, path)].flatten.join
 
           if element.attributes['lang']
             formatter = ::Rouge::Formatters::HTML.new(wrap: false)
             lexer = ::Rouge::Lexer.find(element.attributes['lang'])
             raise "Can’t find lexer for #{element.attributes['lang']}" if lexer.nil?
 
-            out << formatter.format(lexer.lex(html_unescape(addition)))
+            formatter.format(lexer.lex(html_unescape(addition)))
           else
-            out << addition
+            addition
           end
         end
       end
@@ -65,9 +65,7 @@ class Doc2HTML < DMark::Translator
 
   def wrap(name, params = {})
     params_string = params.map { |k, v| " #{k}=\"#{html_escape(v)}\"" }.join('')
-    out << "<#{name}#{params_string}>"
-    yield
-    out << "</#{name}>"
+    ["<#{name}#{params_string}>", yield, "</#{name}>"]
   end
 
   def html_escape(s)
