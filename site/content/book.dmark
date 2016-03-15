@@ -1,0 +1,116 @@
+---
+title: MarkBook
+---
+
+#h MarkBook
+
+#p %firstterm{MarkBook} is a vocabulary for %firstterm{D★Mark} for general technical writing.
+
+#section %h{Elements}
+  #p MarkBook is designed to map easily onto elements commonly found in HTML, but also introduces several other elements.
+
+  #section %h{Elements inherited from HTML}
+    #p The following elements are inherited from HTML:
+
+    #dl[compact]
+      #dt %code{p}
+      #dd Paragraph.
+
+      #dt %code{dl}
+      #dd Definition list. Can have a %code{compact} attribute (without value), which indicates a compact definition list.
+
+      #dt %code{dt}
+      #dd Definition list term.
+
+      #dt %code{dd}
+      #dd Definition list description.
+
+      #dt %code{ul}
+      #dd Unordered list.
+
+      #dt %code{ol}
+      #dd Ordered list.
+
+      #dt %code{li}
+      #dd List item.
+
+      #dt %code{code}
+      #dd Code.
+
+      #dt %code{em}
+      #dd Emphasis.
+
+      #dt %code{kbd}
+      #dd Keyboard input.
+
+      #dt %code{blockquote}
+      #dd Quotation, block form.
+
+  #section %h{Extra elements}
+    #p The following elements are not part of HTML:
+
+    #dl[compact]
+      #dt %code{filename}
+      #dd
+        #p A filename. This will typically be rendered in monospace, although occasionally italics are used to display fileames. In print, the word-breaking rules will generally be different for filenames, to avoid confusion caused by hyphenation marks. For example:
+        #listing[lang=d-mark]
+          %#p The file is written to %%filename{output/about.html%}.
+
+      #dt %code{firstterm}
+      #dd
+        #p First occurrence of a term. Typically styled in italics. For example:
+        #listing[lang=d-mark]
+          %#p The %%firstterm{kbd%} element indicates keyboard input.
+
+      #dt %code{h}
+      #dd
+        #p A header, typically found at the start of a document and at the beginnings of sections. See the description of the %code{section} element for an example.
+
+      #dt %code{link}
+      #dd
+        #p A hyperlink. The %code{target} attribute contains the URL of the link target. For example:
+        #listing[lang=d-mark]
+          %#p For details, see %%link[target=http://example.com/]{the example site%}.
+
+      #dt %code{listing}
+      #dd
+        #p Source code listing. The %code{lang} attribute contains the language of the source code. For example:
+        #listing[lang=d-mark]
+          %#listing[lang=ruby]
+            def fact(n)
+              if n > 1
+                n * fact(n - 1)
+              elsif n == 1
+                1
+              else
+                raise ArgumentError, "Invalid argument: #{n%}"
+              end
+            end
+
+      #dt %code{prompt}
+      #dd
+        #p A prompt, as it appears in terminal output. For example:
+        #listing[lang=d-mark]
+          %#listing
+            %%prompt{$%} %%kbd{cd lib%}
+            %%prompt{lib$%} %%kbd{pwd%}
+            /home/denis/nanoc/lib
+            %%prompt{lib$%}
+        #p This could be rendered as follows:
+        #listing
+          %prompt{$} %kbd{cd lib}
+          %prompt{lib$} %kbd{pwd}
+          /home/denis/nanoc/lib
+          %prompt{lib$}
+
+      #dt %code{section}
+      #dd
+        #p A section. This is intended to start with a header element (%code{h}). For example, the following code sample contains two nested sections:
+        #listing[lang=d-mark]
+          %#section %%h{Use cases%}
+            %#p General introduction to use cases goes here.
+
+            %#section %%h{Use case 1: first term%}
+              %#p Use case details go here.
+
+    #todo This section is incomplete.

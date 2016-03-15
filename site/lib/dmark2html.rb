@@ -18,8 +18,14 @@ class Doc2HTML < DMark::Translator
 
   def handle_element(element, path)
     case element.name
-    when 'p', 'dl', 'dt', 'dd', 'ol', 'ul', 'li', 'code', 'kbd', 'blockquote'
+    when 'p', 'dt', 'dd', 'ol', 'ul', 'li', 'code', 'kbd', 'blockquote'
       wrap(element.name) { handle_children(element, path) }
+    when 'dl'
+      if element.attributes['compact']
+        wrap(element.name, class: 'compact') { handle_children(element, path) }
+      else
+        wrap(element.name) { handle_children(element, path) }
+      end
     when 'h'
       depth = path.count { |el| el.name == 'section' } + 1
       wrap("h#{depth}") do

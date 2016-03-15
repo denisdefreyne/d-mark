@@ -1,10 +1,17 @@
 #!/usr/bin/env ruby
 
-compile '/index.dmark' do
+compile '/**/*.dmark' do
   filter :dmark2html
   layout '/default.*'
   filter :relativize_paths, type: :html
-  write '/index.html'
+end
+
+route '/index.*' do
+  '/index.html'
+end
+
+route '/**/*.dmark' do
+  item.identifier.without_ext + '/index.html'
 end
 
 passthrough '/stylesheet.css'
