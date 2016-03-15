@@ -27,3 +27,9 @@
 
   #li
     #p A refactored parser that does not need to reset %code{@pos}, and maybe not even have any kind of mutable state at all.
+
+  #li
+    #p Fancy exception handling actually used somewhere.
+
+  #li
+    #p Documentation for every exception that occurs.
