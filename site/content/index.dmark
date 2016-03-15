@@ -302,7 +302,7 @@ title: D★Mark
       end
     end
 
-    result = MyXMLLikeTranslator.new(nodes).run
+    result = MyXMLLikeTranslator.translate(nodes)
     puts result
 
   #p To create a translator, create a subclass of %code{DMark::Translator}, and implement %code{#handle_string} and %code{#handle_element}, which should return an (optionally nested) array of strings, which will then be joined into a single string after processing.
@@ -333,3 +333,21 @@ title: D★Mark
               "</h#{depth%}>",
             ]
           # … handle other elements here …
+
+      #p It can be useful to do some further processing on child nodes before returning them. To get a string containing translated child nodes’ content, call %code{#translate_children}, passing in the element containing the children, along with the path. Here is an example of this function being used to syntax-highlight source code listings:
+
+      #listing[lang=ruby]
+        def handle_element(element, path)
+          case element.name
+          when 'listing'
+            [
+              '<pre><code>',
+              syntax_highlight(translate_children(element, path)),
+              '</code></pre>',
+            ]
+          # … handle other elements here …
+        end
+
+        def syntax_highlight(string, language)
+          # … implmentation here …
+        end

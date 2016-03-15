@@ -19,12 +19,16 @@ module DMark
       end
     end
 
-    def initialize(nodes)
-      @nodes = nodes
+    def self.translate(nodes)
+      new.translate(nodes)
     end
 
-    def run
-      [@nodes.map { |node| handle(node) }].flatten.join('')
+    def translate(nodes, path = [])
+      [nodes.map { |node| handle(node, path) }].flatten.join('')
+    end
+
+    def translate_children(node, path)
+      translate(node.children, path + [node])
     end
 
     def handle(node, path = [])
