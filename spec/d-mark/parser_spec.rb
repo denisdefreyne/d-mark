@@ -161,8 +161,8 @@ describe 'DMark::Parser#parser' do
   end
 
   it 'parses inline element in data lines' do
-    expect(parse("#p\n  %emph{donkey}")).to eq [
-      element('p', {}, [element('emph', {}, ['donkey'])])
+    expect(parse("#p\n  %em{donkey}")).to eq [
+      element('p', {}, [element('em', {}, ['donkey'])])
     ]
   end
 

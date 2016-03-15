@@ -34,7 +34,7 @@ class Doc2HTML < DMark::Translator
       end
     when 'section'
       wrap('section', id: id_for_section(element)) { handle_children(element, path) }
-    when 'emph'
+    when 'em'
       wrap('em') { handle_children(element, path) }
     when 'firstterm', 'prompt', 'filename'
       wrap('span', class: element.name) { handle_children(element, path) }

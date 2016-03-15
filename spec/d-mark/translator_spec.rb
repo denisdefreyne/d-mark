@@ -8,7 +8,7 @@ describe DMark::Translator do
         'para',
         { 'only' => 'web', 'animal' => 'donkey' },
         [
-          DMark::ElementNode.new('emph', {}, ['Hello']),
+          DMark::ElementNode.new('em', {}, ['Hello']),
           ' world!'
         ]
       )
@@ -41,7 +41,7 @@ describe DMark::Translator do
         end
       end
 
-      it { is_expected.to eql('<para only=web animal=donkey><emph>Hello</emph> world!</para>') }
+      it { is_expected.to eql('<para only=web animal=donkey><em>Hello</em> world!</para>') }
     end
   end
 
@@ -86,7 +86,7 @@ describe DMark::Translator do
         end
       end
 
-      it { is_expected.to eql('<emph parent=para>Hello</emph> world!') }
+      it { is_expected.to eql('<em parent=para>Hello</em> world!') }
     end
   end
 end

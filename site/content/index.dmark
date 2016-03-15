@@ -11,7 +11,7 @@ title: D★Mark
 #listing[lang=d-mark]
   %#para This a paragraph; an element in block form containing some text.
 
-  %#note[only=web] This is a note that will %%emph{only%} show up on web.
+  %#note[only=web] This is a note that will %%em{only%} show up on web.
 
 #p For development details on D★Mark, see %link[target=https://github.com/ddfreyne/d-mark]{its GitHub repository}. Please %link[target=https://github.com/ddfreyne/d-mark/issues/new]{open an issue} for any problems that you find.
 
@@ -79,7 +79,7 @@ title: D★Mark
     #blockquote
       #p For more information on patterns, see the %link[target=#]{Patterns} page.
 
-    #p In print, however, the reference is translated into the name of the chapter, along with the page number. Additionally, rather than referring to the Patterns %emph{page}, it refers to the Patterns %emph{chapter}, in order to prevent confusion between web pages and print pages. For example:
+    #p In print, however, the reference is translated into the name of the chapter, along with the page number. Additionally, rather than referring to the Patterns %em{page}, it refers to the Patterns %em{chapter}, in order to prevent confusion between web pages and print pages. For example:
 
     #blockquote
       #p For more information on patterns, see the Patterns chapter on page 87.
@@ -117,13 +117,13 @@ title: D★Mark
       #p Inside an element, text can be marked up using elements with the inline form. An element in inline form consists of the %code{%%} symbol, the name of the element, optionally attributes enclosed in rectangular brackets, and finally the content within braces. For example:
 
       #listing[lang=d-mark]
-        %#para I am a paragraph with an %%emph{amazing%} inline element.
+        %#para I am a paragraph with an %%em{amazing%} inline element.
 
-  #p An element name starts with a lowercase letter, followed by zero or more lowercase letters, digits or a dash. For instance, %code{emph}, %code{h2}, and %code{section-header} are valid element names, while %code{SectionHeader}, %code{2} and %code{input_data} are not.
+  #p An element name starts with a lowercase letter, followed by zero or more lowercase letters, digits or a dash. For instance, %code{em}, %code{h2}, and %code{section-header} are valid element names, while %code{SectionHeader}, %code{2} and %code{input_data} are not.
 
   #note The restrictions on what can be an element name will likely be relaxed before the 1.0 release.
 
-  #p At the top level, D★Mark documents consists %emph{only} of elements in block form.
+  #p At the top level, D★Mark documents consists %em{only} of elements in block form.
 
   #p Elements in block form can be nested. To do so, indent the nested block two spaces deeper than the enclosing block. For example, the following defines a %code{list} element with three %code{item} elements inside it:
 
