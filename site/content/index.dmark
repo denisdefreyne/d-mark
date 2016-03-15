@@ -286,13 +286,15 @@ title: D★Mark
   #listing[lang=ruby]
     class MyXMLLikeTranslator < DMark::Translator
       def handle_string(string)
-        out << escape(string)
+        [escape(string)]
       end
 
       def handle_element(element, path)
-        out << "<#{node.name%}>"
-        handle_children(node, path)
-        out << "</#{node.name%}>"
+        [
+          "<#{node.name%}>",
+          handle_children(node, path),
+          "</#{node.name%}>",
+        ]
       end
 
       def escape(string)
@@ -303,16 +305,16 @@ title: D★Mark
     result = MyXMLLikeTranslator.new(nodes).run
     puts result
 
-  #p To create a translator, create a subclass of %code{DMark::Translator}, and implement %code{#handle_string} and %code{#handle_element}, which should write their translated content to %code{out}.
+  #p To create a translator, create a subclass of %code{DMark::Translator}, and implement %code{#handle_string} and %code{#handle_element}, which should return an (optionally nested) array of strings, which will then be joined into a single string after processing.
 
   #dl
     #dt %code{#handle_string(string)}
     #dd
-      #p This convert plain strings. The %code{string} argument is the string to convert. Typically, this copies the string to the output using %code{out << escape(string)}, where the %code{#escape} function performs escaping (such as replacing %code{&} and %code{<} with %code{&amp;} and %code{&lt;} in HTML and XML).
+      #p This convert plain strings. The %code{string} argument is the string to convert. Typically, this returns an array with the escaped string, e.g. %code{[escape(string)]}, where the %code{#escape} function performs escaping (such as replacing %code{&} and %code{<} with %code{&amp;} and %code{&lt;} in HTML and XML).
 
     #dt %code{#handle_element(element, path)}
     #dd
-      #p This converts elements. The %code{element} argument is the element to convert, and %code{path} is an array containing the ancestors of this element, starting with the root. Like with strings, this function also writes translated content to %code{out} using the %code{#<<} method.
+      #p This converts elements. The %code{element} argument is the element to convert, and %code{path} is an array containing the ancestors of this element, starting with the root.
 
       #p The way an element is translated often depends on the element name, %code{element.name} (a string), and might depend on the element’s attributes, %code{element.attributes} (a hash).
 
@@ -325,7 +327,9 @@ title: D★Mark
           case element.name
           when 'h'
             depth = path.count { |ancestor| ancestor.name == 'section' %} + 1
-            out << "<h#{depth%}">
-            handle_children(element, path)
-            out << "</h#{depth%}">
+            [
+              "<h#{depth%}>",
+              handle_children(element, path),
+              "</h#{depth%}>",
+            ]
           # … handle other elements here …
