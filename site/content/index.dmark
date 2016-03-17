@@ -289,10 +289,10 @@ title: D★Mark
         [escape(string)]
       end
 
-      def handle_element(element, path, context)
+      def handle_element(element, context)
         [
           "<#{node.name%}>",
-          handle_children(node, path, context),
+          handle_children(node, context),
           "</#{node.name%}>",
         ]
       end
@@ -314,47 +314,54 @@ title: D★Mark
 
       #p The %code{context} argument is a hash which is passed through from parent to element. It can be used to change translation logic depending on context. By default, it will be an empty hash.
 
-    #dt %code{#handle_element(element, path, context)}
+    #dt %code{#handle_element(element, context)}
     #dd
-      #p This function translates elements. The %code{element} argument is the element to convert, and %code{path} is an array containing the ancestors of this element, starting with the root.
+      #p This function translates elements. The %code{element} argument is the element to convert.
 
       #p The way an element is translated often depends on the element name, %code{element.name} (a string), and might depend on the element’s attributes, %code{element.attributes} (a hash).
 
-      #p When handling an element, make sure to handle all its child elements. The built-in %code{#handle_children} function can be used for this, and is typically called like %code{handle_children(element, path)}. Handling child elements does not happen automatically, in order to provide the possibility of conditional output.
+      #p When handling an element, make sure to handle all its child elements. The built-in %code{#handle_children} function can be used for this, and is typically called like %code{handle_children(element, context)}. Handling child elements does not happen automatically, in order to provide the possibility of conditional output.
 
       #p Like with %code{#handle_string}, the %code{context} argument is a hash which is passed through from parent to element.
 
   #section %h{Tips and tricks}
-    #p The %code{path} argument of %code{#handle_element} is useful in cases where the resulting output depends on the nesting level. For example, this page uses nested %code{section} elements that start with a %code{h} (header) element, which is translated to any of the HTML header elements (such as %code{h1}) depending on the number of %code{section} ancestors:
+    #p The %code{context} argument of %code{#handle_element} is useful in cases where the resulting output depends on the nesting level. For example, this page uses nested %code{section} elements that start with a %code{h} (header) element, which is translated to any of the HTML header elements (such as %code{h1}) depending on the number of %code{section} ancestors:
 
     #listing[lang=ruby]
-      def handle_element(element, path, context)
+      def handle_element(element, context, context)
         case element.name
         when 'h'
-          depth = path.count { |ancestor| ancestor.name == 'section' %} + 1
+          depth = context.fetch(:depth, 1)
           [
             "<h#{depth%}>",
-            handle_children(element, path, context),
+            handle_children(element, context),
             "</h#{depth%}>",
+          ]
+        when 'section'
+          depth = context.fetch(:depth, 1)
+          [
+            '<section>',
+            handle_children(element, context.merge(depth: depth + 1)),
+            '</section>',
           ]
         # … handle other elements here …
 
-    #p It can be useful to do some further processing on child nodes before returning them. To get a string containing translated child nodes’ content, call %code{#translate_children}, passing in the element containing the children, along with the path. Here is an example of this function being used to syntax-highlight source code listings:
+    #p It can be useful to do some further processing on child nodes before returning them. To get a string containing translated child nodes’ content, call %code{#translate}, passing in the element’s children, along with the context. Here is an example of this function being used to syntax-highlight source code listings:
 
     #listing[lang=ruby]
-      def handle_element(element, path, context)
+      def handle_element(element, context)
         case element.name
         when 'listing'
           [
             '<pre><code>',
-            syntax_highlight(element, path, context),
+            syntax_highlight(element, context),
             '</code></pre>',
           ]
         # … handle other elements here …
       end
 
-      def syntax_highlight(element, path, context)
-        content = translate_children(element, path, context)
+      def syntax_highlight(element, context)
+        content = translate(element.children, context)
         language = element.attributes['lang']
 
         # … implementation here …
@@ -373,12 +380,12 @@ title: D★Mark
         end
       end
 
-      def handle_element(element, path, context)
+      def handle_element(element, context)
         case element.name
         when 'listing'
           [
             '<pre><code>',
-            syntax_highlight(element, path, context.merge(raw: true)),
+            syntax_highlight(element, context.merge(raw: true)),
             '</code></pre>',
           ]
         # … handle other elements here …

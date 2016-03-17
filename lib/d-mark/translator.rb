@@ -20,23 +20,19 @@ module DMark
     end
 
     def self.translate(nodes, context = {})
-      new.translate(nodes, [], context)
+      new.translate(nodes, context)
     end
 
-    def translate(nodes, path = [], context = {})
-      [nodes.map { |node| handle(node, path, context) }].flatten.join('')
+    def translate(nodes, context = {})
+      [nodes.map { |node| handle(node, context) }].flatten.join('')
     end
 
-    def translate_children(node, path, context = {})
-      translate(node.children, path + [node], context)
-    end
-
-    def handle(node, path = [], context = {})
+    def handle(node, context = {})
       case node
       when String
         handle_string(node, context)
       when DMark::ElementNode
-        handle_element(node, path, context)
+        handle_element(node, context)
       else
         raise ArgumentError, "Cannot handle #{node.class}"
       end
@@ -48,15 +44,14 @@ module DMark
     end
 
     # @abstract
-    def handle_element(element, _path, _context)
+    def handle_element(element, _context)
       raise DMark::Translator::UnhandledNode.new(element)
     end
 
     private
 
-    def handle_children(node, path, context)
-      new_path = path + [node]
-      node.children.map { |child| handle(child, new_path, context) }
+    def handle_children(node, context)
+      node.children.map { |child| handle(child, context) }
     end
   end
 end

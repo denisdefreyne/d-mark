@@ -32,12 +32,12 @@ describe DMark::Translator do
             [string]
           end
 
-          def handle_element(element, path, context)
+          def handle_element(element, context)
             [
               "<#{element.name}",
               element.attributes.map { |k, v| ' ' + [k, v].join('=') }.join,
               '>',
-              handle_children(element, path, context),
+              handle_children(element, context),
               "</#{element.name}>"
             ]
           end
@@ -53,12 +53,12 @@ describe DMark::Translator do
               [string, " [parent=#{context[:kind]}]"]
             end
 
-            def handle_element(element, path, context)
+            def handle_element(element, context)
               [
                 "<#{element.name}",
                 element.attributes.map { |k, v| ' ' + [k, v].join('=') }.join,
                 '>',
-                handle_children(element, path, context.merge(kind: element.name)),
+                handle_children(element, context.merge(kind: element.name)),
                 "</#{element.name}>"
               ]
             end
@@ -96,41 +96,6 @@ describe DMark::Translator do
     context 'unrecognised type' do
       subject { translator.translate([:donkey]) }
       include_examples 'errors on unknown type'
-    end
-  end
-
-  describe '#translate_children' do
-    subject { translator.translate_children(nodes[0], path) }
-    let(:path) { [] }
-
-    context 'translator base class' do
-      it 'raises error' do
-        expect { subject }.to raise_error(DMark::Translator::UnhandledNode)
-      end
-    end
-
-    context 'custom translator' do
-      let(:translator_class) do
-        Class.new(described_class) do
-          def handle_string(string, _context)
-            [string]
-          end
-
-          def handle_element(element, path, context)
-            attributes = element.attributes.merge(parent: path[-1].name)
-
-            [
-              "<#{element.name}",
-              attributes.map { |k, v| ' ' + [k, v].join('=') }.join,
-              '>',
-              handle_children(element, path, context),
-              "</#{element.name}>"
-            ]
-          end
-        end
-      end
-
-      it { is_expected.to eql('<em parent=para>Hello</em> world!') }
     end
   end
 end

@@ -16,12 +16,12 @@ class Doc2HTML < DMark::Translator
     [context[:raw] ? string : html_escape(string)]
   end
 
-  def handle_element(element, path, context)
+  def handle_element(element, context)
     case element.name
     when 'p', 'dl', 'dt', 'dd', 'ol', 'ul', 'li', 'code', 'kbd', 'blockquote'
-      wrap(element.name) { handle_children(element, path, context) }
+      wrap(element.name) { handle_children(element, context) }
     when 'h'
-      depth = path.count { |el| el.name == 'section' } + 1
+      depth = context.fetch(:depth, 1)
       wrap("h#{depth}") do
         before =
           if depth == 1
@@ -30,30 +30,33 @@ class Doc2HTML < DMark::Translator
             wrap('a', href: '#' + id_for_header(element), class: 'permalink') { ['#'] }
           end
 
-        [before, handle_children(element, path, context)]
+        [before, handle_children(element, context)]
       end
     when 'section'
-      wrap('section', id: id_for_section(element)) { handle_children(element, path, context) }
+      sub_depth = context.fetch(:depth, 1) + 1
+      wrap('section', id: id_for_section(element)) do
+        handle_children(element, context.merge(depth: sub_depth))
+      end
     when 'em'
-      wrap('em') { handle_children(element, path, context) }
+      wrap('em') { handle_children(element, context) }
     when 'firstterm', 'prompt', 'filename'
-      wrap('span', class: element.name) { handle_children(element, path, context) }
+      wrap('span', class: element.name) { handle_children(element, context) }
     when 'note', 'todo'
-      wrap('div', class: element.name) { handle_children(element, path, context) }
+      wrap('div', class: element.name) { handle_children(element, context) }
     when 'link'
-      wrap('a', href: element.attributes['target']) { handle_children(element, path, context) }
+      wrap('a', href: element.attributes['target']) { handle_children(element, context) }
     when 'listing'
       wrap('pre') do
         wrap('code') do
           if element.attributes['lang']
-            addition = translate(element.children, path, context.merge(raw: true))
+            addition = translate(element.children, context.merge(raw: true))
             formatter = ::Rouge::Formatters::HTML.new(wrap: false)
             lexer = ::Rouge::Lexer.find(element.attributes['lang'])
             raise "Can’t find lexer for #{element.attributes['lang']}" if lexer.nil?
 
             formatter.format(lexer.lex(addition))
           else
-            translate(element.children, path, context)
+            translate(element.children, context)
           end
         end
       end
