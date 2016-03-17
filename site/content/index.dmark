@@ -285,14 +285,14 @@ title: D★Mark
 
   #listing[lang=ruby]
     class MyXMLLikeTranslator < DMark::Translator
-      def handle_string(string)
+      def handle_string(string, _context)
         [escape(string)]
       end
 
-      def handle_element(element, path)
+      def handle_element(element, path, context)
         [
           "<#{node.name%}>",
-          handle_children(node, path),
+          handle_children(node, path, context),
           "</#{node.name%}>",
         ]
       end
@@ -308,11 +308,13 @@ title: D★Mark
   #p To create a translator, create a subclass of %code{DMark::Translator}, and implement %code{#handle_string} and %code{#handle_element}, which should return an (optionally nested) array of strings, which will then be joined into a single string after processing.
 
   #dl
-    #dt %code{#handle_string(string)}
+    #dt %code{#handle_string(string, context)}
     #dd
       #p This function translates strings. The %code{string} argument is the string to convert. Typically, this returns an array with the escaped string, e.g. %code{[escape(string)]}, where the %code{#escape} function performs escaping (such as replacing %code{&} and %code{<} with %code{&amp;} and %code{&lt;} in HTML and XML).
 
-    #dt %code{#handle_element(element, path)}
+      #p The %code{context} argument is a hash which is passed through from parent to element. It can be used to change translation logic depending on context. By default, it will be an empty hash.
+
+    #dt %code{#handle_element(element, path, context)}
     #dd
       #p This function translates elements. The %code{element} argument is the element to convert, and %code{path} is an array containing the ancestors of this element, starting with the root.
 
@@ -320,17 +322,19 @@ title: D★Mark
 
       #p When handling an element, make sure to handle all its child elements. The built-in %code{#handle_children} function can be used for this, and is typically called like %code{handle_children(element, path)}. Handling child elements does not happen automatically, in order to provide the possibility of conditional output.
 
+      #p Like with %code{#handle_string}, the %code{context} argument is a hash which is passed through from parent to element.
+
   #section %h{Tips and tricks}
     #p The %code{path} argument of %code{#handle_element} is useful in cases where the resulting output depends on the nesting level. For example, this page uses nested %code{section} elements that start with a %code{h} (header) element, which is translated to any of the HTML header elements (such as %code{h1}) depending on the number of %code{section} ancestors:
 
     #listing[lang=ruby]
-      def handle_element(element, path)
+      def handle_element(element, path, context)
         case element.name
         when 'h'
           depth = path.count { |ancestor| ancestor.name == 'section' %} + 1
           [
             "<h#{depth%}>",
-            handle_children(element, path),
+            handle_children(element, path, context),
             "</h#{depth%}>",
           ]
         # … handle other elements here …
@@ -338,20 +342,44 @@ title: D★Mark
     #p It can be useful to do some further processing on child nodes before returning them. To get a string containing translated child nodes’ content, call %code{#translate_children}, passing in the element containing the children, along with the path. Here is an example of this function being used to syntax-highlight source code listings:
 
     #listing[lang=ruby]
-      def handle_element(element, path)
+      def handle_element(element, path, context)
         case element.name
         when 'listing'
           [
             '<pre><code>',
-            syntax_highlight(element, path),
+            syntax_highlight(element, path, context),
             '</code></pre>',
           ]
         # … handle other elements here …
       end
 
-      def syntax_highlight(element, path)
-        content = translate_children(element, path)
+      def syntax_highlight(element, path, context)
+        content = translate_children(element, path, context)
         language = element.attributes['lang']
 
         # … implementation here …
+      end
+
+    #p The %code{context} argument can be used to change translation logic for an elemet based on its parent. For example, strings might be escaped by default, except when they’re inside a %code{listing} element, where the strings will be captured and passed into a syntax-highlighting function that expects non-escaped content.
+
+    #p The syntax-highlighting example given above can be modified as follows, for situations where  %code{#syntax_highlight} expects unescaped content:
+
+    #listing[lang=ruby]
+      def handle_string(string, context)
+        if context[:raw]
+          string
+        else
+          [html_escape(string)]
+        end
+      end
+
+      def handle_element(element, path, context)
+        case element.name
+        when 'listing'
+          [
+            '<pre><code>',
+            syntax_highlight(element, path, context.merge(raw: true)),
+            '</code></pre>',
+          ]
+        # … handle other elements here …
       end
