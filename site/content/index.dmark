@@ -367,7 +367,7 @@ title: D★Mark
     #listing[lang=ruby]
       def handle_string(string, context)
         if context[:raw]
-          string
+          [string]
         else
           [html_escape(string)]
         end
