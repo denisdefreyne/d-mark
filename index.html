@@ -194,10 +194,10 @@
     <span class="p">[</span><span class="n">escape</span><span class="p">(</span><span class="n">string</span><span class="p">)]</span>
   <span class="k">end</span>
 
-  <span class="k">def</span> <span class="nf">handle_element</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+  <span class="k">def</span> <span class="nf">handle_element</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
     <span class="p">[</span>
       <span class="s2">"&lt;</span><span class="si">#{</span><span class="n">node</span><span class="p">.</span><span class="nf">name</span><span class="si">}</span><span class="s2">&gt;"</span><span class="p">,</span>
-      <span class="n">handle_children</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">context</span><span class="p">),</span>
+      <span class="n">handle_children</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">context</span><span class="p">),</span>
       <span class="s2">"&lt;/</span><span class="si">#{</span><span class="n">node</span><span class="p">.</span><span class="nf">name</span><span class="si">}</span><span class="s2">&gt;"</span><span class="p">,</span>
     <span class="p">]</span>
   <span class="k">end</span>
@@ -216,41 +216,48 @@
 <p>This function translates strings. The <code>string</code> argument is the string to convert. Typically, this returns an array with the escaped string, e.g. <code>[escape(string)]</code>, where the <code>#escape</code> function performs escaping (such as replacing <code>&amp;</code> and <code>&lt;</code> with <code>&amp;amp;</code> and <code>&amp;lt;</code> in HTML and XML).</p>
 <p>The <code>context</code> argument is a hash which is passed through from parent to element. It can be used to change translation logic depending on context. By default, it will be an empty hash.</p>
 </dd>
-<dt><code>#handle_element(element, path, context)</code></dt>
+<dt><code>#handle_element(element, context)</code></dt>
 <dd>
-<p>This function translates elements. The <code>element</code> argument is the element to convert, and <code>path</code> is an array containing the ancestors of this element, starting with the root.</p>
+<p>This function translates elements. The <code>element</code> argument is the element to convert.</p>
 <p>The way an element is translated often depends on the element name, <code>element.name</code> (a string), and might depend on the element’s attributes, <code>element.attributes</code> (a hash).</p>
-<p>When handling an element, make sure to handle all its child elements. The built-in <code>#handle_children</code> function can be used for this, and is typically called like <code>handle_children(element, path)</code>. Handling child elements does not happen automatically, in order to provide the possibility of conditional output.</p>
+<p>When handling an element, make sure to handle all its child elements. The built-in <code>#handle_children</code> function can be used for this, and is typically called like <code>handle_children(element, context)</code>. Handling child elements does not happen automatically, in order to provide the possibility of conditional output.</p>
 <p>Like with <code>#handle_string</code>, the <code>context</code> argument is a hash which is passed through from parent to element.</p>
 </dd>
 </dl>
 <section id="tips-and-tricks"><h3>
 <a href="#tips-and-tricks" class="permalink">#</a>Tips and tricks</h3>
-<p>The <code>path</code> argument of <code>#handle_element</code> is useful in cases where the resulting output depends on the nesting level. For example, this page uses nested <code>section</code> elements that start with a <code>h</code> (header) element, which is translated to any of the HTML header elements (such as <code>h1</code>) depending on the number of <code>section</code> ancestors:</p>
-<pre><code><span class="k">def</span> <span class="nf">handle_element</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+<p>The <code>context</code> argument of <code>#handle_element</code> is useful in cases where the resulting output depends on the nesting level. For example, this page uses nested <code>section</code> elements that start with a <code>h</code> (header) element, which is translated to any of the HTML header elements (such as <code>h1</code>) depending on the number of <code>section</code> ancestors:</p>
+<pre><code><span class="k">def</span> <span class="nf">handle_element</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
   <span class="k">case</span> <span class="n">element</span><span class="p">.</span><span class="nf">name</span>
   <span class="k">when</span> <span class="s1">'h'</span>
-    <span class="n">depth</span> <span class="o">=</span> <span class="n">path</span><span class="p">.</span><span class="nf">count</span> <span class="p">{</span> <span class="o">|</span><span class="n">ancestor</span><span class="o">|</span> <span class="n">ancestor</span><span class="p">.</span><span class="nf">name</span> <span class="o">==</span> <span class="s1">'section'</span> <span class="p">}</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">depth</span> <span class="o">=</span> <span class="n">context</span><span class="p">.</span><span class="nf">fetch</span><span class="p">(</span><span class="ss">:depth</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="p">[</span>
       <span class="s2">"&lt;h</span><span class="si">#{</span><span class="n">depth</span><span class="si">}</span><span class="s2">&gt;"</span><span class="p">,</span>
-      <span class="n">handle_children</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">context</span><span class="p">),</span>
+      <span class="n">handle_children</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">context</span><span class="p">),</span>
       <span class="s2">"&lt;/h</span><span class="si">#{</span><span class="n">depth</span><span class="si">}</span><span class="s2">&gt;"</span><span class="p">,</span>
     <span class="p">]</span>
+  <span class="k">when</span> <span class="s1">'section'</span>
+    <span class="n">depth</span> <span class="o">=</span> <span class="n">context</span><span class="p">.</span><span class="nf">fetch</span><span class="p">(</span><span class="ss">:depth</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">[</span>
+      <span class="s1">'&lt;section&gt;'</span><span class="p">,</span>
+      <span class="n">handle_children</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">context</span><span class="p">.</span><span class="nf">merge</span><span class="p">(</span><span class="ss">depth: </span><span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)),</span>
+      <span class="s1">'&lt;/section&gt;'</span><span class="p">,</span>
+    <span class="p">]</span>
   <span class="c1"># … handle other elements here …</span></code></pre>
-<p>It can be useful to do some further processing on child nodes before returning them. To get a string containing translated child nodes’ content, call <code>#translate_children</code>, passing in the element containing the children, along with the path. Here is an example of this function being used to syntax-highlight source code listings:</p>
-<pre><code><span class="k">def</span> <span class="nf">handle_element</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+<p>It can be useful to do some further processing on child nodes before returning them. To get a string containing translated child nodes’ content, call <code>#translate</code>, passing in the element’s children, along with the context. Here is an example of this function being used to syntax-highlight source code listings:</p>
+<pre><code><span class="k">def</span> <span class="nf">handle_element</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
   <span class="k">case</span> <span class="n">element</span><span class="p">.</span><span class="nf">name</span>
   <span class="k">when</span> <span class="s1">'listing'</span>
     <span class="p">[</span>
       <span class="s1">'&lt;pre&gt;&lt;code&gt;'</span><span class="p">,</span>
-      <span class="n">syntax_highlight</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">context</span><span class="p">),</span>
+      <span class="n">syntax_highlight</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">context</span><span class="p">),</span>
       <span class="s1">'&lt;/code&gt;&lt;/pre&gt;'</span><span class="p">,</span>
     <span class="p">]</span>
   <span class="c1"># … handle other elements here …</span>
 <span class="k">end</span>
 
-<span class="k">def</span> <span class="nf">syntax_highlight</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
-  <span class="n">content</span> <span class="o">=</span> <span class="n">translate_children</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">syntax_highlight</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+  <span class="n">content</span> <span class="o">=</span> <span class="n">translate</span><span class="p">(</span><span class="n">element</span><span class="p">.</span><span class="nf">children</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
   <span class="n">language</span> <span class="o">=</span> <span class="n">element</span><span class="p">.</span><span class="nf">attributes</span><span class="p">[</span><span class="s1">'lang'</span><span class="p">]</span>
 
   <span class="c1"># … implementation here …</span>
@@ -265,12 +272,12 @@
   <span class="k">end</span>
 <span class="k">end</span>
 
-<span class="k">def</span> <span class="nf">handle_element</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">handle_element</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
   <span class="k">case</span> <span class="n">element</span><span class="p">.</span><span class="nf">name</span>
   <span class="k">when</span> <span class="s1">'listing'</span>
     <span class="p">[</span>
       <span class="s1">'&lt;pre&gt;&lt;code&gt;'</span><span class="p">,</span>
-      <span class="n">syntax_highlight</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">context</span><span class="p">.</span><span class="nf">merge</span><span class="p">(</span><span class="ss">raw: </span><span class="kp">true</span><span class="p">)),</span>
+      <span class="n">syntax_highlight</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">context</span><span class="p">.</span><span class="nf">merge</span><span class="p">(</span><span class="ss">raw: </span><span class="kp">true</span><span class="p">)),</span>
       <span class="s1">'&lt;/code&gt;&lt;/pre&gt;'</span><span class="p">,</span>
     <span class="p">]</span>
   <span class="c1"># … handle other elements here …</span>
