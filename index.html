@@ -17,7 +17,7 @@
 <p>Here’s an example of D★Mark:</p>
 <pre><code><span class="nt">#para</span><span class="err"> This a paragraph; an element in block form containing some text.
 
-</span><span class="nt">#note</span><span class="err">[only=web] This is a note that will </span><span class="nt">%emph</span><span class="err">{only} show up on web.</span></code></pre>
+</span><span class="nt">#note</span><span class="err">[only=web] This is a note that will </span><span class="nt">%em</span><span class="err">{only} show up on web.</span></code></pre>
 <p>For development details on D★Mark, see <a href="https://github.com/ddfreyne/d-mark">its GitHub repository</a>. Please <a href="https://github.com/ddfreyne/d-mark/issues/new">open an issue</a> for any problems that you find.</p>
 <section id="cheat-sheet"><h2>
 <a href="#cheat-sheet" class="permalink">#</a>Cheat sheet</h2>
@@ -81,10 +81,10 @@
 <dt>Inline form</dt>
 <dd>
 <p>Inside an element, text can be marked up using elements with the inline form. An element in inline form consists of the <code>%</code> symbol, the name of the element, optionally attributes enclosed in rectangular brackets, and finally the content within braces. For example:</p>
-<pre><code><span class="nt">#para</span><span class="err"> I am a paragraph with an </span><span class="nt">%emph</span><span class="err">{amazing} inline element.</span></code></pre>
+<pre><code><span class="nt">#para</span><span class="err"> I am a paragraph with an </span><span class="nt">%em</span><span class="err">{amazing} inline element.</span></code></pre>
 </dd>
 </dl>
-<p>An element name starts with a lowercase letter, followed by zero or more lowercase letters, digits or a dash. For instance, <code>emph</code>, <code>h2</code>, and <code>section-header</code> are valid element names, while <code>SectionHeader</code>, <code>2</code> and <code>input_data</code> are not.</p>
+<p>An element name starts with a lowercase letter, followed by zero or more lowercase letters, digits or a dash. For instance, <code>em</code>, <code>h2</code>, and <code>section-header</code> are valid element names, while <code>SectionHeader</code>, <code>2</code> and <code>input_data</code> are not.</p>
 <div class="note">The restrictions on what can be an element name will likely be relaxed before the 1.0 release.</div>
 <p>At the top level, D★Mark documents consists <em>only</em> of elements in block form.</p>
 <p>Elements in block form can be nested. To do so, indent the nested block two spaces deeper than the enclosing block. For example, the following defines a <code>list</code> element with three <code>item</code> elements inside it:</p>
@@ -190,14 +190,14 @@
 <p>D★Mark does not come with any translators. It does, however, provide a class named <code>DMark::Translator</code>, which is intended as the base class for translators.</p>
 <p>For example, the following translator will convert the tree into XML:</p>
 <pre><code><span class="k">class</span> <span class="nc">MyXMLLikeTranslator</span> <span class="o">&lt;</span> <span class="no">DMark</span><span class="o">::</span><span class="no">Translator</span>
-  <span class="k">def</span> <span class="nf">handle_string</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+  <span class="k">def</span> <span class="nf">handle_string</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">_context</span><span class="p">)</span>
     <span class="p">[</span><span class="n">escape</span><span class="p">(</span><span class="n">string</span><span class="p">)]</span>
   <span class="k">end</span>
 
-  <span class="k">def</span> <span class="nf">handle_element</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+  <span class="k">def</span> <span class="nf">handle_element</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
     <span class="p">[</span>
       <span class="s2">"&lt;</span><span class="si">#{</span><span class="n">node</span><span class="p">.</span><span class="nf">name</span><span class="si">}</span><span class="s2">&gt;"</span><span class="p">,</span>
-      <span class="n">handle_children</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">path</span><span class="p">),</span>
+      <span class="n">handle_children</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">context</span><span class="p">),</span>
       <span class="s2">"&lt;/</span><span class="si">#{</span><span class="n">node</span><span class="p">.</span><span class="nf">name</span><span class="si">}</span><span class="s2">&gt;"</span><span class="p">,</span>
     <span class="p">]</span>
   <span class="k">end</span>
@@ -211,45 +211,69 @@
 <span class="nb">puts</span> <span class="n">result</span></code></pre>
 <p>To create a translator, create a subclass of <code>DMark::Translator</code>, and implement <code>#handle_string</code> and <code>#handle_element</code>, which should return an (optionally nested) array of strings, which will then be joined into a single string after processing.</p>
 <dl>
-<dt><code>#handle_string(string)</code></dt>
-<dd><p>This function translates strings. The <code>string</code> argument is the string to convert. Typically, this returns an array with the escaped string, e.g. <code>[escape(string)]</code>, where the <code>#escape</code> function performs escaping (such as replacing <code>&amp;</code> and <code>&lt;</code> with <code>&amp;amp;</code> and <code>&amp;lt;</code> in HTML and XML).</p></dd>
-<dt><code>#handle_element(element, path)</code></dt>
+<dt><code>#handle_string(string, context)</code></dt>
+<dd>
+<p>This function translates strings. The <code>string</code> argument is the string to convert. Typically, this returns an array with the escaped string, e.g. <code>[escape(string)]</code>, where the <code>#escape</code> function performs escaping (such as replacing <code>&amp;</code> and <code>&lt;</code> with <code>&amp;amp;</code> and <code>&amp;lt;</code> in HTML and XML).</p>
+<p>The <code>context</code> argument is a hash which is passed through from parent to element. It can be used to change translation logic depending on context. By default, it will be an empty hash.</p>
+</dd>
+<dt><code>#handle_element(element, path, context)</code></dt>
 <dd>
 <p>This function translates elements. The <code>element</code> argument is the element to convert, and <code>path</code> is an array containing the ancestors of this element, starting with the root.</p>
 <p>The way an element is translated often depends on the element name, <code>element.name</code> (a string), and might depend on the element’s attributes, <code>element.attributes</code> (a hash).</p>
 <p>When handling an element, make sure to handle all its child elements. The built-in <code>#handle_children</code> function can be used for this, and is typically called like <code>handle_children(element, path)</code>. Handling child elements does not happen automatically, in order to provide the possibility of conditional output.</p>
+<p>Like with <code>#handle_string</code>, the <code>context</code> argument is a hash which is passed through from parent to element.</p>
 </dd>
 </dl>
 <section id="tips-and-tricks"><h3>
 <a href="#tips-and-tricks" class="permalink">#</a>Tips and tricks</h3>
 <p>The <code>path</code> argument of <code>#handle_element</code> is useful in cases where the resulting output depends on the nesting level. For example, this page uses nested <code>section</code> elements that start with a <code>h</code> (header) element, which is translated to any of the HTML header elements (such as <code>h1</code>) depending on the number of <code>section</code> ancestors:</p>
-<pre><code><span class="k">def</span> <span class="nf">handle_element</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+<pre><code><span class="k">def</span> <span class="nf">handle_element</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
   <span class="k">case</span> <span class="n">element</span><span class="p">.</span><span class="nf">name</span>
   <span class="k">when</span> <span class="s1">'h'</span>
     <span class="n">depth</span> <span class="o">=</span> <span class="n">path</span><span class="p">.</span><span class="nf">count</span> <span class="p">{</span> <span class="o">|</span><span class="n">ancestor</span><span class="o">|</span> <span class="n">ancestor</span><span class="p">.</span><span class="nf">name</span> <span class="o">==</span> <span class="s1">'section'</span> <span class="p">}</span> <span class="o">+</span> <span class="mi">1</span>
     <span class="p">[</span>
       <span class="s2">"&lt;h</span><span class="si">#{</span><span class="n">depth</span><span class="si">}</span><span class="s2">&gt;"</span><span class="p">,</span>
-      <span class="n">handle_children</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">path</span><span class="p">),</span>
+      <span class="n">handle_children</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">context</span><span class="p">),</span>
       <span class="s2">"&lt;/h</span><span class="si">#{</span><span class="n">depth</span><span class="si">}</span><span class="s2">&gt;"</span><span class="p">,</span>
     <span class="p">]</span>
   <span class="c1"># … handle other elements here …</span></code></pre>
 <p>It can be useful to do some further processing on child nodes before returning them. To get a string containing translated child nodes’ content, call <code>#translate_children</code>, passing in the element containing the children, along with the path. Here is an example of this function being used to syntax-highlight source code listings:</p>
-<pre><code><span class="k">def</span> <span class="nf">handle_element</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+<pre><code><span class="k">def</span> <span class="nf">handle_element</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
   <span class="k">case</span> <span class="n">element</span><span class="p">.</span><span class="nf">name</span>
   <span class="k">when</span> <span class="s1">'listing'</span>
     <span class="p">[</span>
       <span class="s1">'&lt;pre&gt;&lt;code&gt;'</span><span class="p">,</span>
-      <span class="n">syntax_highlight</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">path</span><span class="p">),</span>
+      <span class="n">syntax_highlight</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">context</span><span class="p">),</span>
       <span class="s1">'&lt;/code&gt;&lt;/pre&gt;'</span><span class="p">,</span>
     <span class="p">]</span>
   <span class="c1"># … handle other elements here …</span>
 <span class="k">end</span>
 
-<span class="k">def</span> <span class="nf">syntax_highlight</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-  <span class="n">content</span> <span class="o">=</span> <span class="n">translate_children</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">syntax_highlight</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+  <span class="n">content</span> <span class="o">=</span> <span class="n">translate_children</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
   <span class="n">language</span> <span class="o">=</span> <span class="n">element</span><span class="p">.</span><span class="nf">attributes</span><span class="p">[</span><span class="s1">'lang'</span><span class="p">]</span>
 
   <span class="c1"># … implementation here …</span>
+<span class="k">end</span></code></pre>
+<p>The <code>context</code> argument can be used to change translation logic for an elemet based on its parent. For example, strings might be escaped by default, except when they’re inside a <code>listing</code> element, where the strings will be captured and passed into a syntax-highlighting function that expects non-escaped content.</p>
+<p>The syntax-highlighting example given above can be modified as follows, for situations where  <code>#syntax_highlight</code> expects unescaped content:</p>
+<pre><code><span class="k">def</span> <span class="nf">handle_string</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">context</span><span class="p">[</span><span class="ss">:raw</span><span class="p">]</span>
+    <span class="n">string</span>
+  <span class="k">else</span>
+    <span class="p">[</span><span class="n">html_escape</span><span class="p">(</span><span class="n">string</span><span class="p">)]</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">handle_element</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+  <span class="k">case</span> <span class="n">element</span><span class="p">.</span><span class="nf">name</span>
+  <span class="k">when</span> <span class="s1">'listing'</span>
+    <span class="p">[</span>
+      <span class="s1">'&lt;pre&gt;&lt;code&gt;'</span><span class="p">,</span>
+      <span class="n">syntax_highlight</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">context</span><span class="p">.</span><span class="nf">merge</span><span class="p">(</span><span class="ss">raw: </span><span class="kp">true</span><span class="p">)),</span>
+      <span class="s1">'&lt;/code&gt;&lt;/pre&gt;'</span><span class="p">,</span>
+    <span class="p">]</span>
+  <span class="c1"># … handle other elements here …</span>
 <span class="k">end</span></code></pre></section></section>
   </body>
 </html>
