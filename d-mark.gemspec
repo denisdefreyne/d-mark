@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.rdoc_options     = ['--main', 'README.adoc']
   s.extra_rdoc_files = ['LICENSE', 'README.adoc', 'NEWS.md']
 
-  s.required_ruby_version = '>= 2.1.0'
+  s.required_ruby_version = '>= 2.2.0'
 
   s.add_development_dependency('bundler', '>= 1.11.2', '< 2.0')
 end
