@@ -44,7 +44,8 @@ describe 'DMark::Parser#parser' do
         'p', {},
         [
           element('foo', {}, ['}'])
-        ])
+        ]
+      )
     ]
   end
 
