@@ -367,7 +367,7 @@ title: D★Mark
         # … implementation here …
       end
 
-    #p The %code{context} argument can be used to change translation logic for an elemet based on its parent. For example, strings might be escaped by default, except when they’re inside a %code{listing} element, where the strings will be captured and passed into a syntax-highlighting function that expects non-escaped content.
+    #p The %code{context} argument can be used to change translation logic for an element based on its parent. For example, strings might be escaped by default, except when they’re inside a %code{listing} element, where the strings will be captured and passed into a syntax-highlighting function that expects non-escaped content.
 
     #p The syntax-highlighting example given above can be modified as follows, for situations where  %code{#syntax_highlight} expects unescaped content:
 
