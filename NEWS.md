@@ -1,5 +1,13 @@
 # D★Mark news
 
+## 1.0.0a3 (2016-07-03)
+
+Changes:
+
+* Dropped support for Ruby 2.1
+* Removed CLI
+* Changed `Translator` API to allow specialisation
+
 ## 1.0.0a2 (2016-03-06)
 
 Changes:
