@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css?family=Merriweather:400,400italic,700" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Cousine:400,700,400italic,700italic" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="stylesheet.css">
-    <meta name="generator" content="Nanoc 4.1.4">
+    <meta name="generator" content="Nanoc 4.3.5">
     <meta name="viewport" content="width=device-width, initial-scale=0.5">
   </head>
   <body>
@@ -84,8 +84,7 @@
 <pre><code><span class="nt">#para</span><span class="err"> I am a paragraph with an </span><span class="nt">%em</span><span class="err">{amazing} inline element.</span></code></pre>
 </dd>
 </dl>
-<p>An element name starts with a lowercase letter, followed by zero or more lowercase letters, digits or a dash. For instance, <code>em</code>, <code>h2</code>, and <code>section-header</code> are valid element names, while <code>SectionHeader</code>, <code>2</code> and <code>input_data</code> are not.</p>
-<div class="note">The restrictions on what can be an element name will likely be relaxed before the 1.0 release.</div>
+<p>An element name starts with a letter (lowercase or uppercase), followed by zero or more letters, digits, dashes, or underscores. For instance, <code>em</code>, <code>h2</code>, <code>section-header</code>, <code>SectionHeader</code> and <code>section_header</code> are valid element names, while <code>_section</code>, <code>2</code> and <code>hello/world</code> are not.</p>
 <p>At the top level, D★Mark documents consists <em>only</em> of elements in block form.</p>
 <p>Elements in block form can be nested. To do so, indent the nested block two spaces deeper than the enclosing block. For example, the following defines a <code>list</code> element with three <code>item</code> elements inside it:</p>
 <pre><code><span class="nt">#list</span><span class="err">[unordered]
@@ -112,8 +111,7 @@
 <li><p><code>#h2[id=donkey] All about donkeys</code> is a block-level <code>h2</code> element with the <code>id</code> attribute set to <code>donkey</code>.</p></li>
 <li><p><code>#p[print] This is a paragraph that only readers of the book will see.</code> is a block-level <code>para</code> element with the <code>print</code> attribute set to <code>print</code>.</p></li>
 </ul>
-<p>An attribute key starts with a lowercase letter, followed by zero or more lowercase letters, digits or a dash. For instance, <code>lang</code> and <code>only-for</code> are valid attribute keys, while <code>OnlyFor</code> and <code>data_type</code> are not.</p>
-<div class="note">The restrictions on what can be an attribute key will likely be relaxed before the 1.0 release.</div></section><section id="escaping"><h3>
+<p>An attribute key starts with a letter (lowercase or uppercase), followed by zero or more letters, digits, dashes, or underscores. For instance, <code>lang</code>, <code>only-for</code>, <code>Audience</code> and <code>data_type</code> are valid attribute keys, while <code>-except</code> and <code>hello/world</code> are not.</p></section><section id="escaping"><h3>
 <a href="#escaping" class="permalink">#</a>Escaping</h3>
 <p>The following characters need to be escaped:</p>
 <ul>
@@ -171,7 +169,7 @@
 <p>JSON and YAML are data interchange formats rather than markup languages, and thus are not well-suited for marking up prose.</p>
 <pre><code><span class="p">[</span><span class="w">
   </span><span class="s2">"A glob pattern that matches every item is "</span><span class="p">,</span><span class="w">
-  </span><span class="p">[</span><span class="s2">"pattern"</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="nt">"kind"</span><span class="p">:</span><span class="w"> </span><span class="s2">"glob"</span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="s2">"/**/*"</span><span class="p">]],</span><span class="w">
+  </span><span class="p">[</span><span class="s2">"pattern"</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="s2">"kind"</span><span class="p">:</span><span class="w"> </span><span class="s2">"glob"</span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="s2">"/**/*"</span><span class="p">]],</span><span class="w">
   </span><span class="s2">"."</span><span class="w">
 </span><span class="p">]</span></code></pre>
 <pre><code><span class="nt">#para</span><span class="err"> A glob pattern that matches every item is </span><span class="nt">%pattern</span><span class="err">[glob]{/**/*}.</span></code></pre>
