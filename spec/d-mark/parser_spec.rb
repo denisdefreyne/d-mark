@@ -15,6 +15,36 @@ describe 'DMark::Parser#parser' do
     expect(parse('#p hi %}')).to eq [element('p', {}, ['hi ', '}'])]
   end
 
+  it 'parses element with name containing dash' do
+    expect(parse('#intro-para hi')).to eq [
+      element('intro-para', {}, ['hi'])
+    ]
+  end
+
+  it 'parses element with name containing underscore' do
+    expect(parse('#intro_para hi')).to eq [
+      element('intro_para', {}, ['hi'])
+    ]
+  end
+
+  it 'parses element with name containing uppercase letters' do
+    expect(parse('#IntroPara hi')).to eq [
+      element('IntroPara', {}, ['hi'])
+    ]
+  end
+
+  it 'does not parse element with name starting with a dash' do
+    expect { parse('#-intro hi there') }.to raise_error(DMark::Parser::ParserError)
+  end
+
+  it 'does not parse element with name starting with an underscore' do
+    expect { parse('#_intro hi there') }.to raise_error(DMark::Parser::ParserError)
+  end
+
+  it 'does not parse element with name starting with a digit' do
+    expect { parse('#4ever best friends') }.to raise_error(DMark::Parser::ParserError)
+  end
+
   it 'parses escaped % in block' do
     expect(parse('#p %%')).to eq [
       element('p', {}, ['%'])
@@ -177,6 +207,42 @@ describe 'DMark::Parser#parser' do
     expect(parse('#p[foo=bar] hi')).to eq [
       element('p', { 'foo' => 'bar' }, ['hi'])
     ]
+  end
+
+  it 'parses attribute with dash' do
+    expect(parse('#p[intended-audience=learner] hi')).to eq [
+      element('p', { 'intended-audience' => 'learner' }, ['hi'])
+    ]
+  end
+
+  it 'parses attribute with numbers' do
+    expect(parse('#p[is-over-9000=yup] hi')).to eq [
+      element('p', { 'is-over-9000' => 'yup' }, ['hi'])
+    ]
+  end
+
+  it 'parses attribute with underscore' do
+    expect(parse('#p[intended_audience=learner] hi')).to eq [
+      element('p', { 'intended_audience' => 'learner' }, ['hi'])
+    ]
+  end
+
+  it 'parses attribute with uppercase letters' do
+    expect(parse('#p[IntendedAudience=learner] hi')).to eq [
+      element('p', { 'IntendedAudience' => 'learner' }, ['hi'])
+    ]
+  end
+
+  it 'does not parse atttributes starting with -' do
+    expect { parse('#p[-this=is dog] hello yes') }.to raise_error(DMark::Parser::ParserError)
+  end
+
+  it 'does not parse atttributes starting with _' do
+    expect { parse('#p[_this=is dog] hello yes') }.to raise_error(DMark::Parser::ParserError)
+  end
+
+  it 'does not parse atttributes starting with a digit' do
+    expect { parse('#p[4this=is dog] hello yes') }.to raise_error(DMark::Parser::ParserError)
   end
 
   it 'parses single value-less attribute' do

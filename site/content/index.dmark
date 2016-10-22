@@ -119,9 +119,7 @@ title: D★Mark
       #listing[lang=d-mark]
         %#para I am a paragraph with an %%em{amazing%} inline element.
 
-  #p An element name starts with a lowercase letter, followed by zero or more lowercase letters, digits or a dash. For instance, %code{em}, %code{h2}, and %code{section-header} are valid element names, while %code{SectionHeader}, %code{2} and %code{input_data} are not.
-
-  #note The restrictions on what can be an element name will likely be relaxed before the 1.0 release.
+  #p An element name starts with a letter (lowercase or uppercase), followed by zero or more letters, digits, dashes, or underscores. For instance, %code{em}, %code{h2}, %code{section-header}, %code{SectionHeader} and %code{section_header} are valid element names, while %code{_section}, %code{2} and %code{hello/world} are not.
 
   #p At the top level, D★Mark documents consists %em{only} of elements in block form.
 
@@ -165,9 +163,7 @@ title: D★Mark
       #li
         #p %code{#p[print] This is a paragraph that only readers of the book will see.} is a block-level %code{para} element with the %code{print} attribute set to %code{print}.
 
-    #p An attribute key starts with a lowercase letter, followed by zero or more lowercase letters, digits or a dash. For instance, %code{lang} and %code{only-for} are valid attribute keys, while %code{OnlyFor} and %code{data_type} are not.
-
-    #note The restrictions on what can be an attribute key will likely be relaxed before the 1.0 release.
+    #p An attribute key starts with a letter (lowercase or uppercase), followed by zero or more letters, digits, dashes, or underscores. For instance, %code{lang}, %code{only-for}, %code{Audience} and %code{data_type} are valid attribute keys, while %code{-except} and %code{hello/world} are not.
 
   #section %h{Escaping}
     #p The following characters need to be escaped:

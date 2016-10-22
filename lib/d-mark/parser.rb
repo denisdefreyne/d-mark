@@ -209,7 +209,7 @@ module DMark
     def read_identifier_head
       char = peek_char
       case char
-      when 'a'..'z'
+      when 'a'..'z', 'A'..'Z'
         advance
         char
       else
@@ -223,7 +223,7 @@ module DMark
       loop do
         char = peek_char
         case char
-        when 'a'..'z', '-', '0'..'9'
+        when 'a'..'z', 'A'..'Z', '-', '_', '0'..'9'
           advance
           res << char
         else
