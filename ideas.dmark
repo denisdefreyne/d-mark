@@ -2,28 +2,10 @@
 
 #ul
   #li
-    #p Support line breaks in the same block-level element. A potential problem arises when the next line also starts with a valid element and a period, though.
-
-  #li
-    #p Support comments. Maybe %% at the beginning of a line, or at the current indentation level?
-
-  #li
     #p Support validation. Which elements can contain which other elements? Which elements can live at the root?
 
   #li
-    #p A lone %% should probably be okay. Maybe everything that doesn’t fully look like an inline element (e.g. %%code) could be acceptable.
-
-  #li
-    #p Be very strict on what whitespace is accepted. It should be two spaces, period; no tabs. Additional indentation should go into the element itself.
-
-  #li
     #p Have different translators built-in. I’m thinking %code{BasicMarkdown2HTML} and %code{HTMLForWriters2HTML}, and perhaps %code{DocBook2HTML}.
-
-  #li
-    #p Concise nested block syntax, e.g. %code{#li #p} at the beginning of a block.
-
-  #li
-    #p Blocks that start with %code{%%}.
 
   #li
     #p A refactored parser that does not need to reset %code{@pos}, and maybe not even have any kind of mutable state at all.
