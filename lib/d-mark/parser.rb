@@ -16,8 +16,7 @@ module DMark
     attr_reader :pos
 
     def initialize(input)
-      @input = input
-      @input_chars = @input.chars
+      @input_chars = input.chars
 
       @pos = 0
       @col_nr = 0
