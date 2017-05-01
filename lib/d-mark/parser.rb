@@ -17,6 +17,7 @@ module DMark
 
     def initialize(input)
       @input_chars = input.chars
+      @length = @input_chars.size
 
       @pos = 0
       @col_nr = 0
@@ -56,7 +57,7 @@ module DMark
     end
 
     def eof?(pos = @pos)
-      pos >= @input_chars.size
+      pos >= @length
     end
 
     def advance
