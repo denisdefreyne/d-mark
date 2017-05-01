@@ -48,16 +48,12 @@ module DMark
 
     ##########
 
-    def peek_char(pos = @pos)
-      @input_chars[pos]
-    end
-
     def eof?(pos = @pos)
       pos >= @length
     end
 
     def advance
-      if peek_char == "\n"
+      if @input_chars[@pos] == "\n"
         @line_nr += 1
         @col_nr = 0
       end
@@ -67,7 +63,7 @@ module DMark
     end
 
     def read_char(c)
-      char = peek_char
+      char = @input_chars[@pos]
       if char != c
         raise_parse_error("expected #{c.inspect}, but got #{char.nil? ? 'EOF' : char.inspect}")
       else
@@ -114,7 +110,7 @@ module DMark
       pos = @pos
 
       loop do
-        case peek_char(pos)
+        case @input_chars[pos]
         when ' '
           pos += 1
         when nil
@@ -129,8 +125,8 @@ module DMark
 
     # FIXME: ugly and duplicated
     def try_read_block_start
-      if peek_char == '#'
-        next_char = peek_char(@pos + 1)
+      if @input_chars[@pos] == '#'
+        next_char = @input_chars[@pos + 1]
         ('a'..'z').cover?(next_char)
       else
         false
@@ -142,7 +138,7 @@ module DMark
       pos = @pos
 
       loop do
-        case peek_char(pos)
+        case @input_chars[pos]
         when ' '
           pos += 1
           indentation_chars += 1
@@ -166,13 +162,13 @@ module DMark
       identifier = read_identifier
 
       attributes =
-        if peek_char == '['
+        if @input_chars[@pos] == '['
           read_attributes
         else
           {}
         end
 
-      case peek_char
+      case @input_chars[@pos]
       when nil, "\n"
         advance
         ElementNode.new(identifier, attributes, [])
@@ -185,7 +181,7 @@ module DMark
     end
 
     def read_end_of_inline_content
-      char = peek_char
+      char = @input_chars[@pos]
       case char
       when "\n", nil
         advance
@@ -203,7 +199,7 @@ module DMark
     end
 
     def read_identifier_head
-      char = peek_char
+      char = @input_chars[@pos]
       case char
       when 'a'..'z', 'A'..'Z'
         advance
@@ -219,7 +215,7 @@ module DMark
       res = ''
 
       loop do
-        char = peek_char
+        char = @input_chars[@pos]
         break unless IDENTIFIER_CHARS.include?(char)
         advance
         res << char
@@ -235,7 +231,7 @@ module DMark
 
       at_start = true
       loop do
-        char = peek_char
+        char = @input_chars[@pos]
         case char
         when ']'
           advance
@@ -244,7 +240,7 @@ module DMark
           read_char(',') unless at_start
 
           key = read_attribute_key
-          if peek_char == '='
+          if @input_chars[@pos] == '='
             read_char('=')
             value = read_attribute_value
           else
@@ -269,7 +265,7 @@ module DMark
 
       is_escaping = false
       loop do
-        char = peek_char
+        char = @input_chars[@pos]
 
         if is_escaping
           case char
@@ -309,7 +305,7 @@ module DMark
       res = []
 
       loop do
-        char = peek_char
+        char = @input_chars[@pos]
         case char
         when "\n", nil
           break
@@ -330,7 +326,7 @@ module DMark
       res = ''
 
       loop do
-        char = peek_char
+        char = @input_chars[@pos]
         case char
         when nil, "\n", '%', '}'
           break
@@ -344,7 +340,7 @@ module DMark
     end
 
     def read_percent_body
-      char = peek_char
+      char = @input_chars[@pos]
       case char
       when '%', '}', '#'
         advance
@@ -359,7 +355,7 @@ module DMark
     def read_inline_element
       name = read_identifier
       attributes =
-        if peek_char == '['
+        if @input_chars[@pos] == '['
           read_attributes
         else
           {}
