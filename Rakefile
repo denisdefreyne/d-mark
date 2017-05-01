@@ -7,7 +7,7 @@ RSpec::Core::RakeTask.new(:spec) do |t|
 end
 
 RuboCop::RakeTask.new(:rubocop) do |task|
-  task.options  = %w( --display-cop-names --format simple )
+  task.options  = %w[--display-cop-names --format simple]
   task.patterns = ['lib/**/*.rb', 'spec/**/*.rb']
 end
 

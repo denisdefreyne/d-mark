@@ -163,7 +163,7 @@ describe 'DMark::Parser#parser' do
 
   it 'includes raw content' do
     expect(parse("#p foo\n  donkey")).to eq [
-      element('p', {}, %W(foo \n donkey))
+      element('p', {}, %W[foo \n donkey])
     ]
   end
 
