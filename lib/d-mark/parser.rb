@@ -49,11 +49,7 @@ module DMark
     ##########
 
     def peek_char(pos = @pos)
-      if eof?
-        nil
-      else
-        @input_chars[pos]
-      end
+      @input_chars[pos]
     end
 
     def eof?(pos = @pos)
@@ -61,7 +57,7 @@ module DMark
     end
 
     def advance
-      if !eof? && @input_chars[@pos] == "\n"
+      if peek_char == "\n"
         @line_nr += 1
         @col_nr = 0
       end
