@@ -213,18 +213,16 @@ module DMark
       end
     end
 
+    IDENTIFIER_CHARS = Set.new(['a'..'z', 'A'..'Z', ['-', '_'], '0'..'9'].map(&:to_a).flatten)
+
     def read_identifier_tail
       res = ''
 
       loop do
         char = peek_char
-        case char
-        when 'a'..'z', 'A'..'Z', '-', '_', '0'..'9'
-          advance
-          res << char
-        else
-          break
-        end
+        break unless IDENTIFIER_CHARS.include?(char)
+        advance
+        res << char
       end
 
       res.to_s
