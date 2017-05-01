@@ -336,7 +336,7 @@ module DMark
         end
       end
 
-      res.to_s
+      res
     end
 
     def read_percent_body
@@ -344,7 +344,7 @@ module DMark
       case char
       when '%', '}', '#'
         advance
-        char.to_s
+        char
       when nil, "\n"
         raise_parse_error('expected something after %')
       else
