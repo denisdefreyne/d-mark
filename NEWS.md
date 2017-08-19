@@ -1,5 +1,15 @@
 # D★Mark news
 
+## 1.0.0a4 (2017-08-19)
+
+Changes:
+
+* Relaxed identifier restrictions (#16, #17)
+
+Enhancements:
+
+* Made various speed improvements
+
 ## 1.0.0a3 (2016-07-03)
 
 Changes:
