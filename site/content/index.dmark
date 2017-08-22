@@ -229,7 +229,7 @@ title: D★Mark
 
     #dt AsciiDoc
     #dd
-      #p AsciiDoc, along with its AsciiDoctor variant, are syntactically unambiguous, but complex languages. They prescribe a comparatively large set of elements which translates well to DocBook and HTML. They do not support custom markup or embedding raw HTML, which makes them harder t use for prose that requires more complex markup.
+      #p AsciiDoc, along with its AsciiDoctor variant, are syntactically unambiguous, but complex languages. They prescribe a comparatively large set of elements which translates well to DocBook and HTML. They do not support custom markup or embedding raw HTML, which makes them harder to use for prose that requires more complex markup.
 
       #note There is no AsciiDoc example, as this example cannot be represented with AsciiDoc.
 
