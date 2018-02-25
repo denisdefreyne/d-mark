@@ -222,7 +222,7 @@ title: D★Mark
       #p Markdown has a compact syntax, but is complex and ambiguous, as evidenced by the many different mutually incompatible implementations. It prescribes a small set of elements (smaller even than HTML). It supports embedding raw HTML, which in theory makes it possible to combine the best of both worlds, but in practice leads to markup that is harder to read than either Markdown or HTML separately, and occasionally trips up the parser and syntax highlighter.
 
       #listing[lang=markdown]
-        A glob pattern that matches every item is <span class="glob attr-kind-glob">/**/*</span>.
+        A glob pattern that matches every item is <span class="pattern attr-kind-glob">/**/*</span>.
 
       #listing[lang=d-mark]
         %#para A glob pattern that matches every item is %%pattern[glob]{/**/*%}.
