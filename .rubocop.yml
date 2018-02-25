@@ -1,5 +1,8 @@
 # ----- CONFIGURED -----
 
+AllCops:
+  TargetRubyVersion: "2.2"
+
 FileName:
   Exclude:
     - 'lib/d-mark.rb'
