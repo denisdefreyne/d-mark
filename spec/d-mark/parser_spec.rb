@@ -6,6 +6,32 @@ def element(name, attributes, children)
   DMark::ElementNode.new(name, attributes, children)
 end
 
+describe DMark::Parser::ParserError do
+  subject(:error) do
+    begin
+      DMark::Parser.new(content).parse
+    rescue described_class => e
+      break e
+    end
+  end
+
+  let(:content) do
+    "#p Stuff\n\n#p More stuff }"
+  end
+
+  describe '#message' do
+    subject { error.message }
+
+    it { is_expected.to eq('parse error at line 3, col 15: unexpected } -- try escaping it as "%}"') }
+  end
+
+  describe '#fancy_message' do
+    subject { error.fancy_message }
+
+    it { is_expected.to eq("parse error at line 3, col 15: unexpected } -- try escaping it as \"%}\"\n\n#p More stuff }\n\e[31m              ↑\e[0m") }
+  end
+end
+
 describe 'DMark::Parser#parser' do
   it 'parses' do
     expect(parse('')).to eq []

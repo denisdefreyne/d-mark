@@ -4,18 +4,33 @@ module DMark
       attr_reader :line_nr
       attr_reader :col_nr
 
-      def initialize(line_nr, col_nr, msg)
+      def initialize(line_nr, col_nr, msg, content)
         @line_nr = line_nr
         @col_nr = col_nr
         @msg = msg
+        @content = content
 
         super("parse error at line #{@line_nr + 1}, col #{@col_nr + 1}: #{@msg}")
+      end
+
+      def fancy_message
+        line = @content.lines[line_nr]
+
+        lines = [
+          message,
+          '',
+          line.rstrip,
+          "\e[31m" + ' ' * [col_nr, 0].max + '↑' + "\e[0m"
+        ]
+
+        lines.join("\n")
       end
     end
 
     attr_reader :pos
 
     def initialize(input)
+      @input = input
       @input_chars = input.chars
       @length = @input_chars.size
 
@@ -368,7 +383,7 @@ module DMark
     end
 
     def raise_parse_error(msg)
-      raise ParserError.new(@line_nr, @col_nr, msg)
+      raise ParserError.new(@line_nr, @col_nr, msg, @input)
     end
   end
 end
