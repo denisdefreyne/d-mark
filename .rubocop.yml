@@ -1,11 +1,14 @@
 # ----- CONFIGURED -----
 
 AllCops:
-  TargetRubyVersion: "2.2"
+  TargetRubyVersion: "2.3"
 
 FileName:
   Exclude:
     - 'lib/d-mark.rb'
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
 
 
 

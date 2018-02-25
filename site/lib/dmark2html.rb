@@ -86,7 +86,7 @@ end
 Class.new(Nanoc::Filter) do
   identifier :dmark2html
 
-  def run(content, params = {})
+  def run(content, _params = {})
     tree = DMark::Parser.new(content).parse
     Doc2HTML.translate(tree)
   end
