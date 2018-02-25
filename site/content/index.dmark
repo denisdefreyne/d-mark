@@ -386,3 +386,19 @@ title: D★Mark
           ]
         # … handle other elements here …
       end
+
+  #section %h{Error handling}
+    #p Parser errors implement %code{#fancy_message}, which is similar to %code{#message} but returns a multi-line string with additional diagnostic information to make it easier to identify and fix errors. For example, the following D★Mark snippet is invalid:
+
+    #listing[lang=d-mark]
+      %#p Stuff
+
+      %#p More stuff %}
+
+    #p … and raises an error, whose %code{#fancy_message} returns a string with this content:
+
+    #listing
+      parse error at line 3, col 15: unexpected %} -- try escaping it as "%%%}"
+
+      %#p More stuff %}
+                    ↑
