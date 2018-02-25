@@ -12,9 +12,9 @@ If you’re a technical writer looking for a flexible markup language, D★Mark 
 Here’s an example of D★Mark:
 
 ```
-para. This a paragraph; an element in block form containing some text.
+#para This a paragraph; an element in block form containing some text.
 
-note[only=web]. This is a note that will %em{only} show up on web.
+#note[only=web] This is a note that will %em{only} show up on web.
 ```
 
 For details, see the [D★Mark web page](http://ddfreyne.github.io/d-mark/).
