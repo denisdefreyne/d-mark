@@ -1,5 +1,9 @@
 source 'https://rubygems.org'
 
+group 'nanoc' do
+  gem 'nanoc-live', '= 1.0.0b1'
+end
+
 gem 'adsf'
 gem 'd-mark', path: '..'
 gem 'nanoc', '~> 4.9'
