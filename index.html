@@ -281,7 +281,7 @@
   <span class="c1"># … handle other elements here …</span>
 <span class="k">end</span></code></pre></section><section id="error-handling"><h3>
 <a href="#error-handling" class="permalink">#</a>Error handling</h3>
-<p>Parser errors implement <code>#fancy_message</code>, which is similar to <code>#message</code> but returns a multi-line string with additional diagnostic information to make it easier to identify and fix errors. For example, the following D★Mark snippet is invalid:</p>
+<p>Parse errors, <code>DMark::Parser::ParserError</code>, implement <code>#fancy_message</code>, which is similar to <code>#message</code> but returns a multi-line string with additional diagnostic information to make it easier to identify and fix errors. For example, the following D★Mark snippet is invalid:</p>
 <pre><code><span class="nt">#p</span><span class="err"> Stuff
 
 </span><span class="nt">#p</span><span class="err"> More stuff }</span></code></pre>
