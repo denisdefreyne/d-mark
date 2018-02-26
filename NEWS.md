@@ -1,5 +1,11 @@
 # D★Mark news
 
+## 1.0.0b1 (2018-02-26)
+
+Enhancements:
+
+* Added `ParserError#fancy_message`
+
 ## 1.0.0a4 (2017-08-19)
 
 Changes:
