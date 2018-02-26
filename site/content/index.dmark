@@ -388,7 +388,7 @@ title: D★Mark
       end
 
   #section %h{Error handling}
-    #p Parser errors implement %code{#fancy_message}, which is similar to %code{#message} but returns a multi-line string with additional diagnostic information to make it easier to identify and fix errors. For example, the following D★Mark snippet is invalid:
+    #p Parse errors, %code{DMark::Parser::ParserError}, implement %code{#fancy_message}, which is similar to %code{#message} but returns a multi-line string with additional diagnostic information to make it easier to identify and fix errors. For example, the following D★Mark snippet is invalid:
 
     #listing[lang=d-mark]
       %#p Stuff
