@@ -17,8 +17,8 @@ Gem::Specification.new do |s|
     ['d-mark.gemspec']
   s.require_paths = ['lib']
 
-  s.rdoc_options     = ['--main', 'README.adoc']
-  s.extra_rdoc_files = ['LICENSE', 'README.adoc', 'NEWS.md']
+  s.rdoc_options     = ['--main', 'README.md']
+  s.extra_rdoc_files = ['LICENSE', 'README.md', 'NEWS.md']
 
   s.required_ruby_version = '~> 2.3'
 end
