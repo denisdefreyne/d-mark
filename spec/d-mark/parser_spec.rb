@@ -1,5 +1,5 @@
-def parse(s)
-  DMark::Parser.new(s).parse
+def parse(str)
+  DMark::Parser.new(str).parse
 end
 
 def element(name, attributes, children)

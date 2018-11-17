@@ -55,6 +55,7 @@ module DMark
 
       loop do
         break if eof?
+
         res << read_block_with_children
       end
 
@@ -77,10 +78,10 @@ module DMark
       @col_nr += 1
     end
 
-    def read_char(c)
+    def read_char(expected_char)
       char = @input_chars[@pos]
-      if char != c
-        raise_parse_error("expected #{c.inspect}, but got #{char.nil? ? 'EOF' : char.inspect}")
+      if char != expected_char
+        raise_parse_error("expected #{expected_char.inspect}, but got #{char.nil? ? 'EOF' : char.inspect}")
       else
         advance
         char
@@ -232,6 +233,7 @@ module DMark
       loop do
         char = @input_chars[@pos]
         break unless IDENTIFIER_CHARS.include?(char)
+
         advance
         res << char
       end

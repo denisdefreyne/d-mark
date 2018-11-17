@@ -2,6 +2,9 @@
 
 AllCops:
   TargetRubyVersion: "2.3"
+  Exclude:
+    - 'site/**/*.rb'
+    - 'scripts/release'
 
 FileName:
   Exclude:
