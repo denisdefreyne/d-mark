@@ -8,11 +8,9 @@ end
 
 describe DMark::Parser::ParserError do
   subject(:error) do
-    begin
-      DMark::Parser.new(content).parse
-    rescue described_class => e
-      break e
-    end
+    DMark::Parser.new(content).parse
+  rescue described_class => e
+    break e
   end
 
   let(:content) do

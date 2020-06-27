@@ -20,5 +20,5 @@ Gem::Specification.new do |s|
   s.rdoc_options     = ['--main', 'README.md']
   s.extra_rdoc_files = ['LICENSE', 'README.md', 'NEWS.md']
 
-  s.required_ruby_version = '~> 2.3'
+  s.required_ruby_version = '~> 2.5'
 end

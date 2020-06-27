@@ -1,19 +1,18 @@
-# ----- CONFIGURED -----
+--- # ----- CONFIGURED -----
 
 AllCops:
-  TargetRubyVersion: "2.3"
+  TargetRubyVersion: "2.5"
   Exclude:
-    - 'site/**/*.rb'
-    - 'scripts/release'
+    - "site/**/*.rb"
+    - "scripts/release"
+    - "Gemfile.lock"
 
 FileName:
   Exclude:
-    - 'lib/d-mark.rb'
+    - "lib/d-mark.rb"
 
 Style/FrozenStringLiteralComment:
   Enabled: false
-
-
 
 # ----- DISABLED (opinionated) -----
 
@@ -29,8 +28,6 @@ Documentation:
 # This prevents using exceptions with attributes.
 Style/RaiseArgs:
   Enabled: false
-
-
 
 # ----- DISABLED (metrics) -----
 
