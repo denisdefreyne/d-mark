@@ -1,5 +1,11 @@
 # D★Mark news
 
+## 1.0.0b2 (2021-01-01)
+
+Enhancements:
+
+* Added support for Ruby 3.x
+
 ## 1.0.0b1 (2018-02-26)
 
 Enhancements:
