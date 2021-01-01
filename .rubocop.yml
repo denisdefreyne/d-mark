@@ -45,7 +45,7 @@ AllCops:
     - "site/**/*.rb"
     - "scripts/release"
 
-FileName:
+Naming/FileName:
   Exclude:
     - "lib/d-mark.rb"
 
@@ -54,13 +54,8 @@ Style/FrozenStringLiteralComment:
 
 # ----- DISABLED (opinionated) -----
 
-# We should embrace UTF-8, not avoid it. Since the Encoding cop is enabled,
-# there’s no point in enforcing ASCII comments.
-AsciiComments:
-  Enabled: false
-
 # It does not make sense to enforce everything to have documentation.
-Documentation:
+Style/Documentation:
   Enabled: false
 
 # This prevents using exceptions with attributes.
@@ -86,7 +81,7 @@ Metrics/ClassLength:
 Metrics/CyclomaticComplexity:
   Enabled: false
 
-Metrics/LineLength:
+Layout/LineLength:
   Enabled: false
 
 Metrics/MethodLength:
