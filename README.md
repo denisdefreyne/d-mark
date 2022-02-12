@@ -1,9 +1,7 @@
 # D★Mark
 
-[![Gem version](http://img.shields.io/gem/v/d-mark.svg)](http://rubygems.org/gems/d-mark)
-[![Build status](http://img.shields.io/travis/ddfreyne/d-mark.svg)](https://travis-ci.org/ddfreyne/d-mark)
-[![Code Climate](http://img.shields.io/codeclimate/github/ddfreyne/d-mark.svg)](https://codeclimate.com/github/ddfreyne/d-mark)
-[![Code Coverage](http://img.shields.io/codecov/c/github/ddfreyne/d-mark.svg)](https://codecov.io/github/ddfreyne/d-mark)
+[![Gem version](https://img.shields.io/gem/v/d-mark.svg)](http://rubygems.org/gems/d-mark)
+![Build status](https://img.shields.io/github/checks-status/ddfreyne/d-mark/master)
 
 _D★Mark_ is a language for marking up prose. It facilitates writing semantically meaningful text, without limiting itself to the semantics provided by HTML or Markdown.
 

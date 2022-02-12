@@ -1,0 +1,23 @@
+name: "d*mark"
+
+on: "push"
+
+jobs:
+  test:
+    runs-on: "ubuntu-20.04"
+
+    steps:
+      - uses: "actions/checkout@v2"
+
+      - uses: "ruby/setup-ruby@v1"
+        with:
+          ruby-version: 3.1
+          bundler-cache: true
+
+      - name: "Run rubocop"
+        run: "bundle exec rubocop"
+        timeout-minutes: 2
+
+      - name: "Run rspec"
+        run: "bundle exec rspec"
+        timeout-minutes: 3
