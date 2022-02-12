@@ -123,6 +123,7 @@ AllCops:
   Exclude:
     - "site/**/*.rb"
     - "scripts/release"
+    - "vendor/bundle/**/*"
 
 Naming/FileName:
   Exclude:
