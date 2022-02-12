@@ -20,7 +20,7 @@ module DMark
           message,
           '',
           line.rstrip,
-          "\e[31m" + ' ' * [col_nr, 0].max + '↑' + "\e[0m"
+          "\e[31m" + (' ' * [col_nr, 0].max) + '↑' + "\e[0m"
         ]
 
         lines.join("\n")

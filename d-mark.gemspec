@@ -21,4 +21,5 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files = ['LICENSE', 'README.md', 'NEWS.md']
 
   s.required_ruby_version = '>= 2.5'
+  s.metadata['rubygems_mfa_required'] = 'true'
 end
