@@ -1,7 +1,7 @@
 deploy:
   default:
     kind: git
-    remote: git@github.com:ddfreyne/d-mark.git
+    remote: git@github.com:denisdefreyne/d-mark.git
     branch: gh-pages
     forced: true
 

@@ -13,7 +13,7 @@ title: D★Mark
 
   %#note[only=web] This is a note that will %%em{only%} show up on web.
 
-#p For development details on D★Mark, see %link[target=https://github.com/ddfreyne/d-mark]{its GitHub repository}. Please %link[target=https://github.com/ddfreyne/d-mark/issues/new]{open an issue} for any problems that you find.
+#p For development details on D★Mark, see %link[target=https://github.com/denisdefreyne/d-mark]{its GitHub repository}. Please %link[target=https://github.com/denisdefreyne/d-mark/issues/new]{open an issue} for any problems that you find.
 
 #section %h{Cheat sheet}
   #p This cheat sheet covers the common uses of D★Mark. For more details on the syntax, see the %link[target=#syntax]{Syntax} section.

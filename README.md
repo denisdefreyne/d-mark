@@ -1,7 +1,7 @@
 # D★Mark
 
 [![Gem version](https://img.shields.io/gem/v/d-mark.svg)](http://rubygems.org/gems/d-mark)
-![Build status](https://img.shields.io/github/checks-status/ddfreyne/d-mark/main)
+![Build status](https://img.shields.io/github/checks-status/denisdefreyne/d-mark/main)
 
 _D★Mark_ is a language for marking up prose. It facilitates writing semantically meaningful text, without limiting itself to the semantics provided by HTML or Markdown.
 

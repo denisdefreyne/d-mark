@@ -45,7 +45,7 @@ puts "Version = #{DMark::VERSION}"
 puts
 
 puts '=== Verifying that release does not yet exist…'
-releases = client.releases('ddfreyne/d-mark')
+releases = client.releases('denisdefreyne/d-mark')
 release = releases.find { |r| r.tag_name == DMark::VERSION }
 if release
   warn 'Release already exists!'
@@ -79,7 +79,7 @@ puts '=== Creating release on GitHub…'
 sleep 3 # Give GitHub some time to detect the new tag
 is_prerelease = DMark::VERSION =~ /a|b|rc/ || DMark::VERSION =~ /^0/
 client.create_release(
-  'ddfreyne/d-mark', DMark::VERSION,
+  'denisdefreyne/d-mark', DMark::VERSION,
   prerelease: !!is_prerelease,
   body: release_notes
 )
