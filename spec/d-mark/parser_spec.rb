@@ -257,15 +257,15 @@ describe 'DMark::Parser#parser' do
     ]
   end
 
-  it 'does not parse atttributes starting with -' do
+  it 'does not parse attributes starting with -' do
     expect { parse('#p[-this=is dog] hello yes') }.to raise_error(DMark::Parser::ParserError)
   end
 
-  it 'does not parse atttributes starting with _' do
+  it 'does not parse attributes starting with _' do
     expect { parse('#p[_this=is dog] hello yes') }.to raise_error(DMark::Parser::ParserError)
   end
 
-  it 'does not parse atttributes starting with a digit' do
+  it 'does not parse attributes starting with a digit' do
     expect { parse('#p[4this=is dog] hello yes') }.to raise_error(DMark::Parser::ParserError)
   end
 
