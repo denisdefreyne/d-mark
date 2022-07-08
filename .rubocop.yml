@@ -155,7 +155,7 @@ RSpec/Rails/HaveHttpStatus: # new in 2.12
 # ----- CONFIGURED -----
 
 AllCops:
-  TargetRubyVersion: "2.5"
+  TargetRubyVersion: "2.7"
   Exclude:
     - "site/**/*.rb"
     - "scripts/release"
