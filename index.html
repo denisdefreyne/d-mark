@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css?family=Merriweather:400,400italic,700" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Cousine:400,700,400italic,700italic" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="stylesheet.css">
-    <meta name="generator" content="Nanoc 4.11.5">
+    <meta name="generator" content="Nanoc 4.12.7">
     <meta name="viewport" content="width=device-width, initial-scale=0.5">
   </head>
   <body>
@@ -18,7 +18,7 @@
 <pre><code><span class="nt">#para</span><span class="err"> This a paragraph; an element in block form containing some text.
 
 </span><span class="nt">#note</span><span class="err">[only=web] This is a note that will </span><span class="nt">%em</span><span class="err">{only} show up on web.</span></code></pre>
-<p>For development details on D★Mark, see <a href="https://github.com/ddfreyne/d-mark">its GitHub repository</a>. Please <a href="https://github.com/ddfreyne/d-mark/issues/new">open an issue</a> for any problems that you find.</p>
+<p>For development details on D★Mark, see <a href="https://github.com/denisdefreyne/d-mark">its GitHub repository</a>. Please <a href="https://github.com/denisdefreyne/d-mark/issues/new">open an issue</a> for any problems that you find.</p>
 <section id="cheat-sheet"><h2>
 <a href="#cheat-sheet" class="permalink">#</a>Cheat sheet</h2>
 <p>This cheat sheet covers the common uses of D★Mark. For more details on the syntax, see the <a href="#syntax">Syntax</a> section.</p>
@@ -169,7 +169,7 @@
 <p>JSON and YAML are data interchange formats rather than markup languages, and thus are not well-suited for marking up prose.</p>
 <pre><code><span class="p">[</span><span class="w">
   </span><span class="s2">"A glob pattern that matches every item is "</span><span class="p">,</span><span class="w">
-  </span><span class="p">[</span><span class="s2">"pattern"</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="s2">"kind"</span><span class="p">:</span><span class="w"> </span><span class="s2">"glob"</span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="s2">"/**/*"</span><span class="p">]],</span><span class="w">
+  </span><span class="p">[</span><span class="s2">"pattern"</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="nl">"kind"</span><span class="p">:</span><span class="w"> </span><span class="s2">"glob"</span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="s2">"/**/*"</span><span class="p">]],</span><span class="w">
   </span><span class="s2">"."</span><span class="w">
 </span><span class="p">]</span></code></pre>
 <pre><code><span class="nt">#para</span><span class="err"> A glob pattern that matches every item is </span><span class="nt">%pattern</span><span class="err">[glob]{/**/*}.</span></code></pre>
