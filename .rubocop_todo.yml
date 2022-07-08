@@ -12,14 +12,6 @@ Lint/DuplicateBranch:
   Exclude:
     - 'lib/d-mark/parser.rb'
 
-# Offense count: 13
-# Configuration parameters: Prefixes.
-# Prefixes: when, with, without
-RSpec/ContextWording:
-  Exclude:
-    - 'spec/d-mark/element_node_spec.rb'
-    - 'spec/d-mark/translator_spec.rb'
-
 # Offense count: 1
 # Configuration parameters: IgnoredMetadata.
 RSpec/DescribeClass:

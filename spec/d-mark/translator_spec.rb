@@ -16,7 +16,7 @@ describe DMark::Translator do
   end
 
   shared_examples 'translates' do
-    context 'translator base class' do
+    context 'with translator base class' do
       it 'raises error' do
         expect { subject }.to raise_error(
           DMark::Translator::UnhandledNode,
@@ -25,7 +25,7 @@ describe DMark::Translator do
       end
     end
 
-    context 'custom translator' do
+    context 'with custom translator' do
       let(:translator_class) do
         Class.new(described_class) do
           def handle_string(string, _context)
@@ -46,7 +46,7 @@ describe DMark::Translator do
 
       it { is_expected.to eql('<para only=web animal=donkey><em>Hello</em> world!</para>') }
 
-      context 'doing something with context' do
+      context 'when doing something with context' do
         let(:translator_class) do
           Class.new(described_class) do
             def handle_string(string, context)
@@ -84,7 +84,7 @@ describe DMark::Translator do
 
     include_examples 'translates'
 
-    context 'unrecognised type' do
+    context 'with unrecognised type' do
       subject { translator_class.translate([:donkey]) }
 
       include_examples 'errors on unknown type'
@@ -96,7 +96,7 @@ describe DMark::Translator do
 
     include_examples 'translates'
 
-    context 'unrecognised type' do
+    context 'with unrecognised type' do
       subject { translator.translate([:donkey]) }
 
       include_examples 'errors on unknown type'
