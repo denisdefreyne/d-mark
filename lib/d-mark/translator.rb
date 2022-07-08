@@ -4,6 +4,7 @@ module DMark
       attr_reader :node
 
       def initialize(node)
+        super(message)
         @node = node
       end
 
