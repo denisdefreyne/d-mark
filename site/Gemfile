@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 group 'nanoc' do
-  gem 'nanoc-live', '= 1.0.0b1'
+  gem 'nanoc-live'
 end
 
 gem 'adsf'
