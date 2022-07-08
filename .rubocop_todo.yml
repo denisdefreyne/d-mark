@@ -31,18 +31,6 @@ RSpec/DescribeClass:
   Exclude:
     - 'spec/d-mark/parser_spec.rb'
 
-# Offense count: 5
-# Cop supports --auto-correct.
-RSpec/EmptyLineAfterFinalLet:
-  Exclude:
-    - 'spec/d-mark/element_node_spec.rb'
-
-# Offense count: 4
-# Cop supports --auto-correct.
-RSpec/EmptyLineAfterSubject:
-  Exclude:
-    - 'spec/d-mark/translator_spec.rb'
-
 # Offense count: 11
 # Configuration parameters: Max.
 RSpec/ExampleLength:
@@ -69,28 +57,6 @@ RSpec/MultipleExpectations:
 # Offense count: 4
 RSpec/NestedGroups:
   Max: 4
-
-# Offense count: 5
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: separated, grouped
-Style/AccessorGrouping:
-  Exclude:
-    - 'lib/d-mark/element_node.rb'
-    - 'lib/d-mark/parser.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/NegatedIfElseCondition:
-  Exclude:
-    - 'lib/d-mark/parser.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: Methods.
-Style/RedundantArgument:
-  Exclude:
-    - 'lib/d-mark/translator.rb'
 
 # Offense count: 3
 # Cop supports --auto-correct.

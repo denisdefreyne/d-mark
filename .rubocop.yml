@@ -168,6 +168,9 @@ Naming/FileName:
 Style/FrozenStringLiteralComment:
   Enabled: false
 
+Style/AccessorGrouping:
+  EnforcedStyle: separated
+
 # ----- DISABLED (opinionated) -----
 
 # It does not make sense to enforce everything to have documentation.

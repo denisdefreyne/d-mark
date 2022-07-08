@@ -26,27 +26,32 @@ describe DMark::ElementNode do
 
     context 'other is not an element node' do
       let(:other) { 'donkey' }
+
       it { is_expected.to be false }
     end
 
     context 'other is an element node' do
       context 'other does not differ' do
         let(:other) { described_class.new(name, attributes, children) }
+
         it { is_expected.to be true }
       end
 
       context 'other differs in name' do
         let(:other) { described_class.new('giraffe', attributes, children) }
+
         it { is_expected.to be false }
       end
 
       context 'other differs in attributes' do
         let(:other) { described_class.new(name, { 'friend' => 'donkey' }, children) }
+
         it { is_expected.to be false }
       end
 
       context 'other differs in children' do
         let(:other) { described_class.new(name, attributes, []) }
+
         it { is_expected.to be false }
       end
     end

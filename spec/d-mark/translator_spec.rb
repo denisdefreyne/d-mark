@@ -81,20 +81,24 @@ describe DMark::Translator do
 
   describe '.translate' do
     subject { translator_class.translate(nodes) }
+
     include_examples 'translates'
 
     context 'unrecognised type' do
       subject { translator_class.translate([:donkey]) }
+
       include_examples 'errors on unknown type'
     end
   end
 
   describe '#translate' do
     subject { translator.translate(nodes) }
+
     include_examples 'translates'
 
     context 'unrecognised type' do
       subject { translator.translate([:donkey]) }
+
       include_examples 'errors on unknown type'
     end
   end

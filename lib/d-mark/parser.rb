@@ -80,11 +80,11 @@ module DMark
 
     def read_char(expected_char)
       char = @input_chars[@pos]
-      if char != expected_char
-        raise_parse_error("expected #{expected_char.inspect}, but got #{char.nil? ? 'EOF' : char.inspect}")
-      else
+      if char == expected_char
         advance
         char
+      else
+        raise_parse_error("expected #{expected_char.inspect}, but got #{char.nil? ? 'EOF' : char.inspect}")
       end
     end
 
