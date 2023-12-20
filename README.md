@@ -15,4 +15,4 @@ Here’s an example of D★Mark:
 #note[only=web] This is a note that will %em{only} show up on web.
 ```
 
-For details, see the [D★Mark web page](http://ddfreyne.github.io/d-mark/).
+For details, see the [D★Mark web page](http://denisdefreyne.github.io/d-mark/).
