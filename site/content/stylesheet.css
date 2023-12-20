@@ -31,7 +31,9 @@ h3 {
 
 h1 {
   font-size: 48px;
+
   margin-top: 0;
+  margin-bottom: 20px;
 }
 
 h2 {
@@ -40,6 +42,12 @@ h2 {
 
 h3 {
   font-size: 24px;
+}
+
+.byline {
+  font-style: italic;
+
+  margin-bottom: 60px;
 }
 
 a.permalink {

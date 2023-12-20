@@ -18,8 +18,10 @@ class Doc2HTML < DMark::Translator
 
   def handle_element(element, context)
     case element.name
-    when 'p', 'dl', 'dt', 'dd', 'ol', 'ul', 'li', 'code', 'kbd', 'blockquote'
+    when 'p', 'dl', 'dt', 'dd', 'ol', 'ul', 'li', 'code', 'kbd', 'blockquote', 'b'
       wrap(element.name) { handle_children(element, context) }
+    when 'byline'
+      wrap('div', class: 'byline') { handle_children(element, context) }
     when 'h'
       depth = context.fetch(:depth, 1)
       wrap("h#{depth}") do
