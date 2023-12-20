@@ -17,7 +17,9 @@ body {
   background-color: #f8fcff;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   font-family: Montserrat, sans-serif;
   line-height: 1em;
   margin: 1.5em 0 1em 0;
@@ -29,7 +31,9 @@ h1, h2, h3 {
 
 h1 {
   font-size: 48px;
+
   margin-top: 0;
+  margin-bottom: 20px;
 }
 
 h2 {
@@ -38,6 +42,12 @@ h2 {
 
 h3 {
   font-size: 24px;
+}
+
+.byline {
+  font-style: italic;
+
+  margin-bottom: 60px;
 }
 
 a.permalink {
@@ -65,7 +75,8 @@ a.permalink:hover {
   color: rgba(0, 0, 0, 0.2);
 }
 
-a:link, a:visited {
+a:link,
+a:visited {
   color: rgb(77, 103, 242);
 }
 
@@ -88,11 +99,19 @@ pre code .c1 {
   color: rgba(0, 0, 0, 0.5);
 }
 
-em, .firstterm {
+em,
+.firstterm {
   font-style: italic;
 }
 
-dl, p, pre, blockquote, ul, ol, .note, .todo {
+dl,
+p,
+pre,
+blockquote,
+ul,
+ol,
+.note,
+.todo {
   margin: 0 0 1.5rem 0;
 }
 
@@ -107,7 +126,8 @@ dd {
   padding: 0 0 0 2em;
 }
 
-ul, ol {
+ul,
+ol {
   margin-left: 2rem;
 }
 
@@ -129,7 +149,10 @@ blockquote :last-child {
   margin-bottom: 0;
 }
 
-code, kbd, samp, var {
+code,
+kbd,
+samp,
+var {
   font-size: 14px;
   font-family: Cousine, monospace;
 }
