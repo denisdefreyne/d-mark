@@ -4,7 +4,7 @@ title: D★Mark
 
 #h D★Mark
 
-#byline A project by %link[target=https://denisdefreyne.com]{Denis Defreyne}
+#byline A project by %link[rel=author,target=https://denisdefreyne.com]{Denis Defreyne}
 
 #p %b{D★Mark} is a language for marking up prose. It facilitates writing semantically meaningful text, without limiting itself to the semantics provided by HTML or Markdown. If you’re a technical writer looking for a flexible markup language, D★Mark might be a good fit.
 

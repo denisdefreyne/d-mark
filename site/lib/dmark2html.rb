@@ -46,7 +46,9 @@ class Doc2HTML < DMark::Translator
     when 'note', 'todo'
       wrap('div', class: element.name) { handle_children(element, context) }
     when 'link'
-      wrap('a', href: element.attributes['target']) { handle_children(element, context) }
+      attrs = { href: element.attributes['target'] }
+      attrs['rel'] = element.attributes['rel'] if element.attributes['rel']
+      wrap('a', attrs) { handle_children(element, context) }
     when 'listing'
       wrap('pre') do
         wrap('code') do
