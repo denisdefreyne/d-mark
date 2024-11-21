@@ -1,11 +1,16 @@
 source 'https://rubygems.org'
 
+# Compiling
+gem 'nanoc', '~> 4.9'
 group 'nanoc' do
-  gem 'nanoc-live'
+  gem "nanoc-live", "~> 1.1"
 end
 
-gem 'adsf'
+# Viewing
+gem 'adsf', '~> 1.5'
+gem 'webrick', '~> 1.7'
+
 gem 'd-mark', path: '..'
-gem 'nanoc', '~> 4.9'
+
 gem 'nokogiri'
 gem 'rouge'
