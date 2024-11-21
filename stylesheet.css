@@ -1,18 +1,20 @@
 :root {
   color-scheme: light dark;
 
-  --color-border: light-dark(hsl(348, 82%, 62%), hsl(348, 82%, 38%));
+  --pink: light-dark(hsl(348, 82%, 62%), hsl(348, 95%, 55%));
+
+  --color-border: var(--pink);
 
   --color-page-fg: light-dark(hsl(0, 0%, 27%), hsl(0, 0%, 73%));
   --color-page-bg: light-dark(hsl(206, 100%, 99%), hsl(206, 30%, 10%));
 
-  --color-h-fg: light-dark(hsl(348, 82%, 62%);, hsl(348, 82%, 38%););
+  --color-h-fg: var(--pink);
 
   --color-permalink: light-dark(hsla(0, 0%, 0%, 0.1), hsla(0, 0%, 100%, 0.1));
   --color-permalink-hover: light-dark(hsla(0, 0%, 0%, 0.2), hsla(0, 0%, 100%, 0.2));
 
-  --color-a-link: light-dark(hsl(231, 86%, 63%), hsl(231, 86%, 37%));
-  --color-a-hover: light-dark(hsl(348, 82%, 62%);, hsl(348, 82%, 38%););
+  --color-a-link: light-dark(hsl(231, 86%, 63%), hsl(231, 86%, 67%));
+  --color-a-hover: light-dark(hsl(348, 82%, 62%), hsl(348, 82%, 70%));
   --color-a-active: light-dark(hsl(0, 0%, 0%), hsl(0, 0%, 100%));
 
   --color-dt: light-dark(hsl(0, 0%, 0%), hsl(0, 0%, 100%));
@@ -41,10 +43,22 @@
   padding: 0;
 }
 
+@media screen {
+  html {
+    font-size: 16px;
+    padding: 2rem;
+  }
+}
+
+@media screen and (min-width: 800px) {
+  html {
+    font-size: 18px;
+    padding: 4rem;
+  }
+}
+
 html {
-  font-size: 15px;
-  line-height: 1.5rem;
-  padding: 4rem;
+  line-height: 1.8rem;
   border-left: 1rem solid var(--color-border);
 }
 
@@ -60,7 +74,7 @@ h2,
 h3 {
   font-family: Montserrat, sans-serif;
   line-height: 1em;
-  margin: 1.5em 0 1em 0;
+  margin: 5.4rem 0 1.8rem 0;
   color: var(--color-h-fg);
   position: relative;
   padding-left: 60px;
@@ -68,18 +82,23 @@ h3 {
 }
 
 h1 {
-  font-size: 48px;
+  font-size: 3rem;
+  line-height: 3.6rem;
 
   margin-top: 0;
-  margin-bottom: 20px;
+  margin-bottom: 0.9rem;
 }
 
 h2 {
-  font-size: 36px;
+  font-size: 2rem;
+  line-height: 3.6rem;
 }
 
 h3 {
-  font-size: 24px;
+  font-size: 1.5rem;
+  line-height: 3.6rem;
+  margin-top: 3.6rem;
+  margin-bottom: 0;
 }
 
 .byline {
