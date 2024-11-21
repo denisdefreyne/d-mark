@@ -1,3 +1,41 @@
+:root {
+  color-scheme: light dark;
+
+  --color-border: light-dark(hsl(348, 82%, 62%), hsl(348, 82%, 38%));
+
+  --color-page-fg: light-dark(hsl(0, 0%, 27%), hsl(0, 0%, 73%));
+  --color-page-bg: light-dark(hsl(206, 100%, 99%), hsl(206, 30%, 10%));
+
+  --color-h-fg: light-dark(hsl(348, 82%, 62%);, hsl(348, 82%, 38%););
+
+  --color-permalink: light-dark(hsla(0, 0%, 0%, 0.1), hsla(0, 0%, 100%, 0.1));
+  --color-permalink-hover: light-dark(hsla(0, 0%, 0%, 0.2), hsla(0, 0%, 100%, 0.2));
+
+  --color-a-link: light-dark(hsl(231, 86%, 63%), hsl(231, 86%, 37%));
+  --color-a-hover: light-dark(hsl(348, 82%, 62%);, hsl(348, 82%, 38%););
+  --color-a-active: light-dark(hsl(0, 0%, 0%), hsl(0, 0%, 100%));
+
+  --color-dt: light-dark(hsl(0, 0%, 0%), hsl(0, 0%, 100%));
+
+  --color-pre-fg: light-dark(hsl(0, 0%, 0%), hsl(0, 0%, 100%));
+  --color-pre-bg: light-dark(hsla(231, 86%, 63%, 0.1), hsla(231, 46%, 57%, 0.1));
+
+  --color-pre-code-c1: light-dark(hsla(0, 0%, 0%, 0.5), hsla(0, 0%, 100%, 0.5));
+
+  --color-blockquote-fg: light-dark(hsl(0, 0%, 0%), hsl(0, 0%, 100%));
+  --color-blockquote-bg: light-dark(hsla(0, 0%, 0%, 0.05), hsla(0, 0%, 100%, 0.05));
+
+  --color-dmark-punctuation: light-dark(hsl(0, 0%, 60%), hsl(0, 0%, 40%));
+
+  --color-prompt: light-dark(hsl(0, 0%, 60%), hsl(0, 0%, 40%));
+
+  --color-note-border: light-dark(hsl(0, 0%, 0%), hsl(0, 0%, 100%));
+
+  --color-todo-fg: light-dark(hsl(0, 100%, 43%), hsl(0, 100%, 57%));
+  --color-todo-bg: light-dark(hsla(0, 100%, 50%, 0.05), hsla(0, 100%, 50%, 0.05));
+  --color-todo-border: light-dark(hsl(0, 100%, 50%), hsl(0, 100%, 50%));
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -7,14 +45,14 @@ html {
   font-size: 15px;
   line-height: 1.5rem;
   padding: 4rem;
-  border-left: 1rem solid #ee5070;
+  border-left: 1rem solid var(--color-border);
 }
 
 body {
   max-width: 720px;
   font-family: Merriweather, serif;
-  color: #444;
-  background-color: #f8fcff;
+  color: var(--color-page-fg);
+  background-color: var(--color-page-bg);
 }
 
 h1,
@@ -23,7 +61,7 @@ h3 {
   font-family: Montserrat, sans-serif;
   line-height: 1em;
   margin: 1.5em 0 1em 0;
-  color: #ee5070;
+  color: var(--color-h-fg);
   position: relative;
   padding-left: 60px;
   margin-left: -60px;
@@ -68,25 +106,25 @@ h3:hover a.permalink {
 
 a.permalink:link,
 a.permalink:visited {
-  color: rgba(0, 0, 0, 0.1);
+  color: var(--color-permalink);
 }
 
 a.permalink:hover {
-  color: rgba(0, 0, 0, 0.2);
+  color: var(--color-permalink-hover);
 }
 
 a:link,
 a:visited {
-  color: rgb(77, 103, 242);
+  color: var(--color-a-link);
 }
 
 a:hover {
-  color: #ee5070;
+  color: var(--color-a-hover);
 }
 
 a:active,
 a.permalink:active {
-  color: #000;
+  color: var(--color-a-active);
 }
 
 pre code .k,
@@ -96,7 +134,7 @@ pre code .no {
 }
 
 pre code .c1 {
-  color: rgba(0, 0, 0, 0.5);
+  color: var(--color-pre-code-c1);
 }
 
 em,
@@ -117,7 +155,7 @@ ol,
 
 dt {
   font-weight: bold;
-  color: #000;
+  color: var(--color-dt);
   margin: 2rem 0 1rem 0;
 }
 
@@ -133,15 +171,15 @@ ol {
 
 pre {
   padding: 1em;
-  background: rgba(77, 103, 242, 0.1);
-  color: #000;
+  background: var(--color-pre-bg);
+  color: var(--color-pre-fg);
   white-space: pre-wrap;
 }
 
 blockquote {
   padding: 1em;
-  background: rgba(0, 0, 0, 0.05);
-  color: #000;
+  background: var(--color-blockquote-bg);
+  color: var(--color-blockquote-fg);
   font-style: italic;
 }
 
@@ -158,7 +196,7 @@ var {
 }
 
 .dmark-punctuation {
-  color: #999;
+  color: var(--color-dmark-punctuation);
 }
 
 .dmark-elem {
@@ -166,7 +204,7 @@ var {
 }
 
 .prompt {
-  color: #999;
+  color: var(--color-prompt);
 }
 
 kbd {
@@ -179,7 +217,7 @@ kbd {
 
 .note {
   padding: 1em;
-  border: 1px solid #000;
+  border: 1px solid var(--color-note-border);
 }
 
 .note:before {
@@ -190,9 +228,9 @@ kbd {
 
 .todo {
   padding: 1em;
-  color: #d00;
-  background: rgba(255, 0, 0, 0.05);
-  border: 1px solid #f00;
+  color: var(--color-todo-fg);
+  background: var(--color-todo-bg);
+  border: 1px solid var(--color-todo-border);
 }
 
 .todo:before {
