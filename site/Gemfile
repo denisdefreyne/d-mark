@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 # Compiling
 gem 'nanoc', '~> 4.9'
 group 'nanoc' do
-  gem "nanoc-live", "~> 1.1"
+  gem 'nanoc-live', '~> 1.1'
 end
 
 # Viewing
