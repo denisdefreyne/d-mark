@@ -333,6 +333,18 @@ RSpec/RepeatedSubjectCall: # new in 2.27
   Enabled: true
 RSpec/UndescriptiveLiteralsDescription: # new in 2.29
   Enabled: true
+Lint/HashNewWithKeywordArgumentsAsDefault: # new in 1.69
+  Enabled: true
+Lint/NumericOperationWithConstantResult: # new in 1.69
+  Enabled: true
+Lint/UselessDefined: # new in 1.69
+  Enabled: true
+Style/DigChain: # new in 1.69
+  Enabled: true
+Style/FileNull: # new in 1.69
+  Enabled: true
+Style/FileTouch: # new in 1.69
+  Enabled: true
 
 # ----- CONFIGURED -----
 
