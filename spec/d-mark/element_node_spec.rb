@@ -17,7 +17,7 @@ describe DMark::ElementNode do
     context 'with attributes' do
       let(:attributes) { { 'only' => 'web' } }
 
-      it { is_expected.to eql('Element(para, {"only"=>"web"}, ["Hello!"])') }
+      it { is_expected.to eql('Element(para, {"only" => "web"}, ["Hello!"])') }
     end
   end
 
