@@ -6,6 +6,10 @@ Enhancements:
 
 * Added `ParserError#extended_message`
 
+Fixes:
+
+* Fix wrong (one-off) error indicator
+
 ## 1.0.0b2 (2021-01-01)
 
 Enhancements:

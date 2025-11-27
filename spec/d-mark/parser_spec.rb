@@ -26,13 +26,13 @@ describe DMark::Parser::ParserError do
   describe '#fancy_message' do
     subject { error.fancy_message }
 
-    it { is_expected.to eq("parse error at line 3, col 15: unexpected } -- try escaping it as \"%}\"\n\n#p More stuff }\n\e[31m              ↑\e[0m") }
+    it { is_expected.to eq("parse error at line 3, col 15: unexpected } -- try escaping it as \"%}\"\n\n#p More stuff }\n\e[31m             ↑\e[0m") }
   end
 
   describe '#extended_message' do
     subject { error.extended_message }
 
-    it { is_expected.to eq("parse error at line 3, col 15: unexpected } -- try escaping it as \"%}\"\n\n#p More stuff }\n\e[31m              ↑\e[0m") }
+    it { is_expected.to eq("parse error at line 3, col 15: unexpected } -- try escaping it as \"%}\"\n\n#p More stuff }\n\e[31m             ↑\e[0m") }
   end
 end
 
