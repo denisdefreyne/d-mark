@@ -12,39 +12,6 @@ Lint/DuplicateBranch:
   Exclude:
     - 'lib/d-mark/parser.rb'
 
-# Offense count: 1
-# Configuration parameters: IgnoredMetadata.
-RSpec/DescribeClass:
-  Exclude:
-    - 'spec/d-mark/parser_spec.rb'
-
-# Offense count: 11
-# Configuration parameters: Max.
-RSpec/ExampleLength:
-  Exclude:
-    - 'spec/d-mark/parser_spec.rb'
-
-# Offense count: 2
-# Configuration parameters: Include, CustomTransform, IgnoreMethods, SpecSuffixOnly.
-# Include: **/*_spec*rb*, **/spec/**/*
-RSpec/FilePath:
-  Exclude:
-    - 'spec/d-mark/element_node_spec.rb'
-    - 'spec/d-mark/translator_spec.rb'
-
-# Offense count: 1
-RSpec/MultipleDescribes:
-  Exclude:
-    - 'spec/d-mark/parser_spec.rb'
-
-# Offense count: 2
-RSpec/MultipleExpectations:
-  Max: 7
-
-# Offense count: 4
-RSpec/NestedGroups:
-  Max: 4
-
 # Offense count: 3
 # Cop supports --auto-correct.
 Style/StringConcatenation:

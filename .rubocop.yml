@@ -1,12 +1,5 @@
 inherit_from: .rubocop_todo.yml
 
-require:
-  - rubocop-rspec
-
-plugins:
-  - rubocop-factory_bot
-  - rubocop-capybara
-
 Layout/SpaceBeforeBrackets: # (new in 1.7)
   Enabled: true
 Lint/AmbiguousAssignment: # (new in 1.7)
@@ -109,16 +102,6 @@ Style/RedundantSelfAssignmentBranch: # new in 1.19
   Enabled: true
 Style/SelectByRegexp: # new in 1.22
   Enabled: true
-RSpec/ExcessiveDocstringSpacing: # new in 2.5
-  Enabled: true
-RSpec/IdenticalEqualityAssertion: # new in 2.4
-  Enabled: true
-RSpec/SubjectDeclaration: # new in 2.5
-  Enabled: true
-FactoryBot/SyntaxMethods: # new in 2.7
-  Enabled: true
-RSpecRails/AvoidSetupHook: # new in 2.4
-  Enabled: true
 Layout/LineContinuationLeadingSpace: # new in 1.31
   Enabled: true
 Layout/LineContinuationSpacing: # new in 1.31
@@ -142,16 +125,6 @@ Style/NestedFileDirname: # new in 1.26
 Style/ObjectThen: # new in 1.28
   Enabled: true
 Style/RedundantInitialize: # new in 1.27
-  Enabled: true
-RSpec/BeEq: # new in 2.9.0
-  Enabled: true
-RSpec/BeNil: # new in 2.9.0
-  Enabled: true
-RSpec/ChangeByZero: # new in 2.11.0
-  Enabled: true
-RSpec/VerifiedDoubleReference: # new in 2.10.0
-  Enabled: true
-RSpecRails/HaveHttpStatus: # new in 2.12
   Enabled: true
 Gemspec/DevelopmentDependencies: # new in 1.44
   Enabled: true
@@ -221,56 +194,6 @@ Style/SingleLineDoEndBlock: # new in 1.57
   Enabled: true
 Style/YAMLFileRead: # new in 1.53
   Enabled: true
-FactoryBot/AssociationStyle: # new in 2.23
-  Enabled: true
-FactoryBot/ConsistentParenthesesStyle: # new in 2.14
-  Enabled: true
-FactoryBot/FactoryAssociationWithStrategy: # new in 2.23
-  Enabled: true
-FactoryBot/FactoryNameStyle: # new in 2.16
-  Enabled: true
-FactoryBot/IdSequence: # new in <<next>>
-  Enabled: true
-FactoryBot/RedundantFactoryOption: # new in 2.23
-  Enabled: true
-RSpec/BeEmpty: # new in 2.20
-  Enabled: true
-RSpec/ContainExactly: # new in 2.19
-  Enabled: true
-RSpec/DuplicatedMetadata: # new in 2.16
-  Enabled: true
-RSpec/EmptyMetadata: # new in 2.24
-  Enabled: true
-RSpec/Eq: # new in 2.24
-  Enabled: true
-RSpec/IndexedLet: # new in 2.20
-  Enabled: true
-RSpec/MatchArray: # new in 2.19
-  Enabled: true
-RSpec/MetadataStyle: # new in 2.24
-  Enabled: true
-RSpec/NoExpectationExample: # new in 2.13
-  Enabled: true
-RSpec/PendingWithoutReason: # new in 2.16
-  Enabled: true
-RSpec/ReceiveMessages: # new in 2.23
-  Enabled: true
-RSpec/RedundantAround: # new in 2.19
-  Enabled: true
-RSpec/SkipBlockInsideExample: # new in 2.19
-  Enabled: true
-RSpec/SortMetadata: # new in 2.14
-  Enabled: true
-RSpec/SpecFilePathSuffix: # new in 2.24
-  Enabled: true
-RSpecRails/InferredSpecType: # new in 2.14
-  Enabled: true
-RSpecRails/MinitestAssertions: # new in 2.17
-  Enabled: true
-RSpecRails/NegationBeValid: # new in 2.23
-  Enabled: true
-RSpecRails/TravelAround: # new in 2.19
-  Enabled: true
 Gemspec/AddRuntimeDependency: # new in 1.65
   Enabled: true
 Lint/DuplicateSetElement: # new in 1.67
@@ -302,22 +225,6 @@ Style/SendWithLiteralMethodName: # new in 1.64
 Style/SuperArguments: # new in 1.64
   Enabled: true
 Style/SuperWithArgsParentheses: # new in 1.58
-  Enabled: true
-FactoryBot/ExcessiveCreateList: # new in 2.25
-  Enabled: true
-RSpec/EmptyOutput: # new in 2.29
-  Enabled: true
-RSpec/ExpectInLet: # new in 2.30
-  Enabled: true
-RSpec/IsExpectedSpecify: # new in 2.27
-  Enabled: true
-RSpec/RedundantPredicateMatcher: # new in 2.26
-  Enabled: true
-RSpec/RemoveConst: # new in 2.26
-  Enabled: true
-RSpec/RepeatedSubjectCall: # new in 2.27
-  Enabled: true
-RSpec/UndescriptiveLiteralsDescription: # new in 2.29
   Enabled: true
 Lint/HashNewWithKeywordArgumentsAsDefault: # new in 1.69
   Enabled: true
@@ -403,15 +310,6 @@ Style/Documentation:
 
 # This prevents using exceptions with attributes.
 Style/RaiseArgs:
-  Enabled: false
-
-# This requires `spec/d_mark/…` which does not correspond to the `lib/` structure.
-RSpec/SpecFilePathFormat: # new in 2.24
-  Enabled: false
-
-# ----- DISABLED (irrelevant) -----
-
-Capybara:
   Enabled: false
 
 # ----- DISABLED (metrics) -----
