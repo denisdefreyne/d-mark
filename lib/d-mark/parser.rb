@@ -144,7 +144,7 @@ module DMark
     end
 
     # FIXME: ugly and duplicated
-    def try_read_block_start
+    def try_read_block_start # rubocop:disable Naming/PredicateMethod
       if @input_chars[@pos] == '#'
         next_char = @input_chars[@pos + 1]
         ('a'..'z').cover?(next_char)

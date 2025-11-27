@@ -25,7 +25,7 @@ module DMark
     end
 
     def translate(nodes, context = {})
-      [nodes.map { |node| handle(node, context) }].flatten.join
+      [nodes.map { |node| handle(node, context) }].join
     end
 
     def handle(node, context = {})
