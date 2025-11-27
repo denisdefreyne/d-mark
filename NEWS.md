@@ -1,6 +1,6 @@
 # D★Mark news
 
-## 1.0.0b3 (PENDING)
+## 1.0.0b3 (2025-11-27)
 
 Enhancements:
 
