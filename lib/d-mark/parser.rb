@@ -14,6 +14,10 @@ module DMark
       end
 
       def fancy_message
+        extended_message
+      end
+
+      def extended_message
         line = @content.lines[line_nr]
 
         lines = [
