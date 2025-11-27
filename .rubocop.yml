@@ -355,7 +355,7 @@ Style/RedundantFormat: # new in 1.72
 # ----- CONFIGURED -----
 
 AllCops:
-  TargetRubyVersion: "2.7"
+  TargetRubyVersion: 3.2
   Exclude:
     - "site/**/*.rb"
     - "scripts/release"
